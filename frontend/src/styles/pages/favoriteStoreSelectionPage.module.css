@@ -1,0 +1,135 @@
+
+.storeSelectionPageTopHeader{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.storeSelectionPageTopHeaderRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 20px;
+}
+
+.storeSelectionPageTopHeaderRow h1{
+    font-size: 1.2rem;
+}
+
+.logoutDiv {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.logoutDiv div,
+.logoutDiv div span{
+    cursor: pointer !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.logoutDiv div:hover span,
+.logoutDiv div:hover .logoutIcon{
+    color: red !important;
+    cursor: pointer;
+}
+
+
+.logoutDiv div span.logoutIcon {
+    font-size: 1.3rem;
+    margin-right: .2em !important;
+    color:  black;
+}
+
+
+.titlesRow,
+.titlesCol {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.titlesCol h1 {
+    font-size: 1.6rem;
+    font-weight: bold !important;
+    margin: 0;
+    padding: 0;
+    margin-bottom: .2rem !important;
+}
+
+.titlesCol h2 {
+    font-size: 1.2rem;
+    font-weight: 500 !important;
+    margin: 0;
+    padding: 0;
+}
+
+.radioBtnDiv{
+    position: relative;
+}
+
+.antdGroupRadioCheckedIcon{
+    position: absolute;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    color: white !important;
+    font-size: 1.4rem !important;
+    font-weight: bold !important;
+    background-color: #87BE4B !important;
+    padding: .4rem !important;
+    border-radius: 50% !important;
+
+}
+
+.antdGroupRadioBtnCol {
+    min-height: 100% !important;
+}
+
+.confirmStoreChoiceBtnDiv {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 3rem;
+}
+
+.confirmStoreChoiceBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20rem;
+    background-color: #87BE4B !important;
+}
+
+.confirmStoreChoiceBtn:hover,
+.confirmStoreChoiceBtn:focus {
+    opacity: .8 !important;
+}
+
+.confirmStoreChoiceBtnContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.confirmStoreChoiceBtnIcon {
+    font-size: 1.3rem;
+    margin-bottom: .2em !important;
+    color:  white;
+}
+
+.modalWithGifImage {
+    z-index: 1 !important;
+}
+
+.gifImage {
+    position: absolute !important;
+    width: 24rem !important;
+    height: 14rem !important;
+    top: 12rem !important;
+    left: 0 !important;
+    z-index: 0 !important;
+}

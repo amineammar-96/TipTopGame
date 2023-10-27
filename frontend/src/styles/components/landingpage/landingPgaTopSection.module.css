@@ -1,0 +1,89 @@
+.topSection {
+  margin-top: -7%;
+}
+
+.topSectionLeftSide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column !important;
+  padding: 0 5rem !important;
+}
+
+.topSectionRightSide {
+}
+
+.topSectionTextDiv {
+}
+
+.topSectionTextDiv h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.topSectionTextDiv h1 span {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: var(--navbar-actions-bg);
+}
+
+.topSectionBtnsDiv {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+
+}
+
+.playBtn {
+  align-items: center;
+  min-width: 13rem;
+  font-size: 1rem;
+  font-weight: 500;
+  animation: glowShadow 1s infinite;
+}
+
+.partnerBtn {
+  align-items: center;
+  min-width: 13rem;
+  font-size: 1rem;
+  font-weight: 500;
+  animation: blinking 1.5s infinite;
+}
+
+@keyframes blinkingVisibility {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes blinking {
+  0% {
+    color: #fff;
+    background-color: var(--navbar-actions-bg);
+  }
+  50% {
+    color: #ff0000;
+    background-color: #fff;
+  }
+  100% {
+    color: #fff;
+    background-color: var(--navbar-actions-bg);
+  }
+}
+
+@keyframes glowShadow {
+  0% {
+    box-shadow: 0 0 5px whitesmoke;
+  }
+  50% {
+    box-shadow: 0 0 15px 1px #87BE4B;
+  }
+  100% {
+    box-shadow: 0 0 5px whitesmoke;
+  }
+}

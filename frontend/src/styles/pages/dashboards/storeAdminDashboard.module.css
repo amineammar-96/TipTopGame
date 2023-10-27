@@ -1,0 +1,270 @@
+.antdMenuSideBar{
+    min-height: 100vh !important;
+}
+
+.toggleBtnDiv {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 1rem;
+}
+
+.mainPageDiv {
+    flex: 1;
+    transition: margin-left 0.3s ease;
+}
+.topNavBarDiv ul,
+.topNavBarDiv {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 0.4rem 0;
+}
+
+
+.unhoverableElement {
+    pointer-events: none !important;
+}
+
+.logoutSpan{
+    color: #ff0000 !important;
+}
+
+
+.topHeaderStoreManagementFullWidth {
+    width: 100%;
+    transition: width 0.3s ease !important;
+}
+
+.fullWidthElement {
+    width: 100% !important;
+}
+
+.topHeadersCard {
+    display: flex;
+    justify-content: space-between;
+    padding: 4rem;
+    width: 100%;
+    transition: width 0.3s ease !important;
+
+}
+
+.topCardElement {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+}
+
+.topCardElement {
+    background: #2E3138;
+    color: white !important;
+    max-height: 55px !important;
+}
+
+
+.collapseBtn {
+    background-color: #B95F89 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    margin: 1rem 0 !important;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.collapseBtn:hover {
+    background-color: #B95F89 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #B95F89 !important;
+}
+
+.collapseBtnIcon{
+    color: white !important;
+    transform: scale(1.2) !important;
+}
+
+.sideBarMenu {
+    min-height: 93vh !important;
+}
+
+.centerElementRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.selectStoresOptions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    margin: 1rem 1rem;
+}
+
+
+.selectNoResultFound {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0 !important;
+    height: 100%;
+}
+.selectNoResultFound p{
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    margin: 0 3px !important;
+}
+
+.searchSelectIcon{
+    color: #2E3138 !important;
+    font-size: 1.3rem !important;
+    pointer-events: none !important;
+    font-weight: 800 !important;
+}
+
+
+.updateStoreArrayBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.updateStoreArrayBtn:hover,
+.updateStoreArrayBtn:focus{
+    background-color: #87BE4B !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #87BE4B !important;
+}
+
+
+.deleteStoreArrayBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.deleteStoreArrayBtn:hover,
+.deleteStoreArrayBtn:focus{
+    background-color: #e73232 !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #e73232 !important;
+}
+
+
+
+
+.emptyTableTextDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+}
+
+.emptyTableTextDiv span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.addNewStoreBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px !important;
+    background-color: #87BE4B;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+}
+
+.addNewStoreBtn:hover{
+    background-color: #87BE4B !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #87BE4B !important;
+    opacity: 0.9 !important;
+}
+
+.addNewManagerBtnDiv {
+    display: flex;
+    justify-content: flex-end;
+    margin: 1rem 0;
+}
+
+.addNewManagerBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px !important;
+    background-color: #87BE4B;
+    color: white !important;
+}
+
+.addNewManagerBtn:hover,
+.addNewManagerBtn:focus{
+    background-color: #87BE4B !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #87BE4B !important;
+    opacity: 0.9 !important;
+}
+
+.resetPasswordArrayBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.resetPasswordArrayBtn:hover,
+.resetPasswordArrayBtn:focus{
+    background-color: goldenrod !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: goldenrod !important;
+    opacity: 0.9 !important;
+}
+
+.lastnameColProfileManagement,
+.firstnameColProfileManagement{
+    max-width: 150px !important;
+}
+
+.genderColProfileManagement{
+    width: 10px !important;
+}
+
+.topHeaderProfileManagementTitle{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-size: 1.5rem;
+}
+
+.logoutTopNavBarItem,
+.profileTopNavBarItem{
+   min-width: 10rem !important;
+}
+
+.logoutTopNavBarItem:hover span{
+    font-weight: 600 !important;
+}
+.logoutTopNavBarItem:hover svg{
+    transform: scale(1.2) !important;
+}
+.profileTopNavBarItem:hover span{
+    font-weight: 500 !important;
+}
+
+.mainContent {
+    transition: margin-left 0.3s ease;
+}

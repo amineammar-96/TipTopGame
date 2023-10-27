@@ -1,0 +1,15 @@
+.ant-card-head-title {
+    color: white !important;
+}
+
+.ant-card-body {
+    background: white;
+    color: black;
+    border: 1px solid #2E3138;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 1rem 0 0 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

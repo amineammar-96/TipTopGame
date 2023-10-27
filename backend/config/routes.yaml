@@ -1,0 +1,107 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+
+#authentification routes
+api_login_check_client:
+    path: /api/login_check_client
+    controller: App\Controller\Api\User\UserAuthController::checkLoginClient
+
+api_login_check_admin:
+    path: /api/login_check_admin
+    controller: App\Controller\Api\User\UserAuthController::checkLoginAdmin
+
+oauth_google_callback:
+    path: /api/oauth/google/callback
+    controller: App\Controller\Api\User\UserSocialMediaAuthController::googleCallback
+
+oauth_facebook_callback:
+    path: /api/oauth/facebook/callback
+    controller: App\Controller\Api\User\UserSocialMediaAuthController::facebookCallback
+
+
+api_register:
+    path: /api/register
+    controller: App\Controller\Api\User\UserAuthController::register
+
+logout:
+    path: /api/logout
+    controller: App\Controller\Api\User\UserAuthController::logout
+
+
+
+#stores routes
+get_stores_admin:
+    path: /api/admin/stores
+    controller: App\Controller\Api\Store\StoreController::getStoresForAdmin
+    methods: GET
+
+get_store_by_id:
+    path: /api/store/{id}
+    controller: App\Controller\Api\Store\StoreController::getStoreById
+    methods: GET
+
+admin_add_new_store:
+    path: /api/admin/store/add
+    controller: App\Controller\Api\Store\StoreController::addNewStoreByAdmin
+    methods: POST
+
+update_store_by_id:
+    path: /api/admin/store/update/{id}
+    controller: App\Controller\Api\Store\StoreController::updateStoreByIdForAdmin
+    methods: POST
+
+delete_store_by_id:
+    path: /api/admin/store/delete/{id}
+    controller: App\Controller\Api\Store\StoreController::deleteStoreById
+    methods: DELETE
+
+
+get_stores_for_client:
+    path: /api/client/stores
+    controller: App\Controller\Api\Store\StoreController::getStoresForClient
+    methods: GET
+    defaults:
+        page: 1
+        options:
+            parameters:
+                page:
+                    name: page
+                    in: query
+                    required: false
+
+associate_client_to_store:
+    path: /api/client/store/associate
+    controller: App\Controller\Api\Store\StoreController::associateClientToStore
+    methods: POST
+
+#store's users routes
+get_store_users:
+    path: /api/admin/store/{id}/users
+    controller: App\Controller\Api\Store\StoreUserController::getStoreUsersForAdmin
+    methods: GET
+
+get_store_users_by_role:
+    path: /api/store/{id}/users
+    controller: App\Controller\Api\Store\StoreUserController::getStoreUsersByRole
+    methods: POST
+
+add_new_user_to_store:
+    path: /api/store/{id}/user/add
+    controller: App\Controller\Api\Store\StoreUserController::addNewUserToStore
+    methods: POST
+
+#getUserProdileById
+get_user_profile_by_id:
+    path: /api/user/{id}
+    controller: App\Controller\Api\User\UserController::getUserProfileById
+    methods: GET
+
+#updateUserProfileById
+update_user_profile_by_id:
+    path: /api/user/{id}/update
+    controller: App\Controller\Api\User\UserController::updateUserProfileById
+    methods: POST

@@ -1,0 +1,28 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@font-face {
+  font-family: 'defaultFont';
+  src: url('../../public/fonts/Roboto/RobotoCondensed-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style-type: none;
+}
+
+body, * {
+  font-family: 'defaultFont', sans-serif !important;
+}
+
+
+
+
+.modalError .ant-btn-primary,
+.modalSuccess .ant-btn-primary{
+  background-color: #2E3138 !important;
+  border-color: #2E3138 !important;
+}
