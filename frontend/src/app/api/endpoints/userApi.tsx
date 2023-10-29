@@ -99,4 +99,50 @@ export async function updateUserById(id:string , data: any ){
 }
 
 
+//getClients
+export async function getClients(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
 
+    const baseUrl = '/admin/clients';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}
+
+
+export async function getParticipants(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const baseUrl = '/admin/participants';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}

@@ -15,6 +15,8 @@ import LogoutService from "@/app/service/LogoutService";
 import ModalAddOrUpdateStore
     from "@/pages/dashboard/dashboardComponents/storeManagementComponent/ModalAddOrUpdateStore";
 
+import Styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
+
 interface DataType {
     key: string;
     name: string;
@@ -228,7 +230,7 @@ function StoreDataInfoTable({ selectedStoreId , onStoreUpdate, isStoresUpdated ,
         </div>
     );
     return (
-        <div>
+        <div className={`${Styles.mainTable}`}>
             <Table  locale={{emptyText : customEmptyText}} pagination={false} columns={columns} dataSource={storeData} />
             {selectedStoreId && (
                 <ModalAddOrUpdateStore onStoreUpdate={onStoreUpdate} key={updateFormKey} storeId={selectedStoreId}  modalIsOpen={isModalOpen} closeModal={closeStoreUpdateModal}  updateStore={true} ></ModalAddOrUpdateStore>

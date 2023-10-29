@@ -5,6 +5,8 @@ import { Menu } from 'antd';
 import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
 import { Avatar, Space } from 'antd';
 import RedirectService from "@/app/service/RedirectService";
+import Image from "next/image";
+import logoTeaImage from "@/assets/images/logoTea.png";
 
 
 interface User {
@@ -64,6 +66,10 @@ function TopNavBar() {
 
     return (
         <div className={style.topNavBarDiv}>
+            <div className={`${style.logoDivSideBar}`}>
+                <strong>TipTop</strong>
+                <Image className={`${style.logoSideBar}`} alt={"LogoTipTop"} src={logoTeaImage} />
+            </div>
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
         </div>
     );

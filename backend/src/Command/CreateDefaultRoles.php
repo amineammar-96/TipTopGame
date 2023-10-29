@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Role;
+use Doctrine\DBAL\Connection;
 
 class CreateDefaultRoles extends Command
 {
@@ -17,11 +18,14 @@ class CreateDefaultRoles extends Command
 
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private $connection;
+
+    public function __construct(EntityManagerInterface $entityManager , Connection $connection)
     {
         parent::__construct();
 
         $this->entityManager = $entityManager;
+        $connection = $this->entityManager->getConnection();
     }
 
     protected function configure()
@@ -31,6 +35,13 @@ class CreateDefaultRoles extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');
+        $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
+        $this->connection->executeQuery('DELETE FROM role');
+        $this->connection->executeQuery('ALTER TABLE role AUTO_INCREMENT = 1');
+        $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
+        $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 1');
+
         $roles = [
             ['name' => 'ROLE_ADMIN', 'label' => 'Administrateur'],
             ['name' => 'ROLE_STOREMANAGER', 'label' => 'Gestionnaire de Magasin'],

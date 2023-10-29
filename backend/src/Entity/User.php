@@ -65,10 +65,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Store::class)]
     private Collection $stores;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Ticket::class)]
+    private Collection $ticketsEmployee;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->stores = new ArrayCollection();
+        $this->ticketsEmployee = new ArrayCollection();
     }
 
 
@@ -350,5 +354,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $now = new \DateTime();
         $interval = $this->getDateOfBirth()->diff($now);
         return $interval->y;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTicketsEmployee(): Collection
+    {
+        return $this->ticketsEmployee;
+    }
+
+    public function addTicketsEmployee(Ticket $ticketsEmployee): static
+    {
+        if (!$this->ticketsEmployee->contains($ticketsEmployee)) {
+            $this->ticketsEmployee->add($ticketsEmployee);
+            $ticketsEmployee->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketsEmployee(Ticket $ticketsEmployee): static
+    {
+        if ($this->ticketsEmployee->removeElement($ticketsEmployee)) {
+            // set the owning side to null (unless already changed)
+            if ($ticketsEmployee->getEmployee() === $this) {
+                $ticketsEmployee->setEmployee(null);
+            }
+        }
+
+        return $this;
     }
 }

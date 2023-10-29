@@ -9,6 +9,13 @@ import StoresManagement from "@/pages/dashboard/dashboardComponents/storeManagem
 
 import RedirectService from "@/app/service/RedirectService";
 import ProfilesManagement from "@/pages/dashboard/dashboardComponents/profilesManagementComponent/ProfilesManagement";
+import HomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/HomePageDashboard";
+import TicketsPageDashboard from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
+import PrizesListPage from "@/pages/dashboard/dashboardComponents/PrizesPageComponent/PrizesListPage";
+import ClientManagementPageDashboard
+    from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ClientManagementPageDashboard";
+import ParticipantManagementPageDashboard
+    from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
 
 function storeAdminDashboard() {
 
@@ -47,8 +54,15 @@ function storeAdminDashboard() {
                             <TopNavBar></TopNavBar>
                         </Row>
                         <Row className={styles.mainContent}>
+                            {selectedMenuItem==="dashboardItem" && <HomePage></HomePage>}
                             {selectedMenuItem==="storesManagementItem" && <StoresManagement></StoresManagement>}
                             {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
+                            {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
+                            {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
+                            {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
+                            {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
+
+
                         </Row>
                     </Col>
                 </Row>

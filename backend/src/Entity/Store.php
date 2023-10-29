@@ -60,6 +60,9 @@ class Store
     #[ORM\Column(length: 255)]
     private ?string $siren = null;
 
+    #[ORM\OneToMany(mappedBy: 'store', targetEntity: Ticket::class)]
+    private Collection $tickets;
+
    
 
     
@@ -67,6 +70,7 @@ class Store
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -273,6 +277,36 @@ class Store
     public function setSiren(string $siren): static
     {
         $this->siren = $siren;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setStore($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getStore() === $this) {
+                $ticket->setStore(null);
+            }
+        }
 
         return $this;
     }

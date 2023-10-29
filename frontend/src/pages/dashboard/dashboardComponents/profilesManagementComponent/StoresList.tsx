@@ -79,7 +79,7 @@ function StoresList({ onSelectStore   }: { onSelectStore: (value: string) => voi
 
     return (
         <>
-        <Row className={`${styles.centerElementRow} `}>
+        <Row className={`${styles.centerElementRow} storeManageList `}>
             <Select
                 className={`${styles.selectStoresOptions} dashboardStoresSelect`}
                 showSearch

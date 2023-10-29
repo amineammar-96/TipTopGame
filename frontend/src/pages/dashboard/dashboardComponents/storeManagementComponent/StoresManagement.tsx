@@ -18,6 +18,11 @@ function StoresManagement() {
         return (
             <div className={styles.topHeaderStoreManagementFullWidth} >
                 <Row>
+                    <Col className={`px-4 mt-4 ${styles.homePageContent}`} >
+                        <h2>Gestion des magasins</h2>
+                    </Col>
+                </Row>
+                <Row>
                     <Col className={styles.topHeaderStoreManagementFullWidth} >
                         <StoreCards isStoresUpdated={isStoresUpdated} ></StoreCards>
                     </Col>

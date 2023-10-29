@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Doctrine\DBAL\Connection;
 
 class GenerateDefaultTickets extends Command
 {
@@ -17,12 +18,16 @@ class GenerateDefaultTickets extends Command
     private EntityManagerInterface $entityManager;
     private PrizeRepository $prizeRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, PrizeRepository $prizeRepository)
+    private Connection $connection;
+
+    public function __construct(EntityManagerInterface $entityManager, PrizeRepository $prizeRepository , Connection $connection)
     {
         parent::__construct();
 
         $this->entityManager = $entityManager;
         $this->prizeRepository = $prizeRepository;
+        $this->connection = $connection;
+
     }
 
     protected function configure()
@@ -32,49 +37,51 @@ class GenerateDefaultTickets extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Fetch all prizes from the database
+        $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');
+        $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
+        $this->connection->executeQuery('DELETE FROM ticket');
+        $this->connection->executeQuery('ALTER TABLE ticket AUTO_INCREMENT = 1');
+        $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
+        $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 1');
+
+
         $prizes = $this->prizeRepository->findAll();
 
-        // Calculate the total winning rate from all prizes
         $totalWinningRate = array_reduce($prizes, function ($sum, Prize $prize) {
             return $sum + $prize->getWinningRate();
         }, 0);
 
-        // Define the total number of tickets to generate
-        $ticketCount = 50;
+        $ticketCount = 200000;
         $tickets = [];
         $generatedTicketCodes = [];
 
-        // Generate tickets based on winning rate
         for ($i = 0; $i < $ticketCount; $i++) {
-            // Generate a random ticket code in the format "TK******"
-            do {
-                $randomTicketCode = 'TK' . substr(uniqid(), -8);
+            do {$randomTicketCode = 'TK' . substr(uniqid(), -8);
+                $uppercaseTicketCode = strtoupper($randomTicketCode);
             } while (in_array($randomTicketCode, $generatedTicketCodes));
 
             $generatedTicketCodes[] = $randomTicketCode;
 
-            // Generate a random number between 1 and the total winning rate
             $randomNumber = mt_rand(1, $totalWinningRate);
             $winningPrize = null;
 
-            // Iterate through each prize to find the winning prize
             foreach ($prizes as $prize) {
-                // Subtract the winning rate of the current prize from the random number
                 $randomNumber -= $prize->getWinningRate();
 
-                // If the random number becomes non-positive or zero, the current prize is the winning prize
                 if ($randomNumber <= 0) {
                     $winningPrize = $prize;
                     break;
                 }
             }
 
-            // Create a new ticket and associate it with the winning prize
             if ($winningPrize) {
                 $ticket = new Ticket();
                 $ticket->setPrize($winningPrize);
-                $ticket->setTicketCode($randomTicketCode);
+                $ticket->setTicketCode(strtoupper($randomTicketCode));
+                $ticket->setTicketGeneratedAt(new \DateTimeImmutable());
+                $ticket->setTicketPrintedAt(null);
+                $ticket->setWinDate(null);
+                $ticket->setStatus(Ticket::STATUS_GENERATED);
                 $this->entityManager->persist($ticket);
                 $tickets[] = $ticket;
             }

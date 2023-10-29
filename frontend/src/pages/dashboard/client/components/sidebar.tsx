@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
     BulbOutlined,
     ClusterOutlined,
-    DashboardOutlined,
+    DashboardOutlined, GiftOutlined,
     HistoryOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -35,7 +35,7 @@ const items: MenuItem[] = [
     getItem('Tableau de bord', 'dashboardItem', <DashboardOutlined />),
     getItem('Testez Votre Chance', 'playGameItem', <PlayCircleOutlined />),
     getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
-        getItem('Lots des gains', 'prizesLotsItem' , <ClusterOutlined />),
+        getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
         getItem('Historiques des gains', 'historyPrizesItem' , <HistoryOutlined />),
     ]),
     getItem('Statistiques des gain', 'statisticsItem',<PieChartOutlined /> ),
@@ -75,6 +75,7 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
     return (
         <div className={style.sideBarDiv}>
             <Row className={style.toggleBtnDiv}>
+
                     <Button className={style.collapseBtn} onClick={toggleCollapsed}>
                         {collapsed ? <MenuUnfoldOutlined className={style.collapseBtnIcon} /> : <MenuFoldOutlined className={style.collapseBtnIcon} />}
                     </Button>

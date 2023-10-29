@@ -93,4 +93,181 @@ class UserController extends AbstractController
             'user' => $user->getUserJson()
         ]);
     }
+
+    //getClients
+
+    public function getClients(Request $request): JsonResponse
+    {
+
+
+        $firstname =  $request->get('firstname' , null);
+        $lastname =  $request->get('lastname' , null);
+        $status =  $request->get('status' , null);
+        $store =  $request->get('store' , null);
+        $page = $request->get('page' , 1);
+        $limit = $request->get('limit' , 10);
+        $email =  $request->get('email' , null);
+        $sexe =  $request->get('genre' , null);
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.role', 'ur')
+            ->where('ur.name = :role')
+            ->setParameter('role', 'ROLE_CLIENT');
+
+
+
+
+
+
+
+
+        if ($firstname != "" && $firstname != null) {
+            $qb->andWhere('u.firstname LIKE :firstname')
+                ->setParameter('firstname', '%' . $firstname . '%');
+        }
+
+        if ($lastname != "" && $lastname != null) {
+            $qb->andWhere('u.lastname LIKE :lastname')
+                ->setParameter('lastname', '%' . $lastname . '%');
+        }
+
+        if ($status != "" && $status != null) {
+            $qb->andWhere('u.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        if ($store != "" && $store != null) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
+        }
+
+        if ($email != "" && $email != null) {
+            $qb->andWhere('u.email LIKE :email')
+                ->setParameter('email', '%' . trim($email) . '%');
+        }
+
+        if ($sexe != "" && $sexe != null) {
+            $qb->andWhere('LOWER(u.gender) LIKE :gender')
+                ->setParameter('gender', '%' . strtolower(trim($sexe)) . '%');
+        }
+
+
+        $totalCount = count($qb->getQuery()->getResult());
+
+
+        $page = $page ?? 1;
+        $pageSize = $limit ?? 10;
+        $qb->setFirstResult(($page - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+
+        $users = $qb->getQuery()->getResult();
+
+
+
+        $usersJson = [];
+        foreach ($users as $user) {
+            $usersJson[] =
+                $user->getUserJson();
+        }
+
+
+        return $this->json([
+            'users' => $usersJson,
+            'totalCount' => $totalCount,
+            'resultCount' => count($users),
+            'status' => 'success',
+        ]);
+    }
+
+
+    public function getParticipants(Request $request): JsonResponse
+    {
+
+        $firstname =  $request->get('firstname' , null);
+        $lastname =  $request->get('lastname' , null);
+        $status =  $request->get('status' , null);
+        $store =  $request->get('store' , null);
+        $page = $request->get('page' , 1);
+        $limit = $request->get('limit' , 10);
+        $email =  $request->get('email' , null);
+        $sexe =  $request->get('genre' , null);
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.tickets', 't')
+            ->innerJoin('u.role', 'ur')
+            ->where('ur.name = :role')
+            ->setParameter('role', 'ROLE_CLIENT');
+
+
+
+
+
+
+
+
+        if ($firstname != "" && $firstname != null) {
+            $qb->andWhere('u.firstname LIKE :firstname')
+                ->setParameter('firstname', '%' . $firstname . '%');
+        }
+
+        if ($lastname != "" && $lastname != null) {
+            $qb->andWhere('u.lastname LIKE :lastname')
+                ->setParameter('lastname', '%' . $lastname . '%');
+        }
+
+        if ($status != "" && $status != null) {
+            $qb->andWhere('u.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        if ($store != "" && $store != null) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
+        }
+
+        if ($email != "" && $email != null) {
+            $qb->andWhere('u.email LIKE :email')
+                ->setParameter('email', '%' . trim($email) . '%');
+        }
+
+        if ($sexe != "" && $sexe != null) {
+            $qb->andWhere('LOWER(u.gender) LIKE :gender')
+                ->setParameter('gender', '%' . strtolower(trim($sexe)) . '%');
+        }
+
+
+        $totalCount = count($qb->getQuery()->getResult());
+
+
+        $page = $page ?? 1;
+        $pageSize = $limit ?? 10;
+        $qb->setFirstResult(($page - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+
+        $users = $qb->getQuery()->getResult();
+
+
+
+        $usersJson = [];
+        foreach ($users as $user) {
+            $usersJson[] =
+                $user->getUserJson();
+        }
+
+
+        return $this->json([
+            'users' => $usersJson,
+            'totalCount' => $totalCount,
+            'resultCount' => count($users),
+            'status' => 'success',
+        ]);
+    }
 }

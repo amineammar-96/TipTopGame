@@ -45,4 +45,18 @@ class TicketRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
+    /**
+     * @param array $tickets
+     * @return array
+     */
+    public function getTicketCountByStatus(array $tickets): array
+    {
+        $ticketCounter = [];
+        foreach ($tickets as $ticket) {
+            $ticketCounter[$ticket->getStatus()][] = $ticket;
+        }
+        return $ticketCounter;
+    }
 }

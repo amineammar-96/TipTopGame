@@ -105,3 +105,33 @@ update_user_profile_by_id:
     path: /api/user/{id}/update
     controller: App\Controller\Api\User\UserController::updateUserProfileById
     methods: POST
+
+#getTickes
+get_tickets:
+    path: /api/tickets
+    controller: App\Controller\Api\Ticket\TicketController::getTickets
+    methods: GET|POST
+
+#getAllPrizes
+get_all_prizes:
+    path: /api/prizes
+    controller: App\Controller\Api\Prize\PrizeController::getAllPrizes
+    methods: GET
+
+#getClients
+get_clients:
+    path: /api/admin/clients
+    controller: App\Controller\Api\User\UserController::getClients
+    methods: GET
+
+
+get_participants:
+    path: /api/admin/participants
+    controller: App\Controller\Api\User\UserController::getParticipants
+    methods: GET
+
+#tickets/check/play
+check_ticket_play:
+    path: /api/tickets/check/play
+    controller: App\Controller\Api\Ticket\TicketController::checkTicketForPlay
+    methods: POST

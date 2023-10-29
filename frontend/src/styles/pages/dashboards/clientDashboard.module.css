@@ -48,21 +48,10 @@
 
 }
 
-.topCardElement {
-    display: flex;
-    justify-content: space-between;
-    border: none;
-}
-
-.topCardElement {
-    background: #2E3138;
-    color: white !important;
-    max-height: 55px !important;
-}
 
 
 .collapseBtn {
-    background-color: #B95F89 !important;
+    background-color: #7BC558 !important;
     outline: none !important;
     box-shadow: none !important;
     margin: 1rem 0 !important;
@@ -71,10 +60,10 @@
     justify-content: center !important;
 }
 .collapseBtn:hover {
-    background-color: #B95F89 !important;
+    background-color: #7BC558 !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: #B95F89 !important;
+    border-color: #7BC558 !important;
 }
 
 .collapseBtnIcon{
@@ -132,11 +121,11 @@
 
 .updateStoreArrayBtn:hover,
 .updateStoreArrayBtn:focus{
-    background-color: #87BE4B !important;
+    background-color: #EBB3E6 !important;
     color: white !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: #87BE4B !important;
+    border-color: #EBB3E6 !important;
 }
 
 
@@ -149,11 +138,11 @@
 
 .deleteStoreArrayBtn:hover,
 .deleteStoreArrayBtn:focus{
-    background-color: #e73232 !important;
+    background-color: #FF5555 !important;
     color: white !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: #e73232 !important;
+    border-color: #FF5555 !important;
 }
 
 
@@ -178,17 +167,17 @@
     justify-content: center;
     align-items: center;
     height: 50px !important;
-    background-color: #87BE4B;
-    color: white !important;
+    background-color: #ECEF80;
+    color: black !important;
     padding: 1rem 1.5rem !important;
 }
 
 .addNewStoreBtn:hover{
-    background-color: #87BE4B !important;
-    color: white !important;
+    background-color: #ECEF80 !important;
+    color: black !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: #87BE4B !important;
+    border-color: #ECEF80 !important;
     opacity: 0.9 !important;
 }
 
@@ -203,17 +192,17 @@
     justify-content: center;
     align-items: center;
     height: 40px !important;
-    background-color: #87BE4B;
+    background-color: #42B2FF;
     color: white !important;
 }
 
 .addNewManagerBtn:hover,
 .addNewManagerBtn:focus{
-    background-color: #87BE4B !important;
+    background-color: #42B2FF !important;
     color: white !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: #87BE4B !important;
+    border-color: #42B2FF !important;
     opacity: 0.9 !important;
 }
 
@@ -226,11 +215,11 @@
 
 .resetPasswordArrayBtn:hover,
 .resetPasswordArrayBtn:focus{
-    background-color: goldenrod !important;
+    background-color: #7BC558 !important;
     color: white !important;
     outline: none !important;
     box-shadow: none !important;
-    border-color: goldenrod !important;
+    border-color: #7BC558 !important;
     opacity: 0.9 !important;
 }
 
@@ -284,4 +273,332 @@
     background-color: #87BE4B !important;
     width: 1.3rem !important;
     height: 1.3rem !important;
+}
+
+.wheelGameDiv {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    z-index: 99 !important;
+    cursor: pointer !important;
+}
+
+
+.homePageContentTopHeader {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 100%;
+}
+.gameMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+
+.gameMainDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+
+.homePageContent {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 2rem;
+    width: 100%;
+}
+
+.spinWheelBtn {
+    z-index: -1 !important;
+    position: absolute !important;
+    bottom: 35vw !important;
+    right: 10vw !important;
+    width: 20rem !important;
+    font-size: 2rem;
+    height: 5rem;
+    text-align: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    background-color: #2D2F2C;
+    color: white !important;
+    border-radius: 1rem;
+    flex-direction: row !important;
+
+}
+
+.spinWheelBtn:hover {
+    opacity: 0.9 !important;
+    cursor: pointer !important;
+}
+
+.spinWheelInput {
+    position: fixed !important;
+    bottom: 1% !important;
+    z-index: 99999 !important;
+    left: 18% !important;
+    width: 20rem !important;
+    font-size: 2rem;
+    height: 5rem;
+    text-align: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+    cursor: pointer;
+}
+
+.gameComponentDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+    position: relative;
+
+}
+
+.disabledWheel {
+    pointer-events: none !important;
+    opacity: 0.3 !important;
+}
+
+
+.disabledWheelBtn {
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
+
+.spinWheelLock {
+    z-index: 999 !important;
+    position: absolute !important;
+    width: 12rem !important;
+    height: 12rem !important;
+    bottom: 50%;
+    right: 58% !important;
+    opacity: 0.85 !important;
+}
+
+.spinWheelLock:hover {
+    opacity: 1 !important;
+    cursor: pointer !important;
+}
+
+
+
+.modalWithGifImage {
+    z-index: 1 !important;
+}
+
+.gifImage {
+    position: absolute !important;
+    width: 24rem !important;
+    height: 14rem !important;
+    top: 12rem !important;
+    left: 0 !important;
+    z-index: 0 !important;
+}
+
+.ticketCardIconsPrize {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+}
+
+.ticketCardIconsPrize img {
+    width: 9rem;
+    height: 9rem;
+    margin: 0.5rem 0;
+
+}
+
+
+.ticketCardElement {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.62);
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    min-width: 30rem !important;
+    min-height: 20rem !important;
+}
+
+.ticketCardElement .cardTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    color: black !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.ticketCardElement .counter {
+    color: black;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.ticketCardBody {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.ticketCardText {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-weight: bold;
+}
+.ticketCardText p {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0;
+    text-transform: capitalize;
+
+}
+
+.prizeCardText  {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    text-transform: capitalize;
+
+}
+.ticketCardIconsPrize {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.ticketCardIconsPrize img {
+    width: 12rem;
+    height: 12rem;
+    margin: 0;
+}
+
+
+.prizesTag {
+    position: absolute;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0;
+
+}
+
+
+.prizesTag span {
+    padding: 0.3rem .73rem !important;
+    margin: 0;
+}
+
+
+.firstPrize span {
+    background-color: #3D3633;
+    border-color: #3D3633;
+    color: white;
+    overflow: hidden;
+}
+
+.secondPrize span {
+    background-color: #7BC558;
+    border-color: #7BC558;
+    color: white;
+    overflow: hidden;
+}
+
+.thirdPrize span {
+    background-color: #E8B14A;
+    border-color: #E8B14A;
+    color: white;
+    overflow: hidden;
+}
+
+.fourthPrize span {
+    background-color: #42B2FF;
+    border-color: #42B2FF;
+    color: white;
+    overflow: hidden;
+}
+
+.fifthPrize span {
+    background-color: #EBB3E6;
+    border-color: #EBB3E6;
+    color: white;
+    overflow: hidden;
+}
+
+.giftBox {
+    position: absolute !important;
+    top: 15rem !important;
+    left: 7rem !important;
+    width: 100% !important;
+}
+
+
+.prizeLabel {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    width: 100% !important;
+    font-weight: bold;
+    font-size: .7rem;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+}
+
+.emoji {
+    position: absolute;
+    width: 4rem !important;
+    height: 4rem !important;
+}
+
+.congEmoji {
+    left: 2rem !important;
+    top: 4rem;
+}
+
+.balloonEmoji {
+    right: 2rem !important;
+    width: 6rem !important;
+    height: 6rem !important;
 }

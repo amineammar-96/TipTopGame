@@ -92,7 +92,7 @@ function StoresList({ globalSelectedStoreId, onSelectStore , isStoresUpdated , o
 
     return (
         <>
-        <Row key={selectedStoreId} className={`${styles.centerElementRow} `}>
+        <Row key={selectedStoreId} className={`${styles.centerElementRow} storeManageList `}>
             <Select
                 defaultValue={selectedStoreId ? selectedStoreId : "Veuillez choisir un magasin"}
                 value={selectedStoreId? selectedStoreId : "Veuillez choisir un magasin"}

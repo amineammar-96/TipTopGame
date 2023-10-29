@@ -132,4 +132,17 @@ class Prize
 
         return $this;
     }
+
+
+    public function getPrizeJson(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'label' => $this->getLabel(),
+            'name' => $this->getName(),
+            'type' => $this->getType(),
+            'prize_value' => $this->getPrizeValue(),
+            'winning_rate' => $this->getWinningRate(),
+        ];
+    }
 }
