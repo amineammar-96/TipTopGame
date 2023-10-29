@@ -12,7 +12,7 @@ use Doctrine\DBAL\Connection;
 
 class CreateDefaultRoles extends Command
 {
-    protected static $defaultName = 'app:create-default-roles';
+    protected static $defaultName = 'app:create-default-role';
 
     protected static $defaultDescription = 'Fills the role table with predefined roles';
 

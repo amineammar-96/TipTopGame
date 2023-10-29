@@ -1,35 +1,54 @@
-source ~/.zshrc
-# don't forget to add
-## when i close a store i want to close users (Client , manager , employes)
+#admin default login
 
+login:
 
-# for client sign up
-## if the firstTime to login after a sign it we be redirect to the page to select the store related to it 
-## a client maybe can have many store but he must choose the favorite one to get the prize from it 
-
-
-##add is_active to the user model to verify if the user account is active or not
-and if he is registered with social media we set the is_active to true automatically and we don't need to verify the email
-else if he is registered with email we set the is_active to false and we send him an email to verify his account
-
-
-
-#client auth 
-email:client1@gmail.com
-mdp : azerty
-
-#admin
 eric.bourdon@gmail.com
+
+mdp: 
+
 azerty123456
 
 
+## Getting Started
 
-TK73F46453
+Next.js 
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
-TK73F46457
+To learn more about Next.js, take a look at the following resources:
 
-TK73F4645D
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-TK73F47487
 
-TK73F602EA
+
+## Backend setup
+
+symfony
+migration and generate default data (admin/storeTipTop/Roles/Tickets/Prizes)
+```bash
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+
+check generate data commandes in src/Command 
+
+#add tiptop store
+php bin/console app:create-default-tiptop-company
+
+# generate roles 
+php bin/console app:create-default-role
+
+# generate prizes
+php bin/console app:add-prizes
+
+# generate tickets
+php bin/console app:generate-tickets
+```
+
+
+
