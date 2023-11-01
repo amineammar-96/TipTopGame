@@ -9,7 +9,7 @@ import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 
 import { Space, Spin } from 'antd';
-import HomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/HomePageDashboard";
+import ClientHomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/ClientHomePageDashboard";
 import StoresManagement from "@/pages/dashboard/dashboardComponents/storeManagementComponent/StoresManagement";
 import ProfilesManagement from "@/pages/dashboard/dashboardComponents/profilesManagementComponent/ProfilesManagement";
 import TicketsPageDashboard from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
@@ -70,7 +70,7 @@ function ClientDashboard() {
                         <TopNavBar></TopNavBar>
                     </Row>
                     <Row className={styles.mainContent}>
-                        {selectedMenuItem==="dashboardItem" && <HomePage></HomePage>}
+                        {selectedMenuItem==="dashboardItem" && <ClientHomePage></ClientHomePage>}
                         {selectedMenuItem==="storesManagementItem" && <StoresManagement></StoresManagement>}
                         {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
                         {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}

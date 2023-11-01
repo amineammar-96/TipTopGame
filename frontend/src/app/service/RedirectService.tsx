@@ -15,15 +15,17 @@ const RedirectService = () => {
         const token = localStorage.getItem('loggedInUserToken');
         const role = localStorage.getItem('loggedInUserRole');
 
+
+
         if ((token != null || token != "") && role == "ROLE_ADMIN") {
             console.log("redirecting to store admin dashboard");
             router.push("/dashboard/storeAdmin");
         } else if ((token != null || token != "") && role == "ROLE_STOREMANAGER") {
             console.log("redirecting to storeManager admin dashboard");
             router.push("/dashboard/storeManager");
-        } else if ((token != null || token != "") && role == "ROLE_EMPLOYE") {
+        } else if ((token != null || token != "") && role == "ROLE_EMPLOYEE") {
             console.log("redirecting to storeEmploye dashboard");
-            router.push("/dashboard/storeEmploye");
+            router.push("/dashboard/storeEmployee");
         } else if ((token != null || token != "") && role == "ROLE_BAILIFF") {
             console.log("redirecting to store storeBailiff dashboard");
             router.push("/dashboard/storeBailiff");

@@ -18,16 +18,15 @@ interface User {
 
 function TopNavBar() {
 
-    const { redirectClientUserToLoginPage } = RedirectService();
+    const { redirectAdminsUserToLoginPage } = RedirectService();
     const logout = () => {
         localStorage.removeItem('loggedInUser');
         localStorage.removeItem('loggedInUserId');
         localStorage.removeItem('loggedInUserRole');
         localStorage.removeItem('loggedInUserEmail');
         localStorage.removeItem('loggedInUserToken');
-        localStorage.removeItem('selectedMenuItem');
 
-        redirectClientUserToLoginPage();
+        redirectAdminsUserToLoginPage();
 
     }
 

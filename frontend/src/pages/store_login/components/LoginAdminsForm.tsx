@@ -86,6 +86,7 @@ export default function LoginAdminsForm() {
             localStorage.setItem("loggedInUserEmail" , loggedInUser.email);
             localStorage.setItem("loggedInUserRole" , loggedInUser.role);
             localStorage.setItem("loggedInUser" , JSON.stringify(loggedInUser));
+
             redirectAdminToToDashboard();
 
 

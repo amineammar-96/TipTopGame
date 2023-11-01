@@ -208,7 +208,7 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey}: storeManager
         }else if(roleKey=="2") {
             setUserForm((prevFormData) => ({
                 ...prevFormData,
-                role: "ROLE_EMPLOYE",
+                role: "ROLE_EMPLOYEE",
             }));
         }else if(roleKey=="3") {
             setUserForm((prevFormData) => ({
