@@ -121,7 +121,7 @@ export async function getStoreUsersByRoleAndStoreId(id: string, params: any, rol
 }
 
 
-export async function getStoresForClient(page:number , pageSize:number) {
+export async function getStoresForClient(page:number , pageSize:number , storeSearchText:string) {
     const token = localStorage.getItem('loggedInUserToken');
 
     const config: AxiosRequestConfig = {
@@ -132,7 +132,7 @@ export async function getStoresForClient(page:number , pageSize:number) {
         }
     };
 
-    return await fetchJson(`/client/stores?page=${page}&pageSize=${pageSize}`, config);
+    return await fetchJson(`/client/stores?page=${page}&pageSize=${pageSize}&search=${storeSearchText}`, config);
 }
 
 export async function associateClientToStore(data: any) {

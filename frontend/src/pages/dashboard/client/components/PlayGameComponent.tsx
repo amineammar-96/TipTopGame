@@ -121,7 +121,7 @@ function PlayGameComponent() {
                     <Image src={welcomeImgAux} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
                     <Image src={welcomeImg} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
                     <p>
-                        Félicitations, vous avez gagné un  {
+                        Félicitations, vous avez gagné  {
                         prize[0]?.label
                     }
                     </p>
@@ -404,8 +404,8 @@ function PlayGameComponent() {
                                                buttonTextColor='black'
                                                isOnlyOnce={!playGame}
                                                size={250}
-                                               upDuration={100}
-                                               downDuration={12000}
+                                               upDuration={300}
+                                               downDuration={300}
                                            />
                                        </div>
                                     </Col>

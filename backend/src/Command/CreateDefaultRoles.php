@@ -48,7 +48,6 @@ class CreateDefaultRoles extends Command
             ['name' => 'ROLE_EMPLOYEE', 'label' => 'Employé'],
             ['name' => 'ROLE_BAILIFF', 'label' => 'Huissier'],
             ['name' => 'ROLE_CLIENT', 'label' => 'Client'],
-
         ];
 
         foreach ($roles as $roleData) {

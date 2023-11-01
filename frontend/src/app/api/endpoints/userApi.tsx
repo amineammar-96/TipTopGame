@@ -2,6 +2,9 @@
 import { AxiosRequestConfig } from 'axios';
 import { fetchJson } from '@/app/api';
 
+const facebookclientid = process.env.FACEBOOK_CLIENT_ID;
+
+
 export async function loginClient(data: any) {
     const config: AxiosRequestConfig = {
         method: 'POST',
@@ -145,4 +148,22 @@ export async function getParticipants(searchParams: any) {
     };
 
     return await fetchJson(finalUrl, config);
+}
+
+
+//facebookCallBack
+export async function facebookCallBack() {
+    const data = {
+        "code": "621713663395181",
+    };
+
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: data,
+    };
+
+    return await fetchJson('/oauth/facebook/callback', config);
 }

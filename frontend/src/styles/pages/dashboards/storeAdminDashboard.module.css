@@ -310,6 +310,11 @@
     align-items: center;
     flex-direction: row;
     min-width: 10rem;
+    position: relative;
+}
+
+.topCardElementAux {
+    flex-direction: column !important;
 }
 
 .topCardElement .cardTitle {
@@ -1061,4 +1066,54 @@
     outline: none !important;
     box-shadow: none !important;
     border-color: #EBB3E6 !important;
+}
+
+
+
+.topCardElementTextBody {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.topCardElementTextBody ul {
+    width: 50% !important;
+    text-align: left !important;
+}
+
+.topCardElementTextBodyTitleLabel {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    color: black !important;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.topCardElementTextBodyTitle {
+    font-size: .8rem;
+    font-weight: 400;
+    margin: 0.5rem 0;
+    color: black !important;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.cardsTitle {
+    position: absolute;
+    right: 3%;
+    top: 10%;
+}
+
+.dashboardAvatar {
+    width: 15rem;
+    height: 12rem;
+    margin: 0;
+    box-shadow: 0px 0px 11px 4px rgb(218 218 218) !important;
 }

@@ -126,6 +126,7 @@ class UserAuthController extends AbstractController {
             ];
 
 
+
             $user = null;
             if ( $userFormData['email'] && $userFormData['password'] ) {
                 $user = $this->entityManager->getRepository( User::class )->findOneBy( [ 'email' => $userFormData[ 'email' ] ] );
@@ -170,6 +171,8 @@ class UserAuthController extends AbstractController {
         ];
 
         $firstLogin = count( $user->getStores() ) === 0;
+
+
 
         return new JsonResponse( [
             'status' => 'success',

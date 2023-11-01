@@ -48,9 +48,9 @@ function TopNavBar() {
             key: 'avatar',
         },
         {
-            label: <span onClick={logout} className={style.logoutSpan}>Déconnexion</span>,
+            label: <span onClick={logout} className={`${style.logoutSpan} logoutLink`}>Déconnexion</span>,
             key: 'SubMenu',
-            icon:  <LogoutOutlined className={style.logoutSpan} />,
+            icon:  <LogoutOutlined className={`${style.logoutSpan} logoutLink`} />,
             className: `${style.logoutTopNavBarItem}`
         },
 

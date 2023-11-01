@@ -51,6 +51,7 @@ function StoreDataInfoTable({ selectedStoreId , onStoreUpdate, isStoresUpdated ,
             title: 'Voulez-vous vraiment supprimer ce magasin ?',
             icon: <ExclamationCircleFilled />,
             content: <>Impossible de supprimer un magasin s'il contient des utilisateurs associés.</>,
+            okText : "D'accord",
             onOk() {
                 deleteStoreById(selectedStoreId).then((response) => {
                     onStoreUpdate();
@@ -82,6 +83,7 @@ function StoreDataInfoTable({ selectedStoreId , onStoreUpdate, isStoresUpdated ,
                 })
 
             },
+            cancelText : "Annuler",
             onCancel() {
                 console.log('Cancel');
             },

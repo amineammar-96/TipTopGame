@@ -11,15 +11,29 @@ use League\OAuth2\Client\Provider\Facebook;
 
 class UserSocialMediaAuthController extends AbstractController
 {
+    //constructor::
+
+
+
     public function facebookCallback(Request $request, Facebook $provider)
     {
-        try {
-            // Get the OAuth access token using the callback code
+
+        $data = $request->getContent();
+        $dataJson = json_decode($data, true);
+
+        $code = $dataJson['code'];
+
+        dd($code);
+
+
+
+
             $accessToken = $provider->getAccessToken('authorization_code', [
-                'code' => $request->query->get('code'),
+                'code' => $code,
             ]);
 
-            // Use the access token to fetch the user details from Facebook API
+
+
             $facebookUser = $provider->getResourceOwner($accessToken);
 
             // You can now handle the user details or authenticate the user in your application
@@ -31,10 +45,13 @@ class UserSocialMediaAuthController extends AbstractController
 
             // Return the JWT token to the client
             return new JsonResponse(['token' => $token]);
-        } catch (IdentityProviderException $e) {
+
+
+        //} catch (IdentityProviderException $e) {
             // Handle authentication failure
-            return new JsonResponse(['error' => 'Authentication failed'], 401);
-        }
+          //  return new JsonResponse(['error' => 'Authentication failed'], 401);
+        //}
+
     }
 
    

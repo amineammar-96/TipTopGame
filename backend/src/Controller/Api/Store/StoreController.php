@@ -259,14 +259,37 @@ class StoreController extends AbstractController
         $page = $request->query->getInt('page', 1);
         $pageSize = $request->query->getInt('pageSize', 9);
         $offset = ($page - 1 ) * $pageSize;
+        $search = $request->query->get('search', "");
+
+
+
+
 
         $storeRepository = $this->entityManager->getRepository(Store::class);
-        $query = $storeRepository->createQueryBuilder('s')
-            ->setMaxResults($pageSize)
+        $query = $storeRepository->createQueryBuilder('s');
+
+        if($search != "") {
+            $query->where('s.name LIKE :search')
+                ->orWhere('s.address LIKE :search')
+                ->orWhere('s.city LIKE :search')
+                ->orWhere('s.postal_code LIKE :search')
+                ->orWhere('s.country LIKE :search')
+                ->orWhere('s.phone LIKE :search')
+                ->orWhere('s.email LIKE :search')
+                ->orWhere('s.siren LIKE :search')
+                ->setParameter('search', '%'.$search.'%');
+        }
+
+        $query->orderBy('s.id', 'ASC');
+
+        $totalStoresCount = count($query->getQuery()->getResult());
+
+        $query->setMaxResults($pageSize)
             ->setFirstResult($offset)
             ->getQuery();
 
-        $storesResult = $query->getResult();
+
+        $storesResult = $query->getQuery()->getResult();
 
         $storesResponse = [];
         foreach ($storesResult as $store) {
@@ -283,9 +306,6 @@ class StoreController extends AbstractController
      * @IsGranted("ROLE_CLIENT")
      */
     public function associateClientToStore(Request $request): JsonResponse {
-        return new JsonResponse([
-            'status'=>'associated',
-        ]);
         try {
             $data = json_decode($request->getContent(), true);
             $id = $data['storeId'];
@@ -298,9 +318,11 @@ class StoreController extends AbstractController
             $user = $this->getUser();
             $user->addStore($store);
             $store->addUser($user);
-            //$this->entityManager->persist($store);
-            //$this->entityManager->persist($user);
-            //$this->entityManager->flush();
+
+            $this->entityManager->persist($user);
+            $this->entityManager->persist($store);
+            $this->entityManager->flush();
+
             return new JsonResponse([
                 'status'=>'associated',
             ]);

@@ -25,6 +25,7 @@ function TopNavBar() {
         localStorage.removeItem('loggedInUserRole');
         localStorage.removeItem('loggedInUserEmail');
         localStorage.removeItem('loggedInUserToken');
+        localStorage.removeItem('selectedMenuItem');
 
         redirectClientUserToLoginPage();
 

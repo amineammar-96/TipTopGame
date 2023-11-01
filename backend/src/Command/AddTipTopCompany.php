@@ -72,6 +72,10 @@ class AddTipTopCompany extends Command
         $store->setEmail('the.tiptop@contact.com');
         $store->setHeadquartersAddress('18 rue Léon Frot, 75011 Paris');
         $store->setPhone('+33 1 43 55 55 55');
+
+        $store->setSiren('94354353435');
+
+
         $store->setCapital('150000.00');
         $store->setStatus(Store::STATUS_OPEN);
         $store->setOpeningDate(new \DateTime());

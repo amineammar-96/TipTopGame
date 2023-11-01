@@ -1,6 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap';
+import { signIn } from 'next-auth/react';
+import FacebookLogin from 'react-facebook-login';
 
 import { Button, Space } from 'antd';
 
@@ -50,7 +52,7 @@ const userFormData = {
 
 
 
-import { loginClient } from '@/app/api';
+import {facebookCallBack, loginClient} from '@/app/api';
 
 
 
@@ -102,8 +104,27 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
 
 
+    const facebookCallBackHandle = () => {
+        facebookCallBack().then((response) => {
+            console.log(response);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    const googleCallBackHandle = () => {
+
+    }
 
 
+    const responseFacebook = async (response : any ) => {
+        if (response.id) {
+            // Facebook login was successful
+            await signIn('facebook', { accessToken: response.accessToken });
+        } else {
+            // Facebook login failed
+            console.log('Facebook login failed');
+        }
+    };
 
 
 
@@ -220,11 +241,21 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         </div>
                         <div className={`py-3`}>
                             <Space direction="vertical" style={{ width: '100%' }}>
-                                <Button className={`${styles.facebookLoginBtn}`} icon={<FacebookFilled />} block>
+                               {/* <FacebookLogin
+                                    appId={"621713663395181"}
+                                    autoLoad={false}
+                                    fields="name,email,picture"
+                                    callback={responseFacebook}
+                                />*/}
+                                <Button onClick={() => {
+                                    facebookCallBackHandle();
+                                }} className={`${styles.facebookLoginBtn}`} icon={<FacebookFilled />} block>
                                     <span> <small>Se coonecter avec Facebook</small></span>
                                 </Button>
 
-                                <Button className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled />} block>
+                                <Button onClick={() => {
+                                    googleCallBackHandle();
+                                }} className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled />} block>
                                     <span><small>Se coonecter avec Google</small></span>
                                 </Button>
                             </Space>

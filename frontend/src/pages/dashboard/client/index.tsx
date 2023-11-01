@@ -20,9 +20,12 @@ import ParticipantManagementPageDashboard
     from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
 import PlayGameComponent from "@/pages/dashboard/client/components/PlayGameComponent";
 
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+
+
 function ClientDashboard() {
     const { redirectUserToHomePage } = RedirectService();
-
+    const [loading, setLoading] = useState(true);
 
     const [selectedMenuItem, setSelectedMenuItem] = useState<string>("dashboardItem");
 
@@ -44,9 +47,20 @@ function ClientDashboard() {
         setCollapsed(!collapsed);
     };
 
+    useEffect(() => {
+        const firstLoginClientStatus = localStorage.getItem('firstLoginClientStatus');
+        if (firstLoginClientStatus == "true") {
+            window.location.href = '/dashboard/client/favoriteStoreSelection';
+        }else {
+            setLoading(false);
+        }
+    }, []);
+
     return (
         <div>
+            {loading && <SpinnigLoader></SpinnigLoader>}
 
+            {!loading &&
             <Row>
                 <Col md={collapsed ? '': 4 }>
                     <Sidebar collapsed={collapsed} toggleCollapsed={toggleCollapsed} onMenuItemClick={handleMenuItemClick} selectedMenuItem={selectedMenuItem}></Sidebar>
@@ -70,6 +84,7 @@ function ClientDashboard() {
                     </Row>
                 </Col>
             </Row>
+            }
         </div>
     );
 

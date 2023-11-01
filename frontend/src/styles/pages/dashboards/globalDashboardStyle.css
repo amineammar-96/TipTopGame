@@ -29,8 +29,8 @@
     border: none !important;
 }
 
-.ant-menu-light .ant-menu-item-selected span,
-.ant-menu-light > .ant-menu .ant-menu-item-selected span,
+.ant-menu-light .ant-menu-item-selected span:not(.logoutLink) ,
+.ant-menu-light > .ant-menu .ant-menu-item-selected span:not(.logoutLink),
 .sideBarMenuDashboards .ant-menu-submenu-selected .ant-menu-item-icon .ant-menu-submenu-arrow::before {
 
     color: #7BC558 !important;
@@ -357,4 +357,8 @@ background: #7c7c7c !important;
 
 .tableClientManagement {
 
+}
+
+.ant-pagination-item-active {
+    border-color: #87BE4B !important;
 }

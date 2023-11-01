@@ -26,3 +26,36 @@ body, * {
   background-color: #2E3138 !important;
   border-color: #2E3138 !important;
 }
+
+.mainSpinner .ant-spin-dot-item{
+  height: 1.6rem !important;
+    width: 1.6rem !important;
+  background-color: #7BC558;
+}
+
+.mainSpinner .ant-spin-dot.ant-spin-dot-spin {
+  height: 4rem !important;
+    width: 4rem !important;
+}
+
+
+.favoriteStoreList .ant-radio-button {
+  box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.42) !important;
+}
+
+.formStoreList .ant-form-item-label {
+  text-align: left !important;
+}
+
+
+.formStoreList .ant-form-item-label label {
+  text-align: left !important;
+  font-size: 1.1rem !important;
+}
+
+.ant-input:hover,
+.ant-input:focus{
+  box-shadow: none;
+  border-color: #2D2F2C !important;
+  outline: none !important;
+}

@@ -101,9 +101,9 @@ function TicketsPageDashboard() {
     const [searchParam, setSearchParam] = useState<SearchParams>(defaultSearchParams);
     const [totalTicketsCount, setTotalTicketsCount] = useState(0);
 
-    function fetchData() {
+    async function fetchData() {
         setLoading(true);
-        getTickets(searchParam).then((response) => {
+        await getTickets(searchParam).then((response) => {
             console.log('response : ', response);
             setData(response.tickets);
             setTotalTicketsCount(response.totalCount);
@@ -317,7 +317,6 @@ function TicketsPageDashboard() {
         getPrizes().then((response) => {
             console.log('response : ', response);
             setPrizesList(response.prizes);
-            setLoading(false);
         }).catch((err) => {
             if (err.response) {
                 if (err.response.status === 401) {
