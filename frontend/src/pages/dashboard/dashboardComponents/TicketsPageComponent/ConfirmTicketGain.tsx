@@ -424,7 +424,8 @@ function ConfirmTicketGain() {
         });
     };
 
-    const onSearchClientList = (value: string) => {    }
+    const onSearchClientList = (value: string) => {
+    }
     const filterOption = (input: string, item: any) => (item?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const getFields = () => {

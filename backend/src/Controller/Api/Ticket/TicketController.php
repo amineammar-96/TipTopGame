@@ -320,7 +320,6 @@ class TicketController extends AbstractController
 
     }
 
-    //getWinnerTickets
     public function getWinnerTickets(Request $request): JsonResponse
     {
 
@@ -329,6 +328,9 @@ class TicketController extends AbstractController
         $employee = $request->get('caissier', null);
         $client = $request->get('client', null);
         $prize = $request->get('prize', null);
+        $employeeId = $request->get('employee', null);
+
+
 
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 9);
@@ -374,7 +376,12 @@ class TicketController extends AbstractController
             $qb->innerJoin('t.prize', 'p')
                 ->andWhere('p.id = :prize')
                 ->setParameter('prize', $prize);
+        }
 
+        if ($employeeId != "" && $employeeId != null) {
+            $qb->innerJoin('t.employee', 'e')
+                ->andWhere('e.id = :employeeId')
+                ->setParameter('employeeId', $employeeId);
         }
 
         $userRole = $this->getUser()->getRoles()[0];

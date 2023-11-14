@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap';
 import { signIn } from 'next-auth/react';
 import FacebookLogin from 'react-facebook-login';
+import Image from 'next/image';
+import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
-import { Button, Space } from 'antd';
+import {Button, Modal, Space} from 'antd';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -60,7 +62,7 @@ import {facebookCallBack, loginClient} from '@/app/api';
 export default function LoginClientForm({ formStep, handleFormStepChange }: Props) {
 
     const [userForm, setUserForm] = useState(userFormData);
-
+    const [loginError, setLoginError] = useState<string | null>(null);
 
 
 
@@ -85,21 +87,34 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
     }
 
     const handleClientLogin = async () => {
-        loginClient(userForm).then((response) => {
-            console.log(response);
-            if(response.status === 'success'){
-                const loggedInUser = response.userJson;
-                localStorage.setItem('loggedInUserToken', response.token);
-                localStorage.setItem('firstLoginClientStatus', response.firstLogin);
-                localStorage.setItem("loggedInUserId" , loggedInUser.id);
-                localStorage.setItem("loggedInUserEmail" , loggedInUser.email);
-                localStorage.setItem("loggedInUserRole" , loggedInUser.role);
-                localStorage.setItem("loggedInUser" , JSON.stringify(loggedInUser));
-                window.location.href = '/dashboard/client';
-            }
-        }).catch((err) => {
+        if (userForm.email && userForm.password) {
 
-        })
+            loginClient(userForm).then((response) => {
+                console.log(response);
+                if (response.status === 'success') {
+                    const loggedInUser = response.userJson;
+                    localStorage.setItem('loggedInUserToken', response.token);
+                    localStorage.setItem('firstLoginClientStatus', response.firstLogin);
+                    localStorage.setItem("loggedInUserId", loggedInUser.id);
+                    localStorage.setItem("loggedInUserEmail", loggedInUser.email);
+                    localStorage.setItem("loggedInUserRole", loggedInUser.role);
+                    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+                    window.location.href = '/dashboard/client';
+                }
+            }).catch((err) => {
+                setLoginError('Email ou mot de passe incorrecte !');
+                Modal.error({
+                    className: 'antdLoginRegisterModal',
+                    title: 'Email ou mot de passe incorrecte !',
+                    content: <>
+                    <span>
+                        Veuillez vérifier votre email et mot de passe et réessayer.
+                    </span>
+                    </>,
+                    okText: "D'accord",
+                });
+            })
+        }
     }
 
 
@@ -142,7 +157,14 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
             </Row>
             <Row className={`${styles.loginLogo} p-0 m-0`}>
-                <a className={`${styles.loginLogo} p-0 m-0`} href="/"><img src="https://app.liberrex.com/img/logo-horizontal.c69162fa.png" alt="" /></a>
+                <a className={`${styles.loginLogo} p-0 m-0`} href="/">
+                    <Image
+                        src={logoTipTopImg}
+                        alt="Picture of the author"
+                    >
+
+                    </Image>
+                </a>
 
             </Row>
 
@@ -163,8 +185,13 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         name="email"
                         rules={[{ required: true, message: validateMessages['required'] }]}
                         className={`${styles.antdLoginInputs}`}
+                        validateStatus={loginError ? "error" : "success"}
+                        hasFeedback
+
                     >
-                        <Input onChange={(e) => {
+                        <Input
+
+                            onChange={(e) => {
                             userFormHandleChange(e, "email");
                         }} placeholder='E-mail' className={`${styles.inputsLoginPage}`} prefix={<UserOutlined className={`${styles.inputsLoginPageIcons}`} />} />
                     </Form.Item>
@@ -173,7 +200,9 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         name="password"
                         rules={[{ required: true, message: validateMessages['required'] }]}
                         className={`${styles.antdLoginInputs}`}
-
+                        validateStatus={loginError ? "error" : "success"}
+                        help={loginError}
+                        hasFeedback
                     >
                         <Input.Password
                             onChange={(e) => {

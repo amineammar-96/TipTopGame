@@ -139,3 +139,9 @@ body {
     border-color: #2E3138 !important;
 }
 
+
+
+.antdLoginRegisterModal .ant-btn {
+  background-color: #2E3138 !important;
+  border-color: #2E3138 !important;
+}

@@ -12,6 +12,10 @@
 
 .topSectionRightSide {
 }
+.topSectionRightSide img {
+  width: 50rem;
+  height: 30rem;
+}
 
 .topSectionTextDiv {
 }

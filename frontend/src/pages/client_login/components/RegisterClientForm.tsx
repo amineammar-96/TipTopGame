@@ -75,6 +75,8 @@ const {RangePicker} = DatePicker;
 
 import {register} from '@/app/api';
 import { Modal } from 'antd';
+import Image from "next/image";
+import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
 export default function RegisterClientForm({formStep, handleFormStepChange}: Props) {
 
@@ -246,9 +248,14 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
 
             </Row>
             <Row className={`${styles.loginLogo} p-0 m-0`}>
-                <a className={`${styles.loginLogo} p-0 m-0`} href="/"><img
-                    src="https://app.liberrex.com/img/logo-horizontal.c69162fa.png" alt=""/></a>
+                <a className={`${styles.loginLogo} p-0 m-0`} href="/">
+                    <Image
+                        src={logoTipTopImg}
+                        alt="Picture of the author"
+                    >
 
+                    </Image>
+                </a>
             </Row>
 
             <Row className={`mt-5 px-5 d-flex justify-content-center `}>

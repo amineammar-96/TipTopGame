@@ -10,7 +10,7 @@ import Image from "next/image";
 import WheelComponent from 'react-wheel-of-prizes';
 
 import {Modal, Space } from 'antd';
-import {checkTicketCodeValidity, confirmTicketPlayed} from "@/app/api";
+import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket} from "@/app/api";
 import {GiftOutlined, InfoOutlined, SyncOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
@@ -21,6 +21,8 @@ import SurpriseBoxImg from "@/assets/images/surprise.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import CongratulationsImg from "@/assets/images/congratulations.png";
 import BalloonImg from "@/assets/images/balloon.png";
+import GainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/GainsTable";
+import BestGainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/BestGainsTable";
 interface PrizeType {
     'id' : any;
     'label' : any;
@@ -30,6 +32,62 @@ interface PrizeType {
     'winning_rate' : any;
     'totalCount' : any;
     'percentage' : any;
+}
+
+
+interface DataType {
+    status: string;
+    id: string;
+    ticket_code: string;
+    win_date: {
+        date: string;
+        time: string;
+    };
+    ticket_generated_at: {
+        date: string;
+        time: string;
+    };
+    ticket_printed_at: {
+        date: string;
+        time: string;
+    };
+    updated_at: {
+        date: string;
+        time: string;
+    };
+
+    employee: {
+        id: string;
+        firstname: string;
+        lastname: string;
+        email: string;
+        dob: string;
+    };
+
+    user: {
+        id: string;
+        firstname: string;
+        lastname: string;
+        email: string;
+        dob: string;
+    };
+
+    store: {
+        id: string;
+        name: string;
+        address: string;
+        phone: string;
+        email: string;
+    };
+
+    prize: {
+        id: string;
+        name: string;
+        label: string;
+        prize_value: string;
+        winning_rate: string;
+    };
+
 }
 
 const defaultPrize: PrizeType[] = [
@@ -44,6 +102,32 @@ const defaultPrize: PrizeType[] = [
         'percentage' : "",
     }
 ];
+
+interface SearchParams {
+    page: string;
+    limit: string;
+    store: string;
+    user: string;
+    status: string;
+    employee: string;
+    client: string;
+    sort: string;
+    order: string;
+    prize: string;
+}
+
+const defaultSearchParams: SearchParams = {
+    page: '1',
+    limit: '12',
+    store: '',
+    user: '',
+    status: '4',
+    employee: '',
+    client: '',
+    sort: '',
+    order: '',
+    prize: '',
+};
 function PlayGameComponent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -324,17 +408,44 @@ function PlayGameComponent() {
         });
     }
 
+    const [gainTicketsList, setGainTicketsList] = useState<DataType[]>([]);
+    const [searchParam, setSearchParam] = useState<SearchParams>(defaultSearchParams);
+    const [gainTicketsCount, setGainTicketsCount] = useState<number>(0);
+
+    useEffect(() => {
+        getGainTickets();
+    }, [searchParam]);
+
+    function getGainTickets() {
+        setLoading(true);
+        getGainTicket(searchParam).then((response) => {
+            console.log('response : ', response);
+            setGainTicketsList(response.gains);
+            setGainTicketsCount(response.totalCount);
+            setLoading(false);
+        }).catch((err) => {
+            if (err.response) {
+                if (err.response.status === 401) {
+                    logoutAndRedirectAdminsUserToLoginPage();
+                }
+            } else {
+                console.log(err.request);
+            }
+        })
+    }
 
     return (
         <div className={styles.homePageContent}>
+
+
 
             <div className={`${styles.homePageContentTopHeader}`}>
                 <h1 className={`mx-3`}>
                     Tentez votre chance !
                 </h1>
-                <div className={`${styles.gameMain}`}>
+                <div className={`${styles.gameMain} mb-0`}>
 
-                    <div className={`${styles.gameMainDiv} mb-5 px-4`}>
+                    <div className={`${styles.gameMainDiv} mb-0 pb-0 px-4`}>
 
 
                         <Row className={`${styles.fullWidthElement}  mt-5 mb-5 w-100`}
@@ -435,6 +546,18 @@ function PlayGameComponent() {
                     </div>
 
                 </div>
+
+
+
+
+
+                <h2>
+                    Historique des gains
+                </h2>
+                    <BestGainsTable  key={gainTicketsCount} selectedStoreId={null} data={gainTicketsList as any} ></BestGainsTable>
+
+
+
             </div>
 
             <Modal title="Tentez votre chance" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>

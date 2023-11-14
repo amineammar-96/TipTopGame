@@ -7,7 +7,7 @@ import {Button, message, Space} from 'antd';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import '../../../app/globals.css'
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
 
@@ -41,6 +41,8 @@ const userFormData = {
 
 
 import {loginAdmin} from '@/app/api';
+import Image from "next/image";
+import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
 
 
@@ -50,6 +52,8 @@ export default function LoginAdminsForm() {
     useEffect(() => {
         redirectAdminToToDashboard();
     }, []);
+
+    const [loading, setLoading] = useState(false);
 
     const [userForm, setUserForm] = useState(userFormData);
     const [loginError, setLoginError] = useState(false);
@@ -77,6 +81,7 @@ export default function LoginAdminsForm() {
 
 
     function login(formData: FieldType) {
+        setLoading(true);
         loginAdmin(formData).then((res) => {
             setLoginError(false);
             console.log("res : ", res);
@@ -93,6 +98,7 @@ export default function LoginAdminsForm() {
 
 
         }).catch((err) => {
+            setLoading(false);
             setLoginError(true);
             message.destroy();
             message.error('E-mail ou mot de passe incorrect !');
@@ -102,158 +108,175 @@ export default function LoginAdminsForm() {
 
 
     return (
-        <div className={`${styles.loginForm} mt-0 pt-0 `}>
-            <Row className={`${styles.loginFormTopHeaderAux} p-0 m-0 pt-0`}>
-                <Col>
-                    <Row className={'justify-content-start'}>
-                        <Col md={1}>
-                            <a href="/">
-                                <ArrowLeftOutlined/>
-                            </a>
-                        </Col>
+<>
+    {loading && (
+    <>
+    <SpinnigLoader></SpinnigLoader>
+    </>
+        )}
+    {!loading && (
+            <>
+                <div className={`${styles.loginForm} mt-0 pt-0 `}>
+                    <Row className={`${styles.loginFormTopHeaderAux} p-0 m-0 pt-0`}>
                         <Col>
-                            <h1>Connexion à votre compte</h1>
+                            <Row className={'justify-content-start'}>
+                                <Col md={1}>
+                                    <a href="/">
+                                        <ArrowLeftOutlined/>
+                                    </a>
+                                </Col>
+                                <Col>
+                                    <h1>Connexion à votre compte</h1>
+                                </Col>
+                            </Row>
                         </Col>
-                    </Row>
-                </Col>
 
-                <Col className={`d-flex justify-content-end`}>
-                    <LoginOutlined className={`${styles.loginIcon}`}/>
-                </Col>
+                        <Col className={`d-flex justify-content-end`}>
+                            <LoginOutlined className={`${styles.loginIcon}`}/>
+                        </Col>
 
-            </Row>
-
-            <Row md={6} className={'mt-5 justify-content-center'}>
-                <Col md={4} className={'mt-5 justify-content-center'}>
-
-
-                    <Row className={`${styles.loginLogo} p-0 m-0`}>
-                        <a className={`${styles.loginLogo} p-0 m-0`} href="/"><img
-                            src="https://app.liberrex.com/img/logo-horizontal.c69162fa.png" alt=""/></a>
                     </Row>
 
-                    <Row className={`mt-5 px-5 d-flex justify-content-center `}>
-                        <Form
-                            name="basic"
-                            labelCol={{span: 8}}
-                            wrapperCol={{span: 24}}
-                            initialValues={{remember: +true}}
-                            onFinish={onFinish}
-                            onFinishFailed={onFinishFailed}
-                            autoComplete="off"
-                            validateMessages={validateMessages}
-                            className={`${styles.loginForm}`}
-
-                        >
-                            <Form.Item<FieldType>
-                                name="email"
-                                rules={[{required: true, message: validateMessages['required']}]}
-                                className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
-                                validateStatus={loginError ? 'error' : ''}
-                            >
-                                <Input
-                                    autoComplete="on"
-                                    onChange={(e) => {
-                                    userFormHandleChange(e, "email");
-                                }} placeholder='E-mail' className={`${styles.inputsLoginPage}`}
-                                       prefix={<UserOutlined className={`${styles.inputsLoginPageIcons}`}/>}/>
-                            </Form.Item>
-
-                            <Form.Item<FieldType>
-                                name="password"
-                                rules={[{required: true, message: validateMessages['required']}]}
-                                className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
-                                validateStatus={loginError ? 'error' : ''}
+                    <Row md={6} className={'mt-5 justify-content-center'}>
+                        <Col md={4} className={'mt-5 justify-content-center'}>
 
 
-                            >
-                                <Input.Password
-                                    onChange={(e) => {
-                                        userFormHandleChange(e, "password");
-                                    }}
-                                    autoComplete="on"
-                                    className={`${styles.inputsLoginPage}`}
-                                    prefix={<LockOutlined className={`${styles.inputsLoginPageIcons}`}/>}
-                                    placeholder='Mot de passe'
-                                    iconRender={(visible) =>
-                                        <div className={`${styles.eyePasswordIcon}`}>
+                            <Row className={`${styles.loginLogo} p-0 m-0`}>
+                                <a className={`${styles.loginLogo} p-0 m-0`} href="/">
+                                    <Image
+                                        src={logoTipTopImg}
+                                        alt="Picture of the author"
+                                    >
+
+                                    </Image>
+                                </a>
+                            </Row>
+
+                            <Row className={`mt-5 px-5 d-flex justify-content-center `}>
+                                <Form
+                                    name="basic"
+                                    labelCol={{span: 8}}
+                                    wrapperCol={{span: 24}}
+                                    initialValues={{remember: +true}}
+                                    onFinish={onFinish}
+                                    onFinishFailed={onFinishFailed}
+                                    autoComplete="off"
+                                    validateMessages={validateMessages}
+                                    className={`${styles.loginForm}`}
+
+                                >
+                                    <Form.Item<FieldType>
+                                        name="email"
+                                        rules={[{required: true, message: validateMessages['required']}]}
+                                        className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
+                                        validateStatus={loginError ? 'error' : ''}
+                                    >
+                                        <Input
+                                            autoComplete="on"
+                                            onChange={(e) => {
+                                                userFormHandleChange(e, "email");
+                                            }} placeholder='E-mail' className={`${styles.inputsLoginPage}`}
+                                            prefix={<UserOutlined className={`${styles.inputsLoginPageIcons}`}/>}/>
+                                    </Form.Item>
+
+                                    <Form.Item<FieldType>
+                                        name="password"
+                                        rules={[{required: true, message: validateMessages['required']}]}
+                                        className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
+                                        validateStatus={loginError ? 'error' : ''}
+
+
+                                    >
+                                        <Input.Password
+                                            onChange={(e) => {
+                                                userFormHandleChange(e, "password");
+                                            }}
+                                            autoComplete="on"
+                                            className={`${styles.inputsLoginPage}`}
+                                            prefix={<LockOutlined className={`${styles.inputsLoginPageIcons}`}/>}
+                                            placeholder='Mot de passe'
+                                            iconRender={(visible) =>
+                                                <div className={`${styles.eyePasswordIcon}`}>
                                             <span className={`${styles.eyePasswordIconRow}`}>{visible ?
                                                 <EyeOutlined className={`${styles.inputsLoginPageIcons}`}/> :
                                                 <EyeInvisibleOutlined
                                                     className={`${styles.inputsLoginPageIcons}`}/>}</span>
-                                        </div>
-                                    }
+                                                </div>
+                                            }
 
-                                />
-                            </Form.Item>
-
-                            <Row>
-                                <Col className={`m-0 py-2`}>
-                                    <Form.Item<FieldType>
-                                        name="remember"
-                                        valuePropName="checked"
-                                        className={`m-0 p-0`}
-                                    >
-                                        <Checkbox className={`${styles.sessionCkeckbox}`}> Garder ma session
-                                            active</Checkbox>
+                                        />
                                     </Form.Item>
-                                </Col>
+
+                                    <Row>
+                                        <Col className={`m-0 py-2`}>
+                                            <Form.Item<FieldType>
+                                                name="remember"
+                                                valuePropName="checked"
+                                                className={`m-0 p-0`}
+                                            >
+                                                <Checkbox className={`${styles.sessionCkeckbox}`}> Garder ma session
+                                                    active</Checkbox>
+                                            </Form.Item>
+                                        </Col>
 
 
+                                    </Row>
+
+                                    <Row>
+
+                                        <Col>
+                                            <a href="#" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
+                                                ? <MailOutlined className={`${styles.resetPasswordIcon}`}/></a>
+                                        </Col>
+                                    </Row>
+
+                                    <Form.Item className={`py-3 w-100`}>
+                                        <Button onClick={() => {
+                                            login(userForm);
+                                        }} className={`w-100 ${styles.loginBtnSubmit}`} type="primary" htmlType="submit">
+                                            Se connecter
+                                        </Button>
+                                    </Form.Item>
+                                </Form>
                             </Row>
 
-                            <Row>
-
-                                <Col>
-                                    <a href="#" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
-                                        ? <MailOutlined className={`${styles.resetPasswordIcon}`}/></a>
-                                </Col>
-                            </Row>
-
-                            <Form.Item className={`py-3 w-100`}>
-                                <Button onClick={() => {
-                                    login(userForm);
-                                }} className={`w-100 ${styles.loginBtnSubmit}`} type="primary" htmlType="submit">
-                                    Se connecter
-                                </Button>
-                            </Form.Item>
-                        </Form>
+                        </Col>
                     </Row>
 
-                </Col>
-            </Row>
 
+                    <div className="px-3 py-2 mt-5 pt-5">
+                        <Row className="px-3 py-2 mt-5 pt-5">
+                            <Col className={`w-100 d-flex`}>
+                                <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
+                                    <div className={`${styles.containerLoginFooterLinks} d-flex `}>
+                                        <div className={`${styles.LoginLinksDiv} d-flex`}>
+                                            <Nav className="me-auto d-flex justify-content-between w-100">
+                                                <Nav.Link href="#home" className={`${styles.navLinkLogin}`}><AppstoreFilled
+                                                    className='mx-2'/> Termes et conditions</Nav.Link>
+                                                <Nav.Link href="#link"
+                                                          className={`${styles.navLinkLogin}`}><ExclamationCircleOutlined
+                                                    className='mx-2'/>Politique De Confidentialité</Nav.Link>
+                                                <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><MailOutlined
+                                                    className='mx-2'/>Contact</Nav.Link>
+                                            </Nav>
+                                        </div>
+                                    </div>
+                                </Navbar>
+                            </Col>
 
-            <div className="px-3 py-2 mt-5 pt-5">
-                <Row className="px-3 py-2 mt-5 pt-5">
-                    <Col className={`w-100 d-flex`}>
-                        <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
-                            <div className={`${styles.containerLoginFooterLinks} d-flex `}>
-                                <div className={`${styles.LoginLinksDiv} d-flex`}>
-                                    <Nav className="me-auto d-flex justify-content-between w-100">
-                                        <Nav.Link href="#home" className={`${styles.navLinkLogin}`}><AppstoreFilled
-                                            className='mx-2'/> Termes et conditions</Nav.Link>
-                                        <Nav.Link href="#link"
-                                                  className={`${styles.navLinkLogin}`}><ExclamationCircleOutlined
-                                            className='mx-2'/>Politique De Confidentialité</Nav.Link>
-                                        <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><MailOutlined
-                                            className='mx-2'/>Contact</Nav.Link>
-                                    </Nav>
+                        </Row>
+
+                        <Row>
+                            <Col>
+                                <div className={`${styles.navLinkLogin} d-flex`}>
+                                    <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
                                 </div>
-                            </div>
-                        </Navbar>
-                    </Col>
-
-                </Row>
-
-                <Row>
-                    <Col>
-                        <div className={`${styles.navLinkLogin} d-flex`}>
-                            <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
-                        </div>
-                    </Col>
-                </Row>
-            </div>
-        </div>
+                            </Col>
+                        </Row>
+                    </div>
+                </div>
+            </>
+    )}
+</>
     )
 }

@@ -131,6 +131,10 @@ export async function getClients(searchParams: any) {
 export async function getParticipants(searchParams: any) {
     const token = localStorage.getItem('loggedInUserToken');
 
+    searchParams = {
+        ...searchParams,
+        'status': "",
+    }
     const baseUrl = '/admin/participants';
 
     const queryString = Object.keys(searchParams)

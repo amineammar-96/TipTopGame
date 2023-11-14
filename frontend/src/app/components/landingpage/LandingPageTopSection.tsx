@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { Button } from 'antd';
 import { Container, Row, Col } from 'react-bootstrap';
 import styles from '../../../styles/components/landingpage/landingPgaTopSection.module.css';
-
-
+import wallpaperHomepageImg from '@/assets/images/wallpaperHomepage.png';
+import Image from 'next/image';
 
 function LandingPageTopSection() {
     return (
-        <div className={`mx-2 px-1 ${styles.topSection}`}>
-            <Row className="mb-5">
+        <div className={`mx-2 px-1 ${styles.topSection} mt-1`}>
+            <Row className="mb-5 mt-5">
                 <Col className={`${styles.topSectionLeftSide}`} md={6}>
                     <div className={`${styles.topSectionTextDiv}`}>
                         <h1>Bienvenue au Grand Jeu-Concours <span>  Thé Tip Top ! </span></h1>
@@ -21,7 +21,9 @@ function LandingPageTopSection() {
                     </div>
                 </Col>
                 <Col className={`${styles.topSectionRightSide}`} md={6}>
-                    <img src="https://liberrex.com/wp-content/uploads/2021/09/hardware-liberrex-1.png" alt="Landing Image" style={{ width: '100%' }} />
+                    <Image src={wallpaperHomepageImg} alt={"tiptop"}>
+
+                    </Image>
                 </Col>
             </Row>
         </div>

@@ -271,7 +271,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {storesClientsList.map((client, key) => {
                     return (
-                        <Option key={key} value={client.id}>{client.lastname} {client.firstname}</Option>
+                        <Option key={key} value={client.id}   label={`${client.lastname} ${client.firstname}`} >{client.lastname} {client.firstname}</Option>
                     )
                 })}
             </>
@@ -286,7 +286,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {storesEmployeesList.map((employee, key) => {
                     return (
-                        <Option key={key} value={employee.id}>{employee.lastname} {employee.firstname}</Option>
+                        <Option key={key} value={employee.id} label={`${employee.lastname} ${employee.firstname}`} >{employee.lastname} {employee.firstname}</Option>
                     )
                 })}
             </>
@@ -304,7 +304,19 @@ function GameGainHistoryPage() {
             //}));
         }
     };
+    const onChangeEmployeeList = (value: string) => {
+        setSearchParam({
+            ...searchParam,
+            employee: value,
+        });
+    };
 
+    const onChangeClientList = (value: string) => {
+        setSearchParam({
+            ...searchParam,
+            client: value,
+        });
+    };
     const renderStores = () => {
         return (
             <>
@@ -319,6 +331,17 @@ function GameGainHistoryPage() {
             </>
         )
     }
+
+    function onSearchEmpoyeeList() {
+
+    }
+
+    function onSearchClientList() {
+
+    }
+
+    const filterOption = (input: string, item: any) => (item?.label ?? '').toLowerCase().includes(input.toLowerCase());
+
     const getFields = () => {
         const children = [];
         children.push(
@@ -366,18 +389,14 @@ function GameGainHistoryPage() {
                                 initialValue=""
                                 className={`${styles.formItem} searchTicketFormItem mb-5`}
                             >
-                                <Select
-                                    className={`mt-2`}
-                                    placeholder={`Caissier de Ticket`}
-                                    onChange={
-                                        (e) => {
-                                            setSearchParam({
-                                                ...searchParam,
-                                                client: e.toString(),
-                                            });
+                                <Select showSearch
+                                        onChange={onChangeClientList}
+                                        onSearch={onSearchClientList}
+                                        filterOption={filterOption as any}
+                                        className={`mt-2`} placeholder="Choisir un client"
+                                        notFoundContent={
+                                            <span className={`m-4`}>Aucun client trouvé</span>
                                         }
-                                    }
-                                    allowClear
                                 >
                                     {renderStoresClients()}
                                 </Select>
@@ -423,19 +442,15 @@ function GameGainHistoryPage() {
                             initialValue=""
                             className={`${styles.formItem} searchTicketFormItem mb-5`}
                         >
-                            <Select
-                                className={`mt-2`}
-                                placeholder={`Caissier de Ticket`}
-                                onChange={
-                                    (e) => {
-                                        setSearchParam({
-                                            ...searchParam,
-                                            status: e.toString(),
-                                        });
+                            <Select showSearch
+                                    onChange={onChangeEmployeeList}
+                                    onSearch={onSearchEmpoyeeList}
+                                    filterOption={filterOption as any}
+                                    className={`mt-2`} placeholder="Choisir un client"
+                                    notFoundContent={
+                                        <span className={`m-4`}>Aucun client trouvé</span>
                                     }
-                                }
-                                allowClear
-                                >
+                            >
                                 {renderStoresEmployees()}
                             </Select>
                         </Form.Item>

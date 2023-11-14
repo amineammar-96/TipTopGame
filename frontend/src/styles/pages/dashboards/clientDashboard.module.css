@@ -602,3 +602,15 @@
     width: 6rem !important;
     height: 6rem !important;
 }
+
+.floatTable div {
+    position: absolute;
+    top: 0;
+    right: 1.4rem;
+    width: 50%;
+    height: 100% !important;
+    z-index: 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
