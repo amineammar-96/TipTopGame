@@ -15,8 +15,8 @@ import {
     MailOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    PieChartOutlined,
-    RadarChartOutlined,
+    PieChartOutlined, PrinterOutlined,
+    RadarChartOutlined, SearchOutlined,
     SettingOutlined,
     ShopOutlined, SketchOutlined,
     UserOutlined
@@ -48,37 +48,26 @@ const items: MenuItem[] = [
 
 
 
-    getItem('Gestion des magasins', 'storesItem', <AppstoreOutlined />, [
-        getItem('Magasins', 'storesManagementItem' , <ShopOutlined />),
-        getItem('Gestion des Profils', 'profilesManagementItem' , <UserOutlined />),
-    ]),
 
-    getItem('Gestion des clients', 'clientsItem',<UserOutlined /> , [
-        getItem('Clients Inscrits', 'statisticItemClients' , <GlobalOutlined />),
-        getItem('Participants Actifs ', 'statisticItemPrizes' , <SketchOutlined />),
-    ]),
 
-    getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
-        getItem('Tickets', 'ticketsItem' , <BarcodeOutlined />),
+
+    getItem('Jeu-Concours', 'game', <BulbOutlined />, [
+        getItem('Tickets', 'ticketsItem', <BarcodeOutlined />),
+        getItem('Imprimer un ticket', 'printTicketsItem' ,  <PrinterOutlined />),
+        getItem('Confirmer un gain', 'prizesValidationItem',  <CheckCircleOutlined />),
+        getItem('Historiques', 'historyPrizesItem' , <HistoryOutlined />),
         getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
-        getItem('Historiques des gains', 'historyPrizesItem' , <HistoryOutlined />),
     ]),
 
-    getItem('Règlement du Jeu', 'gameConfigItem', <ControlOutlined />, [
-        getItem('Géneral', 'datesConfigItem' , <ControlOutlined />),
-        getItem('Tirage au sort final', 'finalDrawItem' , <GoldOutlined />),
-    ]),
+    getItem('Paramètres', 'settingsItem', <SettingOutlined />),
 
-    getItem('Paramètres', 'settingsItem', <SettingOutlined />, [
-        getItem('Paramètres Généraux', 'generalSettingsItem' , <SettingOutlined />),
-        getItem('Paramètres de Sécurité', 'securitySettingsItem' , <LockOutlined />),
-        getItem('Modèles E-mails', 'emailManagementItem' , <MailOutlined />),
-    ]),
+
+
 
 ];
 
 // submenu keys of the first level
-const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'gameConfigItem', 'settingsItem'];
+const rootSubmenuKeys = ['dashboardItem', 'prizesValidationItem', 'ticketsItem' , 'printTicketsItem', 'settingsItem'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
     selectedMenuItem: string;

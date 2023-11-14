@@ -19,17 +19,7 @@ export async function getTickets(searchParams: any) {
     const token = localStorage.getItem('loggedInUserToken');
 
     const baseUrl = '/tickets';
-    const searchParamJson: SearchParams = {
-        page: '1',
-        limit: '10',
-        center: searchParams.center || '',
-        user: searchParams.user || '',
-        status: searchParams.status || '',
-        caissier: searchParams.caissier || '',
-        client: searchParams.client || '',
-        sort: searchParams.sort || '',
-        order: searchParams.order || '',
-    };
+
 
 
     const queryString = Object.keys(searchParams)
@@ -47,8 +37,23 @@ export async function getTickets(searchParams: any) {
     };
 
     return await fetchJson(finalUrl, config);
+}
 
 
+export async function getTicketByCode(searchParam: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const url = '/ticket/'+searchParam;
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(url, config);
 }
 
 
@@ -72,4 +77,75 @@ export async function checkTicketCodeValidity(ticketCode: string) {
     return await fetchJson(`/tickets/check/play`, config);
 }
 
+export async function confirmPrintTicket(data: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: {
+            ticketCode: data,
+        },
+    };
 
+    return await fetchJson(`/print_ticket`, config);
+}
+
+//confirmTicketPlayed
+export async function confirmTicketPlayed(ticketCode: string) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: {
+            ticketCode: ticketCode,
+        },
+    };
+
+    return await fetchJson(`/ticket/confirm/play`, config);
+}
+
+//confimGainTicket
+export async function confimGainTicket(ticketId: string) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: {
+            ticketId: ticketId,
+        },
+    };
+
+    return await fetchJson(`/ticket/confirm/gain`, config);
+}
+
+//getGainTicket
+export async function getGainTicket(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const baseUrl = '/winner_tickets';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}

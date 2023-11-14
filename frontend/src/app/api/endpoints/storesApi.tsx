@@ -16,6 +16,22 @@ export async function getStoresForAdmin() {
     return await fetchJson(`/admin/stores`, config);
 }
 
+export async function getStoreForStoreManager() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const id = localStorage.getItem('loggedInUserId');
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(`/storemanager/${id}/store`, config);
+}
+
+
 export async function getStoreById(id: string) {
     const token = localStorage.getItem('loggedInUserToken');
 
@@ -150,9 +166,43 @@ export async function associateClientToStore(data: any) {
     return await fetchJson(`/client/store/associate`, config);
 }
 
+//StoreClientsList
+export async function getStoreClientsList(storeId:string) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(`/store/${storeId}/clients`, config);
+}
 
 
+export async function getStoresEmployees(searchParams:any) {
+    const token = localStorage.getItem('loggedInUserToken');
 
+    const baseUrl = '/employees';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}
 
 
 

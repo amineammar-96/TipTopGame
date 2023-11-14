@@ -29,6 +29,29 @@ class StoreController extends AbstractController
 
     }
 
+
+
+    /**
+     * @IsGranted("ROLE_STOREMANAGER")
+     */
+    public function getStoreForStoreManager(int $id): JsonResponse
+    {
+
+        //get the user store
+        $user = $this->getUser();
+        $stores = $user->getStores();
+        $storesResponse = [];
+        foreach ($stores as $store) {
+            $storesResponse[] =
+                $store->getStoreJson();
+        }
+
+        return $this->json([
+            'storesResponse' => $storesResponse,
+        ], 200);
+    }
+
+
     /**
      * @IsGranted("ROLE_ADMIN")
      */
@@ -61,9 +84,7 @@ class StoreController extends AbstractController
     }
 
 
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     */
+
     public function getStoreById(int $id): JsonResponse
     {
         $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);
@@ -163,7 +184,6 @@ class StoreController extends AbstractController
 
 
     /**
-     * @IsGranted("ROLE_ADMIN")
      * @throws Exception
      */
     public function updateStoreByIdForAdmin(int $id, Request $request): JsonResponse

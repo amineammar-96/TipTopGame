@@ -49,6 +49,9 @@ class Ticket
     #[ORM\ManyToOne(inversedBy: 'ticketsEmployee')]
     private ?User $employee = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updated_at = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -179,6 +182,9 @@ class Ticket
             'status' => $this->getStatus(),
             'ticket_printed_at' => $this->getTicketPrintedAtJson(),
             'ticket_generated_at' => $this->getTicketGeneratedAtJson(),
+            'employee' => $this->getEmployee()?->getUserJson(),
+            'store' => $this->getStore()?->getStoreJson(),
+            'updated_at' => $this->getUpdatedAtJson()
         ];
         return $ticket;
     }
@@ -205,5 +211,26 @@ class Ticket
         $this->employee = $employee;
 
         return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): static
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    private function getUpdatedAtJson(): array
+    {
+        $updatedAt = $this->getUpdatedAt();
+        return [
+            "date" =>  $updatedAt?->format('d/m/Y'),
+            "time" =>  $updatedAt?->format('H:i')
+        ];
     }
 }

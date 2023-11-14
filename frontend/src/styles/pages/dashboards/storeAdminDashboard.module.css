@@ -606,7 +606,7 @@
     justify-content: space-between;
     align-items: center;
     flex-direction: column;
-    width: 100%;
+    width: 100% !important;
 }
 
 
@@ -648,15 +648,18 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
+
 }
 
 .ticketCardText {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
     width: 100%;
     font-weight: bold;
+    height: 100%;
 }
 .ticketCardText p {
     display: flex;
@@ -819,20 +822,29 @@
     border-color: #B95F89;
     color: white;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 .ticketStatusTagPrinted span {
     background-color: #42B2FF;
     border-color: #42B2FF;
-    color: black;
+    color: white;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 .ticketStatusTagWaiting span {
     background-color: #FAE364;
     border-color: #FAE364;
-    color: white;
+    color: black;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 .ticketStatusTagWin span {
@@ -840,6 +852,9 @@
     border-color: #7BC558;
     color: white;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 .ticketStatusTagExpired span {
@@ -847,6 +862,9 @@
     border-color: #FF5555;
     color: white;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 .ticketStatusTagCanceled span {
@@ -854,6 +872,9 @@
     border-color: #FF5555;
     color: white;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 
@@ -1116,4 +1137,188 @@
     height: 12rem;
     margin: 0;
     box-shadow: 0px 0px 11px 4px rgb(218 218 218) !important;
+}
+
+
+.searchOneTicketForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 40%;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.42);
+}
+
+
+
+.oneTicketCardElement {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.62);
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+    width: 40%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.oneTicketCardElement .cardTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    color: black !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.oneTicketCardElement .counter {
+    color: black;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.printBtn {
+    background-color: #1da1f2 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #1da1f2 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    max-height: 1rem;
+    border-radius: 5px;
+    text-decoration: none !important;
+    min-width: 12rem;
+}
+
+.printBtn:hover{
+    opacity: 0.9 !important;
+}
+
+
+.prizeDatesText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 100%;
+    font-weight: bold;
+    font-size: .8rem;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+}
+
+.confirmGainBtn {
+    background-color: #65b606 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #65b606 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+    max-height: 1rem;
+    border-radius: 5px;
+    text-decoration: none !important;
+    width: 17rem;
+    font-size: .9rem !important;
+}
+
+.confirmGainBtn:hover{
+    opacity: 0.9 !important;
+}
+
+.cancelTicketBtn {
+    background-color: #FF5555 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #FF5555 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: .1rem 0;
+    max-height: 1rem;
+    border-radius: 5px;
+    text-decoration: none !important;
+    width: 12rem;
+    font-size: .9rem !important;
+}
+.cancelTicketBtn:hover{
+    opacity: 0.9 !important;
+}
+
+.prizeDatesTextAux {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 1rem 0;
+    width: 100%;
+    font-weight: bold;
+    font-size: .8rem;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+}
+
+
+.ticketCardTextOneTicket {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-weight: bold;
+}
+.ticketCardTextOneTicket p {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.gainTableImg {
+    width: 4rem;
+    height: 4rem;
+    margin: 0;
+}
+
+.InfoCards {
+
+}
+
+
+.InfoCardLeft {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    text-align: left;
+    width: 100%;
+    padding: 1rem 2rem;
+}
+.InfoCardRight {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    text-align: left;
+    width: 100%;
+    padding: 1rem 2rem;
 }

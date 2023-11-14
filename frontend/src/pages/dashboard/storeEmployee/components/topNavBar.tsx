@@ -32,13 +32,39 @@ function TopNavBar() {
 
 
     const [user, setUser] = useState<User | null>(null);
+
+    const [userRole , setUserRole] = useState<string | null>(null);
     useEffect(() => {
         console.log("TopNavBar mounted");
         const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+
         setUser(user);
     }, []);
 
+    const getRoleLabel = (role: string | null) => {
+        switch (role) {
+            case 'ROLE_ADMIN':
+                return 'Espace Admin';
+            case 'ROLE_EMPLOYEE':
+                return 'Espace Employé';
+            case 'ROLE_STOREMANAGER':
+                return 'Espace Gérant';
+            case 'ROLE_CLIENT':
+                return 'Espace Client';
+            default:
+                return 'Inconnu';
+        }
+    }
+
     let items: MenuProps['items'] = [
+        {
+            className: `${style.profileTopNavBarItem}`,
+            label: <div className={style.unhoverableElement}>
+                { user && <span className={style.unhoverableElement}> {getRoleLabel(userRole)} </span>}
+            </div>,
+            key: 'role',
+        },
         {
             className: `${style.profileTopNavBarItem}`,
             label: <div className={style.unhoverableElement}>
@@ -55,7 +81,6 @@ function TopNavBar() {
         },
 
     ];
-
     const [current, setCurrent] = useState('mail');
 
     const onClick: MenuProps['onClick'] = (e) => {

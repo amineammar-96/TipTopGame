@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import {Row , Col} from "antd";
 import StoresList from "@/pages/dashboard/dashboardComponents/profilesManagementComponent/StoresList";
@@ -9,6 +9,10 @@ function ProfilesManagement() {
 
     const [selectedStoreId, setSelectedStoreId] = useState<string>('');
 
+    const [userRole , setUserRole] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
     const handleStoreChange = (value: string) => {
         setSelectedStoreId(value);
     };
@@ -21,9 +25,14 @@ function ProfilesManagement() {
                     <Col className={`${styles.fullWidthElement} mt-3`} >
                         <h3 className={styles.topHeaderProfileManagementTitle} >Gestion des profils</h3>
                     </Col>
-                    <Col className={`${styles.fullWidthElement} mb-5`} >
-                        <StoresList onSelectStore={handleStoreChange} ></StoresList>
-                    </Col>
+
+
+
+                        <Col className={`${styles.fullWidthElement} mb-5`} >
+                            <StoresList onSelectStore={handleStoreChange} ></StoresList>
+                        </Col>
+
+
 
                     {selectedStoreId && (
                         <Col className={styles.fullWidthElement} >

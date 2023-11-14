@@ -21,6 +21,7 @@ import ParticipantManagementPageDashboard
 import PlayGameComponent from "@/pages/dashboard/client/components/PlayGameComponent";
 
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 
 
 function ClientDashboard() {
@@ -78,6 +79,7 @@ function ClientDashboard() {
                         {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
                         {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                         {selectedMenuItem==="playGameItem" && <PlayGameComponent></PlayGameComponent>}
+                        {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
 
 
 

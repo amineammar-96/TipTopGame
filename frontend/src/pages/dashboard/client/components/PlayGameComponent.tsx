@@ -10,7 +10,7 @@ import Image from "next/image";
 import WheelComponent from 'react-wheel-of-prizes';
 
 import {Modal, Space } from 'antd';
-import {checkTicketCodeValidity} from "@/app/api";
+import {checkTicketCodeValidity, confirmTicketPlayed} from "@/app/api";
 import {GiftOutlined, InfoOutlined, SyncOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
@@ -103,15 +103,8 @@ function PlayGameComponent() {
         '#EBB3E6',
     ]
     const onFinished = (winner:any) => {
-        console.log('onFinished')
-        console.log('onFinished')
-        console.log('onFinished')
-        console.log('onFinished')
 
-        console.log('onFinished')
-        console.log(prize, 'priz' );
-        console.log(prize, 'priz' );
-        console.log(prize[0]?.id, 'ioddddddd' );
+
 
         Modal.success({
             className: 'modalSuccess',
@@ -204,10 +197,32 @@ function PlayGameComponent() {
             </>,
             okText: "Continuer",
             onOk() {
-
+                confirmTicketPlayed(ticketCode).then((response) => {
+                    Modal.success({
+                        className: 'modalSuccess',
+                        title: 'Ticket Gagnant !',
+                        content: 'Votre ticket est validé, vous pouvez récupérer votre cadeau : veuillez le présenter à votre magasin.',
+                        okText: "D'accord",
+                    });
+                    setPlayGame(false);
+                }).catch((error) => {
+                    setPlayGame(false);
+                    console.log(error);
+                    if (error.response) {
+                        if (error.response.status === 401) {
+                            logoutAndRedirectAdminsUserToLoginPage();
+                        } else if (error.response.status === 404) {
+                            Modal.error({
+                                className: 'modalError',
+                                title: 'Code invalide !',
+                                content: 'Votre code est invalide, veuillez réessayer.',
+                                okText: "D'accord",
+                            });
+                        }
+                    }
+                });
             }
         });
-        //setPlayGame(false);
     }
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();

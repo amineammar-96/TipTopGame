@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Col, Row, Select} from 'antd';
-import {getStoresForAdmin} from "@/app/api";
+import {getStoresForAdmin , getStoreForStoreManager} from "@/app/api";
 import RedirectService from "@/app/service/RedirectService";
 import LogoutService from "@/app/service/LogoutService";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
@@ -24,6 +24,11 @@ interface OptionType {
 
 function StoresList({ globalSelectedStoreId, onSelectStore , isStoresUpdated , onStoreUpdate  }: {  globalSelectedStoreId: string; onSelectStore: (value: string) => void; isStoresUpdated: boolean;onStoreUpdate: () => void;}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [userRole , setUserRole] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
     const showAddStoreModal = () => {
         setIsModalOpen(true);
     };
@@ -50,18 +55,37 @@ function StoresList({ globalSelectedStoreId, onSelectStore , isStoresUpdated , o
     const [storesOptionsList, setStoresOptionsList] = useState<OptionType[]>([]);
 
     useEffect(() => {
-        getStoresForAdmin().then((response) => {
-            setStoresList(response.storesResponse);
-        }).catch((err) => {
-            if (err.response){
-                if (err.response.status === 401) {
-                    logoutAndRedirectAdminsUserToLoginPage();
+        if(userRole === 'ROLE_ADMIN'){
+            getStoresForAdmin().then((response) => {
+                setStoresList(response.storesResponse);
+            }).catch((err) => {
+                if (err.response){
+                    if (err.response.status === 401) {
+                        logoutAndRedirectAdminsUserToLoginPage();
+                    }
+                }else {
+                    console.log(err.request);
                 }
-            }else {
-                console.log(err.request);
-            }
-        });
-    }, [isStoresUpdated]);
+            });
+        }else if (userRole === 'ROLE_STOREMANAGER'){
+            getStoreForStoreManager().then((response) => {
+                setStoresList(response.storesResponse);
+
+                setSelectedStoreId(response.storesResponse[0].id);
+                onSelectStore(response.storesResponse[0].id);
+
+            }).catch((err) => {
+                if (err.response){
+                    if (err.response.status === 401) {
+                        logoutAndRedirectAdminsUserToLoginPage();
+                    }
+                }else {
+                    console.log(err.request);
+                }
+            });
+        }
+
+    }, [userRole]);
 
     useEffect(() => {
         if (globalSelectedStoreId) {
@@ -110,9 +134,14 @@ function StoresList({ globalSelectedStoreId, onSelectStore , isStoresUpdated , o
                 </div>}
             />
 
-            <Button className={styles.addNewStoreBtn} onClick={showAddStoreModal}  icon={<PlusOutlined />} >
-                Ajouter un nouveau magasin
-            </Button>
+            {userRole === 'ROLE_ADMIN' && (
+                <>
+                    <Button className={styles.addNewStoreBtn} onClick={showAddStoreModal}  icon={<PlusOutlined />} >
+                        Ajouter un nouveau magasin
+                    </Button>
+                </>
+            )}
+
         </Row>
             <ModalAddOrUpdateStore  changeSelectedStore={onSelectStore} onStoreUpdate={onStoreUpdate} storeId={null} modalIsOpen={isModalOpen} closeModal={closeAddStoreModal} updateStore={false} ></ModalAddOrUpdateStore>
 

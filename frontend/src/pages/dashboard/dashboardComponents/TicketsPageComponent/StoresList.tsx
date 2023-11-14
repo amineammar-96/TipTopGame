@@ -42,6 +42,11 @@ function StoresList({ onSelectStore   }: { onSelectStore: (value: string) => voi
     const [storesList, setStoresList] = useState<OptionType[]>([]);
     const [storesOptionsList, setStoresOptionsList] = useState<OptionType[]>([]);
 
+    const [userRole , setUserRole] = useState<string | null>('');
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
+
     useEffect(() => {
         getStoresForAdmin().then((response) => {
             setStoresList(response.storesResponse);

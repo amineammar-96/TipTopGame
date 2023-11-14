@@ -82,9 +82,10 @@ interface storeManagersTableProps {
     selectedStoreId: string;
     profilesRole: string;
     roleKey: string;
+    onUpdate: () => void;
 }
 
-function StoreManagerTable({selectedStoreId, profilesRole,roleKey}: storeManagersTableProps) {
+function StoreManagerTable({selectedStoreId, profilesRole,roleKey , onUpdate}: storeManagersTableProps) {
 
 
 
@@ -327,6 +328,7 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey}: storeManager
     async function updateUserProfile(id: string) {
         try {
             const response = await updateUserById(id, userForm);
+            onUpdate();
             return "updated";
         } catch (err:any) {
             if (err.response) {
@@ -392,7 +394,6 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey}: storeManager
                 message.destroy();
                 await formRef.validateFields();
                 const updateUserResponse = await updateUserProfile(userForm.id ? userForm.id : "") as any;
-                console.log("updateUserResponseupdateUserResponseupdateUserResponse : ", updateUserResponse)
                 if(updateUserResponse=="updated"){
                     message.success('L\'utilisateur a été bien modifié avec succés');
                     formRef.resetFields();
@@ -431,6 +432,7 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey}: storeManager
                 message.destroy();
                 await formRef.validateFields();
                 addNewUserForStore(selectedStoreId, userForm).then((response) => {
+                    onUpdate();
                     message.success('L\'utlisateur a été bien ajouté avec succés');
                     formRef.resetFields();
                     setUserForm(managerUserFormData);

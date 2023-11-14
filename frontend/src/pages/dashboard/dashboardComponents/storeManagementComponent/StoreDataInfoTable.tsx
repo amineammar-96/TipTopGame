@@ -41,6 +41,11 @@ function StoreDataInfoTable({ selectedStoreId , onStoreUpdate, isStoresUpdated ,
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [updateFormKey, setUpdateFormKey] = useState(0);
 
+    const [userRole , setUserRole] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
+
 
     const { confirm } = Modal;
     const showStoreDeleteModal = () => {
@@ -167,9 +172,10 @@ function StoreDataInfoTable({ selectedStoreId , onStoreUpdate, isStoresUpdated ,
                        <Button onClick={showStoreUpdateModal} className={`${styles.updateStoreArrayBtn}`} icon={<EditOutlined />} size={"middle"}>
                            Modifier
                        </Button>
+                       {userRole === 'ROLE_ADMIN' && (<>
                        <Button onClick={showStoreDeleteModal} className={`${styles.deleteStoreArrayBtn}`} icon={<DeleteOutlined />} size={"middle"}>
-
                        </Button>
+                       </>)}
                    </Space>
 
                </>

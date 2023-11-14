@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Card, Col, Row, Spin} from 'antd';
+import {Card, Col, Modal, Row, Spin} from 'antd';
 import Image from 'next/image';
 import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -8,10 +8,10 @@ import TeaBoxImg from "@/assets/images/teaBox.png";
 import TeaBoxSignatureImg from "@/assets/images/teaBoxSignature.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import SurpriseBoxImg from "@/assets/images/surprise.png";
-import {getTickets , getPrizes} from "@/app/api";
+import {getTickets, getPrizes, getStoreClientsList, confimGainTicket} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
 import {Button, Form, Input, Select, Space, theme} from 'antd';
-import {DownOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
+import {DownOutlined, EyeOutlined, GiftOutlined, PrinterOutlined} from "@ant-design/icons";
 import {
     CheckCircleOutlined,
     ClockCircleOutlined,
@@ -46,22 +46,20 @@ interface DataType {
     updated_at: {
         date: string;
         time: string;
-    };
+    }
     ticket_generated_at: {
         date: string;
         time: string;
     };
     client: string;
     caissier: string;
-    store: {
-        id: string;
-        name: string;
-    };
-    employee: {
+    store: string;
+    user: {
         id: string;
         firstname: string;
         lastname: string;
         email: string;
+        phone: string;
     };
 
 
@@ -96,7 +94,7 @@ const defaultSearchParams: SearchParams = {
     limit: '12',
     store: '',
     user: '',
-    status: '',
+    status: '3',
     caissier: '',
     client: '',
     sort: '',
@@ -105,7 +103,7 @@ const defaultSearchParams: SearchParams = {
     prize: '',
 };
 
-function TicketsPageDashboard() {
+function ConfirmTicketGain() {
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();
 
@@ -140,7 +138,6 @@ function TicketsPageDashboard() {
         fetchData();
     }, [searchParam]);
 
-    //getTicketStatusLabel
     const getTicketStatusLabel = (status: string) => {
         console.log('status : ', status=="1");
         switch (status) {
@@ -189,15 +186,76 @@ function TicketsPageDashboard() {
         }
     }
 
+    const confirmGain = (ticketId: string , ticketPrizeId: string , ticketPrizeLabel : string, ticketCode : string, lastname:string, firstname:string, email:string) => {
+        Modal.confirm({
+            title: 'Confirmation de gain',
+            content:
+                <>
+                    <p><strong>Client:</strong> {firstname} {lastname}</p>
+                    <p><strong>Email:</strong> {email}</p>
+                    <p><strong>Gain:</strong></p>
+                    <div className={`${styles.ticketCardIconsPrize}`}>
+                        {renderPrizeImage(ticketPrizeId)}
+                    </div>
+                    <p className={`${styles.prizeLabel} mb-5`}>{ticketPrizeLabel}</p>
+                    <p>Vous êtes sur le point de confirmer le gain de ce ticket
+                        <strong> #{ticketCode}</strong> !
+                    </p>
+                    <p>
+                        Veuillez confirmer que le client a bien reçu son gain.
+                    </p>
+
+            </>,
+            okText: 'Confirmer',
+            cancelText: 'Annuler',
+            onOk: () => {
+                confimGainTicket(ticketId).then((response) => {
+                    Modal.success({
+                        title: 'Confirmation de gain',
+                        content: 'Le gain a été confirmé avec succès !',
+                        okText: 'Fermer',
+                        cancelText: 'Annuler',
+                        onOk: () => {
+                            fetchData();
+                        },
+                    });
+                }).catch((err) => {
+                    Modal.error({
+                        title: 'Confirmation de gain',
+                        content: 'Une erreur est survenue lors de la confirmation de gain !',
+                        okText: 'Fermer',
+                        cancelText: 'Annuler',
+                    });
+                    if (err.response) {
+                        if (err.response.status === 401) {
+                            logoutAndRedirectAdminsUserToLoginPage();
+                        }
+                    } else {
+                        Modal.error({
+                            title: 'Confirmation de gain',
+                            content: 'Une erreur est survenue lors de la confirmation de gain !',
+                            okText: 'Fermer',
+                            cancelText: 'Annuler',
+                        });
+                        console.log(err.request);
+                    }
+                })
+            },
+            onCancel: () => {
+                console.log('Cancel');
+            },
+        });
+    }
+
     const renderTickets = () => {
         if (data) {
             return data.map((ticket, key) => {
                 return (
-                    <Col key={key} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={8} lg={6} span={6}>
+                    <Col key={key} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={12} lg={8} span={8}>
                         <div className={`${styles.ticketCardElement}`}>
 
                             <div className={`${styles.ticketCardBody}`}>
-                                <div className={`${styles.ticketCardText} mb-1`}>
+                                <div className={`${styles.ticketCardTextOneTicket} mb-1`}>
                                     <p className={`${styles.ticketStatusTag}
                                      ${ticket.status=="1" && styles.ticketStatusTagGenerated}
                                         ${ticket.status=="2" && styles.ticketStatusTagPrinted}
@@ -213,25 +271,25 @@ function TicketsPageDashboard() {
 
                                         )}
                                         {ticket.status=="2" && (
-                                            <Tag icon={<PrinterOutlined/>} color="success">
+                                            <Tag icon={<PrinterOutlined />} color="success">
                                                 {getTicketStatusLabel(ticket.status.toString())}
                                             </Tag>
 
                                         )}
                                         {ticket.status=="3" && (
-                                            <Tag icon={<ClockCircleOutlined />} color="success">
+                                            <Tag icon={<CloseCircleOutlined />} color="error">
                                                 {getTicketStatusLabel(ticket.status.toString())}
                                             </Tag>
 
                                         )}
                                         {ticket.status=="4" && (
-                                            <Tag icon={<CheckCircleOutlined />} color="default">
+                                            <Tag icon={<ExclamationCircleOutlined />} color="warning">
                                                 {getTicketStatusLabel(ticket.status.toString())}
                                             </Tag>
 
                                         )}
                                         {ticket.status=="5" && (
-                                            <Tag icon={<CheckCircleOutlined />} color="default">
+                                            <Tag icon={<ClockCircleOutlined />} color="default">
                                                 {getTicketStatusLabel(ticket.status.toString())}
                                             </Tag>
 
@@ -240,14 +298,16 @@ function TicketsPageDashboard() {
 
                                     </p>
 
-                                    <p className={`${styles.barCode}`}><strong>Code de Ticket:</strong> <span className={styles.barCodeText}>#{ticket.ticket_code} <div className={`${styles.ticketCardIconsBarCode}`}>
+                                    <p className={`${styles.prizeDatesTextAux} mt-5 mb-0 pb-0`}>
+                                        <strong>Code de Ticket:</strong>
+                                    </p>
+                                    <p className={`${styles.barCode} mt-0 pt-0`}><span className={styles.barCodeText}>#{ticket.ticket_code} <div className={`${styles.ticketCardIconsBarCode}`}>
                                         <Image src={BarcodeTicketImg} alt={"Code a barre"}></Image>
                                     </div>
                                     </span></p>
 
 
-
-                                    {(userRole === 'ROLE_ADMIN' || ticket.status=="4") &&  (
+                                    {ticket.status=="4" &&  (
                                         <>
                                             <p><strong>Gain:</strong></p>
                                             <div className={`${styles.ticketCardIconsPrize}`}>
@@ -257,43 +317,42 @@ function TicketsPageDashboard() {
                                         </>
                                     )}
 
-
-
                                     {ticket.status=="1" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de Génération:</strong>Le {ticket.ticket_generated_at.date} à {ticket.ticket_generated_at.time} </p>
+                                        <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de Génération:</strong>Le {ticket.ticket_generated_at.date} à {ticket.ticket_generated_at.time} </p>
                                     )}
                                     {ticket.status=="2" && (
-                                        <>
-                                            <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Caisser:</strong> {ticket.employee.lastname}  {ticket.employee.firstname} (#{ticket.employee.id}) </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Caisser E-mail:</strong> {ticket.employee.email}  </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Magasin associé:</strong> {ticket.store.name}  </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
-                                        </>
-                                         )}
+                                        <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
+                                    )}
                                     {ticket.status=="3" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                        <>
+                                            <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant:</strong> {ticket.user.lastname} {ticket.user.firstname} </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant ID :</strong> #{ticket.user.id}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant E-mail :</strong> {ticket.user.email}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant N° Tel :</strong> {ticket.user.phone}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
+
+
+
+
+                                        </>
                                     )}
                                     {ticket.status=="4" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
+                                        <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
                                     )}
 
-                                    {ticket.status=="3" && (userRole=="ROLE_ADMIN" || userRole=="ROLE_STOREMANAGER") &&
-                                        (
-                                            <a
-                                                onClick={() => {
 
-                                                }}
-                                                className={`${styles.cancelTicketBtn} mt-3`}  title={`Annuler le ticket`}  >
-                                                Annuler le ticket <CloseCircleOutlined />
-                                            </a>
-
-                                        )}
-
-                                    <Button className={`${styles.eyeIcon} mt-3`}  title={`Plus de détails`} icon={<EyeOutlined />} size={"large"} >
-                                    Consulter
+                                    {ticket.status=="3" && (
+                                    <Button
+                                        onClick={() => {
+                                            confirmGain(ticket.id , ticket.prize.id,
+                                            ticket.prize.label , ticket.ticket_code , ticket.user.lastname , ticket.user.firstname , ticket.user.email);
+                                        }}
+                                        className={`${styles.confirmGainBtn} mt-5`}  title={`Consulter et confirmer le gain`}  size={"large"} >
+                                    Consulter et confirmer le gain <GiftOutlined />
                                     </Button>
 
-
+                                    )}
 
 
                                 </div>
@@ -317,51 +376,11 @@ function TicketsPageDashboard() {
         });
     };
 
-    const {token} = theme.useToken();
     const [form] = Form.useForm();
     const [expand, setExpand] = useState(false);
 
-    const formStyle: React.CSSProperties = {
-        maxWidth: 'none',
-        background: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        padding: 24,
-    };
 
 
-
-    const renderStores = () => {
-        return (
-                <StoresList onSelectStore={handleStoreChange}></StoresList>
-        )
-    }
-
-    const renderTicketsStatus = () => {
-        return (
-            <>
-                <Option value="">
-                    Tous les Statuts
-                </Option>
-                {userRole === 'ROLE_ADMIN' && (
-                    <>
-                        <Option  value="1">
-                            Ticket Généré
-                        </Option>
-                        <Option value="2">Ticket Imprimé</Option>
-                    </>
-                )}
-                {userRole==="ROLE_EMPLOYEE" && (
-                    <>
-                        <Option value="2">Ticket Imprimé</Option>
-                    </>
-                )}
-                <Option value="3">Ticket en attente de vérification</Option>
-                <Option value="4">Ticket Gagnant</Option>
-                <Option value="5">Ticket Expiré</Option>
-                <Option value="6">Ticket Annuler</Option>
-            </>
-        )
-    }
 
     const [prizesList, setPrizesList] = useState<PrizeType[]>([]);
     function getAllPrizes() {
@@ -380,32 +399,40 @@ function TicketsPageDashboard() {
         })
     }
 
+    const [userStoreId , setUserStoreId] = useState<string>('');
+    const [clientsList , setClientsList] = useState<any[]>([]);
     useEffect(() => {
-        getAllPrizes();
-    },[]);
+        const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+        setUserStoreId(user['store'][0][0]['id']);
+    }, []);
 
-    const renderTicketsPrizes = () => {
-        return (
-            <>
-                <Option value="">
-                    Tous les Gains
-                </Option>
-                {prizesList.map((prize, key) => {
-                    return (
-                        <Option key={key} value={prize.id}>{prize.label}</Option>
-                    )
-                })}
 
-            </>
-        )
-    }
+    useEffect(() => {
+        if(userStoreId != '' && userStoreId != null){
+            getStoreClientsList(userStoreId).then((response) => {
+                console.log('response : ', response);
+                setClientsList(response.users);
+            });
+        }
+    }, [userStoreId]);
+
+
+    const onChangeClientList = (value: string) => {
+        setSearchParam({
+            ...searchParam,
+            client: value,
+        });
+    };
+
+    const onSearchClientList = (value: string) => {    }
+    const filterOption = (input: string, item: any) => (item?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const getFields = () => {
         const count = expand ? 10 : 6;
         const children = [];
         children.push(
             <Row className={`${styles.fullWidthElement} w-100 d-flex`} gutter={24}>
-                <Col span={8} key={`barCode`}>
+                <Col span={24} key={`barCode`}>
                     <Form.Item
                         className={`${styles.formItem} searchTicketFormItem mb-5`}
                         name={`code`}
@@ -420,105 +447,34 @@ function TicketsPageDashboard() {
                                }}
                         />
                     </Form.Item>
+                </Col>
 
-                    {userRole === 'ROLE_ADMIN' || userRole === 'ROLE_STOREMANAGER' && (
-                        <>
-                        <Form.Item
+                <Col span={24} key={`client`}>
+                    <Form.Item
                         className={`${styles.formItem} searchTicketFormItem mb-5`}
                         name={`client`}
                         label={`Client`}
                         initialValue=""
                     >
-                        <Input className={`mt-2`}
-                               placeholder="Nom, Prénom, de Client"
-                               onChange={(e) => {
-                                   setSearchParam({
-                                       ...searchParam,
-                                       client: e.target.value,
-                                   });
-                               }}
-                        />
-                    </Form.Item>
-                        </>
-                        )}
-
-                </Col>
-                <Col span={8} key={`statusTicket`}>
-
-
-                    <Form.Item
-                        className={`${styles.formItem} searchTicketFormItem mb-5`}
-                        name={`status`}
-                        label={`Statut de Ticket`}
-                        initialValue=""
-                    >
-
-                        <Select placeholder={`Tous les Statuts`} value={searchParam.status} onChange={(e) => {
-                            setSearchParam({
-                                ...searchParam,
-                                status: e.toString(),
-                            });
-                        }} className={`mt-2`}>
-                            {renderTicketsStatus()}
+                        <Select showSearch
+                                onChange={onChangeClientList}
+                                onSearch={onSearchClientList}
+                                filterOption={filterOption as any}
+                                className={`mt-2`} placeholder="Choisir un client"
+                                notFoundContent={
+                                <span className={`m-4`}>Aucun client trouvé</span>
+                        }
+                        >
+                            <Option value="" label={`Tous les clients`}>
+                                Tous les clients
+                            </Option>
+                            {clientsList.map((client, key) => (
+                                <Option key={key} value={client.id} label={`${client.lastname} ${client.firstname}`}>
+                                    {`${client.lastname} ${client.firstname}`}
+                                </Option>
+                            ))}
                         </Select>
                     </Form.Item>
-
-                    {userRole === 'ROLE_ADMIN' || userRole === 'ROLE_STOREMANAGER' && (
-                        <>
-                            <Form.Item
-                                className={`${styles.formItem} searchTicketFormItem mb-5`}
-
-                                name={`caissier`}
-                                label={`Caissier`}
-                                initialValue=""
-                            >
-                                <Input
-                                    className={`mt-2`}
-                                    placeholder="Nom, Prénom, de Caissier"
-                                    onChange={(e) => {
-                                        setSearchParam({
-                                            ...searchParam,
-                                            caissier: e.target.value,
-                                        });
-                                    }}
-                                />
-                            </Form.Item>
-                        </>
-                    )}
-
-                </Col>
-
-                <Col span={8} key={`storesTicketsList`}>
-                    {userRole === 'ROLE_ADMIN' && (
-                    <>
-                        {renderStores()}
-                    </>
-                        )}
-
-
-
-                    {expand && (
-                        <>
-                            <Form.Item
-                                name={`gain`}
-                                label={`Gain`}
-                                initialValue=""
-                                className={`${styles.formItem} searchTicketFormItem mb-5`}
-                            >
-                                <Select onChange={
-                                    (e) => {
-                                        setSearchParam({
-                                            ...searchParam,
-                                            prize: e.toString(),
-                                        });
-                                    }
-                                } placeholder={`Tous les Gains`
-                                } className={`mt-2`}>
-                                    {renderTicketsPrizes()}
-                                </Select>
-                            </Form.Item>
-                        </>
-                    )}
                 </Col>
 
 
@@ -531,7 +487,7 @@ function TicketsPageDashboard() {
     const renderSearchForm = () => {
         return (
             <>
-                <Form form={form} name="advanced_search" className={`${styles.searchTicketForm}`}>
+                <Form form={form} name="advanced_search" className={`${styles.searchOneTicketForm}`}>
                     <Row className={`${styles.fullWidthElement}`} gutter={24}>{getFields()}</Row>
                     <div className={`mt-0 w-100`} style={{textAlign: 'right'}}>
                         <Space size="small">
@@ -545,18 +501,6 @@ function TicketsPageDashboard() {
                             >
                                 Réinitialiser
                             </Button>
-                            {userRole === 'ROLE_ADMIN' && (
-                            <a
-                                className={`${styles.moreFiltersBtn} ${expand ? styles.moreFiltersBtnActive : styles.moreFiltersBtnInactive}`}
-                                style={{fontSize: 12}}
-                                onClick={() => {
-                                    setExpand(!expand);
-                                }}
-                            >
-                                <DownOutlined
-                                    rotate={expand ? 180 : 0}/> {!expand ? 'Plus de filtres' : 'Moins de filtres'}
-                            </a>
-                                )}
                         </Space>
                     </div>
                 </Form>
@@ -571,29 +515,7 @@ function TicketsPageDashboard() {
 
             <div className={`${styles.homePageContentTopHeader}`}>
                 <h1 className={`mx-3`}>
-                    {userRole === 'ROLE_ADMIN' && (
-                        <>
-                            Tickets et codes générés
-                        </>
-                        )}
-                    {userRole === 'ROLE_STOREMANAGER' && (
-                        <>
-                            Tickets associés au magasin
-                        </>
-                    )}
-
-                    {userRole === 'ROLE_CLIENT' && (
-                        <>
-                            Tickets associés au client
-                        </>
-                    )}
-                    {userRole === 'ROLE_EMPLOYEE' && (
-                        <>
-                            Tickets associés au caissier
-                        </>
-                    )}
-
-
+                    Confirmer un gain
                 </h1>
                 <div className={`${styles.ticketsCardsMain}`}>
 
@@ -615,7 +537,7 @@ function TicketsPageDashboard() {
                                         Résultat de recherche
                                     </h6>
                                        <h6>
-                                           {data?.length} Utilisateur(s) trouvé(s) sur {totalTicketsCount}
+                                           {data?.length} Ticket(s) trouvé(s) sur {totalTicketsCount}
                                        </h6>
 
                                    </Col>
@@ -631,6 +553,7 @@ function TicketsPageDashboard() {
                                    )}
                                </>
                                )}
+
                         </Row>
                         {!loading && totalTicketsCount>0 &&
                             <Row className={`${styles.fullWidthElement} w-100 mt-5 justify-content-center`}
@@ -660,4 +583,4 @@ function TicketsPageDashboard() {
     );
 }
 
-export default TicketsPageDashboard;
+export default ConfirmTicketGain;

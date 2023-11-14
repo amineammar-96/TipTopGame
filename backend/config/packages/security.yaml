@@ -34,15 +34,15 @@ security:
    
     access_control:
         - { path: ^/api/admin/stores, roles: [ROLE_ADMIN] }
-        - { path: ^/api/store/\d+, roles: [ROLE_ADMIN , ROLE_STOREMANAGER, ROLE_EMPLOYE] }
+        - { path: ^/api/store/\d+, roles: [ROLE_ADMIN , ROLE_STOREMANAGER, ROLE_EMPLOYEE] }
         - { path: ^/api/admin/store/add, roles: [ROLE_ADMIN] }
-        - { path: ^/api/admin/store/update/\d+, roles: [ROLE_ADMIN] }
+        - { path: ^/api/admin/store/update/\d+, roles: [ROLE_ADMIN, ROLE_STOREMANAGER] }
         - { path: ^/api/admin/store/delete/\d+, roles: [ROLE_ADMIN] }
-        - { path: ^/api/admin/store/\d+/users, roles: [ROLE_ADMIN] }
+        - { path: ^/api/admin/store/\d+/users, roles: [ROLE_ADMIN,ROLE_STOREMANAGER] }
         - { path: ^/api/store/\d+/users/, roles: [ROLE_ADMIN, ROLE_STOREMANAGER] }
         - { path: ^/api/store/\d+/user/add, roles: [ROLE_ADMIN, ROLE_STOREMANAGER] }
-        - { path: ^/api/store/\d+/user/update/\d+, roles: [ROLE_ADMIN, ROLE_STOREMANAGER, ROLE_EMPLOYE] }
-        - { path: ^/api/client/stores+, roles: [ROLE_CLIENT] }
+        - { path: ^/api/store/\d+/user/update/\d+, roles: [ROLE_ADMIN, ROLE_STOREMANAGER, ROLE_EMPLOYEE] }
+        - { path: ^/api/client/stores+, roles: [ROLE_CLIENT,ROLE_STOREMANAGER,ROLE_EMPLOYEE] }
         - { path: ^/api/client/store/associate, roles: [ROLE_CLIENT] }
 
 

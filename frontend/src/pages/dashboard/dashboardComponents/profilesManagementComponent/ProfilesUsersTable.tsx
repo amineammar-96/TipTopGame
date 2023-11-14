@@ -38,18 +38,41 @@ function ProfilesUsersTable({selectedStoreId}: storeUsersTableProps) {
 
     }, [selectedStoreId]);
 
+    useEffect(() => {
+        getAllProfilesByStoreId(selectedStoreId).then((response) => {
+            console.log("response tabssss :",response);
+            setClientsCount(response.storeClientUsersCount);
+            setEmployeesCount(response.storeEmployeeUsersCount);
+            setManagersCount(response.storeManagerUsersCount);
+        }).catch((error) => {
+
+        })
+
+    }, []);
+
+    const onUsersTableUpdate = () => {
+        getAllProfilesByStoreId(selectedStoreId).then((response) => {
+            console.log("response tabssss :",response);
+            setClientsCount(response.storeClientUsersCount);
+            setEmployeesCount(response.storeEmployeeUsersCount);
+            setManagersCount(response.storeManagerUsersCount);
+        }).catch((error) => {
+
+        })
+    }
+
     return (
         <Row className={`${styles.fullWidthElement}`}>
             <Col className={`${styles.fullWidthElement} px-5`}>
                 <Tabs activeKey={activeTab} onChange={onTabChange}>
                     <Tabs.TabPane key='1' tab={`Managers ( ${managersCount} )`}>
-                        {activeTab === '1' && <StoreManagerTable roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_STOREMANAGER"} />}
+                        {activeTab === '1' && <StoreManagerTable onUpdate={onUsersTableUpdate} roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_STOREMANAGER"} />}
                     </Tabs.TabPane>
                     <Tabs.TabPane key='2' tab={`Employés ( ${employeesCount} )`} >
-                        {activeTab === '2' && <StoreManagerTable roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_EMPLOYEE"} />}
+                        {activeTab === '2' && <StoreManagerTable onUpdate={onUsersTableUpdate} roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_EMPLOYEE"} />}
                     </Tabs.TabPane>
                     <Tabs.TabPane key='3' tab={`Clients ( ${clientsCount} )`}  >
-                        {activeTab === '3' && <StoreManagerTable roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_CLIENT"} />}
+                        {activeTab === '3' && <StoreManagerTable onUpdate={onUsersTableUpdate} roleKey={activeTab} selectedStoreId={selectedStoreId} profilesRole={"ROLE_CLIENT"} />}
                     </Tabs.TabPane>
                 </Tabs>
             </Col>

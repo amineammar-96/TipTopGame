@@ -87,6 +87,10 @@ function ParticipantManagementPageDashboard() {
     const [loading, setLoading] = useState(false);
     const [searchParam, setSearchParam] = useState<SearchParams>(defaultSearchParams);
     const [clientsCount, setClientsCount] = useState(0);
+    const [userRole , setUserRole] = useState<string | null>('');
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
 
     const [resultCount, setResultCount] = useState(0);
 
@@ -281,7 +285,12 @@ function ParticipantManagementPageDashboard() {
                 </Col>
 
                 <Col span={8} key={`stores`}>
-                    {renderStores()}
+                    {userRole === 'ROLE_ADMIN' && (
+                    <>
+                        {renderStores()}
+                    </>
+                        )}
+
 
 
                     {expand && (

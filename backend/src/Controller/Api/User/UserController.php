@@ -154,6 +154,13 @@ class UserController extends AbstractController
                 ->setParameter('gender', '%' . strtolower(trim($sexe)) . '%');
         }
 
+        $userRole = $this->getUser()->getRoles()[0];
+        if($userRole == Role::ROLE_STOREMANAGER){
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
+        }
+
 
         $totalCount = count($qb->getQuery()->getResult());
 
@@ -242,6 +249,12 @@ class UserController extends AbstractController
                 ->setParameter('gender', '%' . strtolower(trim($sexe)) . '%');
         }
 
+        $userRole = $this->getUser()->getRoles()[0];
+        if($userRole == Role::ROLE_STOREMANAGER){
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
+        }
 
         $totalCount = count($qb->getQuery()->getResult());
 
@@ -269,5 +282,67 @@ class UserController extends AbstractController
             'resultCount' => count($users),
             'status' => 'success',
         ]);
+    }
+
+
+    public function getStoreClients(int $id): JsonResponse
+    {
+        $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);
+        if (!$store) {
+            return $this->json([
+                'error' => 'Store not found'
+            ], 404);
+        }
+
+        $users = $store->getUsers();
+
+        $usersJson = [];
+        foreach ($users as $user) {
+            $userRole = $user->getRoles()[0];
+            if ($userRole == Role::ROLE_CLIENT) {
+                $usersJson[] =
+                    $user->getUserJson();
+            }
+        }
+
+        return $this->json([
+            'users' => $usersJson,
+            'status' => 'success',
+        ]);
+    }
+
+    //getEmployeesList
+    public function getEmployeesList(Request $request): JsonResponse
+    {
+
+        $store =  $request->get('store' , null);
+
+        $qb = $this->entityManager->createQueryBuilder('u');
+        $qb->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.role', 'ur')
+            ->where('ur.name = :role')
+            ->setParameter('role', 'ROLE_EMPLOYEE');
+
+        if ($store != "" && $store != null) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
+        }
+
+
+        $users = $qb->getQuery()->getResult();
+
+        $usersJson = [];
+        foreach ($users as $user) {
+            $usersJson[] =
+                $user->getUserJson();
+        }
+
+        return $this->json([
+            'users' => $usersJson,
+            'status' => 'success',
+        ]);
+
     }
 }

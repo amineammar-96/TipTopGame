@@ -112,6 +112,14 @@ get_tickets:
     controller: App\Controller\Api\Ticket\TicketController::getTickets
     methods: GET|POST
 
+#getTicketByCode
+get_ticket_by_code:
+    path: /api/ticket/{code}
+    controller: App\Controller\Api\Ticket\TicketController::getTicketByCode
+    methods: GET
+    requirements:
+        code: .+
+
 #getAllPrizes
 get_all_prizes:
     path: /api/prizes
@@ -135,3 +143,53 @@ check_ticket_play:
     path: /api/tickets/check/play
     controller: App\Controller\Api\Ticket\TicketController::checkTicketForPlay
     methods: POST
+
+
+get_storemanager_store:
+    path: /api/storemanager/{id}/store
+    controller: App\Controller\Api\Store\StoreController::getStoreForStoreManager
+    methods: GET
+    requirements:
+        id: \d+
+
+#print_ticket by employee
+print_ticket_by_employee:
+    path: /api/print_ticket
+    controller: App\Controller\Api\Ticket\TicketController::printTicketByEmployee
+    methods: POST
+
+#get_store_clients
+get_store_clients:
+    path: /api/store/{id}/clients
+    controller: App\Controller\Api\User\UserController::getStoreClients
+    methods: GET
+    requirements:
+        id: \d+
+
+#confirm_ticket_play
+confirm_ticket_play:
+    path: /api/ticket/confirm/play
+    controller: App\Controller\Api\Ticket\TicketController::confirmTicketPlay
+    methods: POST
+
+
+confirm_ticket_gain:
+    path: /api/ticket/confirm/gain
+    controller: App\Controller\Api\Ticket\TicketController::confirmTicketGain
+    methods: POST
+
+
+
+#employees_list
+get_employees_list:
+    path: /api/employees
+    controller: App\Controller\Api\User\UserController::getEmployeesList
+    methods: GET
+    requirements:
+        id: \d+
+
+#winner_tickets
+get_winner_tickets:
+    path: /api/winner_tickets
+    controller: App\Controller\Api\Ticket\TicketController::getWinnerTickets
+    methods: GET

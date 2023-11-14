@@ -38,14 +38,8 @@ class StoreUserController extends AbstractController
 
     }
 
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     */
 
 
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     */
     public function getStoreUsersForAdmin(int $id): JsonResponse
     {
         $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);

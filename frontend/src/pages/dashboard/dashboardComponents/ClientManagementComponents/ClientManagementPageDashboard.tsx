@@ -126,7 +126,10 @@ function ClientManagementPageDashboard() {
     useEffect(() => {
         fetchData();
     }, [searchParam]);
-
+    const [userRole , setUserRole] = useState<string | null>('');
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+    }, []);
 
 
 
@@ -295,7 +298,12 @@ function ClientManagementPageDashboard() {
                 </Col>
 
                 <Col span={8} key={`stores`}>
-                    {renderStores()}
+                    {userRole === 'ROLE_ADMIN' && (
+                        <>
+                            {renderStores()}
+                        </>
+                    )}
+
 
 
                     {expand && (
@@ -377,9 +385,6 @@ function ClientManagementPageDashboard() {
 
     }
 
-
-    // @ts-ignore
-    // @ts-ignore
     return (
         <div className={styles.homePageContent}>
 

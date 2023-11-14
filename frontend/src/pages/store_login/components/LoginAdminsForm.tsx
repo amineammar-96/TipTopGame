@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react'
 import {Container, Row, Col} from 'react-bootstrap';
 import RedirectService from '../../../app/service/RedirectService';
 
-import {Button, Space} from 'antd';
+import {Button, message, Space} from 'antd';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -52,6 +52,7 @@ export default function LoginAdminsForm() {
     }, []);
 
     const [userForm, setUserForm] = useState(userFormData);
+    const [loginError, setLoginError] = useState(false);
 
 
 
@@ -77,6 +78,7 @@ export default function LoginAdminsForm() {
 
     function login(formData: FieldType) {
         loginAdmin(formData).then((res) => {
+            setLoginError(false);
             console.log("res : ", res);
             const loggedInUserToken = res.token;
             const loggedInUser = res.userJson;
@@ -91,6 +93,9 @@ export default function LoginAdminsForm() {
 
 
         }).catch((err) => {
+            setLoginError(true);
+            message.destroy();
+            message.error('E-mail ou mot de passe incorrect !');
             console.log(err);
         });
     }
@@ -143,7 +148,8 @@ export default function LoginAdminsForm() {
                             <Form.Item<FieldType>
                                 name="email"
                                 rules={[{required: true, message: validateMessages['required']}]}
-                                className={`${styles.antdLoginInputs}`}
+                                className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
+                                validateStatus={loginError ? 'error' : ''}
                             >
                                 <Input
                                     autoComplete="on"
@@ -156,7 +162,9 @@ export default function LoginAdminsForm() {
                             <Form.Item<FieldType>
                                 name="password"
                                 rules={[{required: true, message: validateMessages['required']}]}
-                                className={`${styles.antdLoginInputs}`}
+                                className={`${styles.antdLoginInputs} ${loginError ? styles.errorInput : ''}`}
+                                validateStatus={loginError ? 'error' : ''}
+
 
                             >
                                 <Input.Password

@@ -1,7 +1,7 @@
 import React, {Component, useEffect, useState} from 'react';
-import Sidebar from "@/pages/dashboard/storeAdmin/components/sidebar";
+import Sidebar from "@/pages/dashboard/storeManager/components/sidebar";
 import {Row,Col} from "antd";
-import TopNavBar from "@/pages/dashboard/storeAdmin/components/topNavBar";
+import TopNavBar from "@/pages/dashboard/storeManager/components/topNavBar";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 import StoresManagement from "@/pages/dashboard/dashboardComponents/storeManagementComponent/StoresManagement";
@@ -63,8 +63,6 @@ function storeAdminDashboard() {
                             {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
                             {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                             {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
-
-
 
 
                         </Row>
