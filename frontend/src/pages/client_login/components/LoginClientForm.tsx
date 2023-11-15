@@ -12,7 +12,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 import '../../../app/globals.css'
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
 
 import styles from '../../../styles/pages/clientLoginPage.module.css';
 import Icon, {
@@ -146,11 +146,16 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
     return (
         <div className={`${styles.loginForm} `}>
             <Row className={`${styles.loginFormTopHeader} p-0 m-0`}>
+                <Col md={1}>
+                    <a href="/">
+                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
+                    </a>
+                </Col>
                 <Col>
                     <h1>Connexion à votre compte</h1>
                 </Col>
 
-                <Col className={`d-flex justify-content-end`}>
+                <Col className={`d-flex justify-content-end`} style={{maxWidth: '5rem'}}>
                     <LoginOutlined className={`${styles.loginIcon}`} />
 
                 </Col>
@@ -293,7 +298,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                 </Col>
             </Row>
 
-            <Row className="px-3 py-2 mt-5 pt-4">
+            <Row className="px-3 py-2 mt-5 pt-2">
                 <Col className={`w-100 d-flex`} >
                     <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
                         <div className={`${styles.containerLoginFooterLinks} d-flex `}>

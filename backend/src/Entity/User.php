@@ -68,11 +68,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Ticket::class)]
     private Collection $ticketsEmployee;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TicketHistory::class)]
+    private Collection $ticketHistories;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->ticketsEmployee = new ArrayCollection();
+        $this->ticketHistories = new ArrayCollection();
     }
 
 
@@ -380,6 +384,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ticketsEmployee->getEmployee() === $this) {
                 $ticketsEmployee->setEmployee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TicketHistory>
+     */
+    public function getTicketHistories(): Collection
+    {
+        return $this->ticketHistories;
+    }
+
+    public function addTicketHistory(TicketHistory $ticketHistory): static
+    {
+        if (!$this->ticketHistories->contains($ticketHistory)) {
+            $this->ticketHistories->add($ticketHistory);
+            $ticketHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketHistory(TicketHistory $ticketHistory): static
+    {
+        if ($this->ticketHistories->removeElement($ticketHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($ticketHistory->getUser() === $this) {
+                $ticketHistory->setUser(null);
             }
         }
 

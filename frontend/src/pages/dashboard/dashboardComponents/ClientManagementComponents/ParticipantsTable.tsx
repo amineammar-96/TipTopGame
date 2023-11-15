@@ -86,7 +86,7 @@ const {Option} = Select;
 
 
 interface storeManagersTableProps {
-    selectedStoreId: string;
+    selectedStoreId?: string|null;
     data: DataType ;
 }
 

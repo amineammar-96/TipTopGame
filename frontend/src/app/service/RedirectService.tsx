@@ -16,7 +16,6 @@ const RedirectService = () => {
         const role = localStorage.getItem('loggedInUserRole');
 
 
-
         if ((token != null || token != "") && role == "ROLE_ADMIN") {
             console.log("redirecting to store admin dashboard");
             router.push("/dashboard/storeAdmin");

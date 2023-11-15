@@ -171,3 +171,31 @@ export async function facebookCallBack() {
 
     return await fetchJson('/oauth/facebook/callback', config);
 }
+
+export async function getClientDashboardCardsCounters() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson('/client/dashboard/counters', config);
+}
+
+export async function getAdminDashboardCardsCounters() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson('/admin/dashboard/counters', config);
+}

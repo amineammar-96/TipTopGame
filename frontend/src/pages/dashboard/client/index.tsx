@@ -28,7 +28,7 @@ function ClientDashboard() {
     const { redirectUserToHomePage } = RedirectService();
     const [loading, setLoading] = useState(true);
 
-    const [selectedMenuItem, setSelectedMenuItem] = useState<string>("dashboardItem");
+    const [selectedMenuItem, setSelectedMenuItem] = useState<string>("playGameItem");
 
     useEffect(() => {
         const selectedMenuItemSaved = localStorage.getItem("selectedMenuItem");
@@ -57,7 +57,45 @@ function ClientDashboard() {
         }
     }, []);
 
+
+    const [userRrole , setUserRole] = useState<string | null>(null);
+    const [userToken , setUserToken] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+        setUserToken(localStorage.getItem('loggedInUserToken'));
+        if (userToken == null && userToken == "") {
+            window.location.href = '/client_login';
+        }
+        setLoading(true)
+    }, []);
+
+    useEffect(() => {
+        setLoading(true);
+        if (userRrole == "ROLE_STOREMANAGER") {
+            window.location.href = '/dashboard/storeManager';
+        }
+        if (userRrole == "ROLE_EMPLOYEE") {
+            window.location.href = '/dashboard/storeEmployee';
+        }
+        if (userRrole == "ROLE_CLIENT") {
+            setLoading(false);
+        }
+
+        if (userRrole == "ROLE_ADMIN") {
+            window.location.href = '/dashboard/storeAdmin';
+        }
+
+
+
+        }, [userRrole]);
+
     return (
+        <>
+            {loading && (
+                <SpinnigLoader></SpinnigLoader>
+            )}
+            {!loading && (
+                <>
         <div>
             {loading && <SpinnigLoader></SpinnigLoader>}
 
@@ -88,6 +126,9 @@ function ClientDashboard() {
             </Row>
             }
         </div>
+                </>
+            )}
+        </>
     );
 
 }

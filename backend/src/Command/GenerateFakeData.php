@@ -77,11 +77,11 @@ class GenerateFakeData extends Command
             ->getQuery()
             ->getSingleScalarResult();
 
-        $offset = mt_rand(0, max(0, $totalTickets - 100));
+        $offset = mt_rand(0, max(0, $totalTickets - 1000));
 
         return $ticketRepository->createQueryBuilder('t')
             ->setFirstResult($offset)
-            ->setMaxResults(100)
+            ->setMaxResults(1000)
             ->getQuery()
             ->getResult();
     }
@@ -108,7 +108,7 @@ class GenerateFakeData extends Command
             $this->entityManager->persist($store);
         }
 
-        $output->writeln('10 stores added to the store table.');
+        $output->writeln('20 stores added to the store table.');
         $this->entityManager->flush();
     }
 
@@ -126,7 +126,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -135,6 +135,7 @@ class GenerateFakeData extends Command
             $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
             $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
             $user->setStatus(User::STATUS_OPEN);
+            $user->setPhone(Factory::create()->phoneNumber);
             $plainPassword="azerty";
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
@@ -147,7 +148,7 @@ class GenerateFakeData extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln('20 managers added to the user table. (relationship too)');
+        $output->writeln('200 managers added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -166,7 +167,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 300; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -174,6 +175,7 @@ class GenerateFakeData extends Command
             $user->setLastname(Factory::create()->lastName);
             $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
             $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
+            $user->setPhone(Factory::create()->phoneNumber);
             $plainPassword="azerty";
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
@@ -187,7 +189,7 @@ class GenerateFakeData extends Command
         }
         $this->entityManager->flush();
 
-        $output->writeln('20 employees added to the user table. (relationship too)');
+        $output->writeln('300 employees added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -206,7 +208,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -215,6 +217,7 @@ class GenerateFakeData extends Command
             $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
             $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
             $user->setStatus(User::STATUS_OPEN);
+            $user->setPhone(Factory::create()->phoneNumber);
             $plainPassword="azerty";
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
@@ -226,7 +229,7 @@ class GenerateFakeData extends Command
         }
         $this->entityManager->flush();
 
-        $output->writeln('20 clients added to the user table. (relationship too)');
+        $output->writeln('500 clients added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -240,9 +243,9 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        $clients = $this->getRandomUsersByRole($clientRole, 10);
+        $clients = $this->getRandomUsersByRole($clientRole, 100);
 
-        $employees = $this->getRandomUsersByRole($employeeRole, 10);
+        $employees = $this->getRandomUsersByRole($employeeRole, 100);
 
         foreach ($randomTickets as $ticket) {
             $client = $clients[array_rand($clients)];

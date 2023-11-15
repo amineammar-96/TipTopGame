@@ -6,11 +6,10 @@ import  SpinAndWin  from 'react-spin-game'
 import  'react-spin-game/dist/index.css'
 import LockImg from '@/assets/images/lock.png';
 import Image from "next/image";
-// @ts-ignore
 import WheelComponent from 'react-wheel-of-prizes';
 
 import {Modal, Space } from 'antd';
-import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket} from "@/app/api";
+import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket, getGainTicketHistory} from "@/app/api";
 import {GiftOutlined, InfoOutlined, SyncOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
@@ -21,8 +20,10 @@ import SurpriseBoxImg from "@/assets/images/surprise.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import CongratulationsImg from "@/assets/images/congratulations.png";
 import BalloonImg from "@/assets/images/balloon.png";
-import GainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/GainsTable";
+import gameWallpaperImg from "@/assets/images/gameWallpaper.png";
 import BestGainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/BestGainsTable";
+import PrizesList from "@/pages/dashboard/client/components/PrizesList";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 interface PrizeType {
     'id' : any;
     'label' : any;
@@ -137,7 +138,10 @@ function PlayGameComponent() {
 
     const handleOk = () => {
         //setIsModalOpen(false);
-        checkCodeValidity();
+        if(ticketCode != ""){
+            checkCodeValidity();
+        }
+
     };
 
     const handleCancel = () => {
@@ -246,11 +250,7 @@ function PlayGameComponent() {
                                             </Tag>
 
                                         )}
-
-
                                     </p>
-
-
 
                                     <p className={`my-3`}></p>
                                     <div className={`${styles.ticketCardIconsPrize}`}>
@@ -260,11 +260,6 @@ function PlayGameComponent() {
 
                                     <Image src={CongratulationsImg} className={`${styles.emoji} ${styles.congEmoji}`} alt={"CongratulationsImg"}></Image>
                                     <Image src={BalloonImg} className={`${styles.emoji} ${styles.balloonEmoji}`} alt={"BalloonImg"}></Image>
-
-
-
-
-
                                 </div>
                             </div>
 
@@ -361,7 +356,7 @@ function PlayGameComponent() {
 
     //checkCodeValidity
     function checkCodeValidity() {
-        setLoading(true);
+        //setLoading(true);
         checkTicketCodeValidity(ticketCode).then((response) => {
             console.log(response.prize.id , "response.prize");
             setPrize([
@@ -380,7 +375,7 @@ function PlayGameComponent() {
             console.log("response" , formatPrizeById(response.prize.id));
             let formatPrizeByIdAux = formatPrizeById(response.prize.id);
             setFormatPrizeById(formatPrizeByIdAux);
-            setLoading(false);
+            //setLoading(false);
             setValidTicketCode(ticketCode);
             setPlayGame(true);
             setIsModalOpen(false);
@@ -391,7 +386,7 @@ function PlayGameComponent() {
                 okText: "D'accord",
             });
         }).catch((error) => {
-            setLoading(false);
+            //setLoading(false);
             console.log(error);
             if (error.response) {
                 if (error.response.status === 401) {
@@ -418,7 +413,7 @@ function PlayGameComponent() {
 
     function getGainTickets() {
         setLoading(true);
-        getGainTicket(searchParam).then((response) => {
+        getGainTicketHistory(searchParam).then((response) => {
             console.log('response : ', response);
             setGainTicketsList(response.gains);
             setGainTicketsCount(response.totalCount);
@@ -433,6 +428,7 @@ function PlayGameComponent() {
             }
         })
     }
+
 
     return (
         <div className={styles.homePageContent}>
@@ -451,11 +447,6 @@ function PlayGameComponent() {
                         <Row className={`${styles.fullWidthElement}  mt-5 mb-5 w-100`}
                              gutter={{xs: 8, sm: 16, md: 24, lg: 32}}>
 
-                            {loading &&
-                                <div className={`${styles.loadingDashboardFullPage}`}>
-                                    <Spin size="large"/>
-                                </div>
-                            }
                             {!loading && (
                                 <>
                                     <Col key={"gamePAgeCol"} className={`w-100 d-flex justify-content-between mt-3 px-4 ${styles.gameComponentDiv}`} xs={24} sm={24} md={24} lg={24} span={6}>
@@ -496,13 +487,23 @@ function PlayGameComponent() {
                                         )}
 
                                         {!playGame && (
-                                            <Image src={LockImg}
-                                                   onClick={() => {
-                                                       showModal();
-                                                   }}
-                                                   className={`${styles.spinWheelLock}`} alt={'LockImg'} />
 
-                                        )}
+                                            <>
+                                                <Image src={gameWallpaperImg}
+                                        onClick={() => {
+                                            showModal();
+                                        }}
+                                        className={`${styles.spinWheelLock}`} alt={'LockImg'} />
+                                                <div className={`${styles.spinWheelTitle}`} >
+                                                    <p>
+                                                        Veuillez entrer votre code de participation pour tourner la roue.
+                                                    </p>
+                                                    <p>
+                                                        Il vous reste que à cliquer sur la roue pour echanger votre code de ticket.
+                                                    </p>
+                                                </div>
+                                        </>
+                                            )}
 
 
                                         <Button className={`${styles.spinWheelBtn} ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheelBtn : ''}`}  onClick={() => {
@@ -513,27 +514,35 @@ function PlayGameComponent() {
                                             Tourner <SyncOutlined className={`mx-3`}></SyncOutlined>
                                         </Button>
 
-                                       <div className={`w-100 d-flex justify-content-between mt-3 px-4 ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheel : ''}`}>
-                                           <WheelComponent
-                                               className={styles.wheelGameDiv}
-                                               key={prize[0]?.id}
-                                               segments={segments}
-                                               segColors={segColors}
-                                               winningSegment={
-                                                   formatPrizeByIdGlobal
-                                               }
-                                               onFinished={(winner:any) => onFinished(winner)}
-                                               primaryColor='black'
-                                               contrastColor='black'
-                                               buttonText='Tentez'
-                                               buttonColor='white'
-                                               buttonTextColor='black'
-                                               isOnlyOnce={!playGame}
-                                               size={250}
-                                               upDuration={300}
-                                               downDuration={300}
-                                           />
-                                       </div>
+
+                                        {playGame && (
+                                            <>
+                                        <div
+                                            style={{ cursor: !playGame ? 'pointer' : 'default', pointerEvents: !playGame ? 'auto' : 'none' , minHeight: '100vh' }}
+                                            className={`w-100 d-flex justify-content-between mt-3 px-4 ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheel : ''}`}>
+
+                                                  <WheelComponent
+                                                        className={styles.wheelGameDiv}
+                                                        key={prize[0]?.id}
+                                                        segments={segments}
+                                                        segColors={segColors}
+                                                        winningSegment={
+                                                            formatPrizeByIdGlobal
+                                                        }
+                                                        onFinished={(winner:any) => onFinished(winner)}
+                                                        primaryColor='black'
+                                                        contrastColor='white'
+                                                        buttonText='Tentez'
+                                                        buttonColor='white'
+                                                        buttonTextColor='black'
+                                                        isOnlyOnce={!playGame}
+                                                        size={220}
+                                                        upDuration={800}
+                                                        downDuration={3000}
+                                                    />
+                                        </div>
+                                            </>
+                                        )}
                                     </Col>
 
                                 </>
@@ -549,12 +558,14 @@ function PlayGameComponent() {
 
 
 
-
-
-                <h2>
-                    Historique des gains
-                </h2>
-                    <BestGainsTable  key={gainTicketsCount} selectedStoreId={null} data={gainTicketsList as any} ></BestGainsTable>
+                    <div className={`d-flex flex-column`}>
+                        <div className={`${styles.historyGainTable} ${styles.fullWidthElement}`}>
+                            <BestGainsTable  key={gainTicketsCount} selectedStoreId={null} data={gainTicketsList as any} ></BestGainsTable>
+                        </div>
+                        <div className={`${styles.prizesCardsDiv} ${styles.fullWidthElement}`}>
+                                <PrizesList></PrizesList>
+                        </div>
+                    </div>
 
 
 
@@ -562,16 +573,36 @@ function PlayGameComponent() {
 
             <Modal title="Tentez votre chance" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>
-                    Veuillez entrer votre code de participation pour tourner la roue.
+                    - Veuillez entrer votre code de participation pour tourner la roue.
                 </p>
+                <p>
+                    - Aide : Votre code de participation est composé de 10 caractères, il commence par TK et se termine par 8 caractères alphanumériques.
+                </p>
+                <p>
+                    - Exemple : TKXXXXXXXX
+                </p>
+
+                <p>
+                    - Vous pouvez trouver votre code de participation dans votre ticket de caisse.
+                </p>
+
+
                 <Input
                 name="ticketCode"
-                placeholder="Entrez votre code de participation (#Code de ticket) TK-XXXXXXXX"
+                placeholder="Entrez votre code de participation (#Code de ticket) TKXXXXXXXX"
                 value={ticketCode}
                 onChange={(e) => setTicketCode(e.target.value)}
                 >
 
                 </Input>
+                <p className={`mt-3 mb-0`}>
+                    *Veuillez bien recpecter le format de votre code de participation.
+                </p>
+
+                <p className={`mt-0`}>
+                    *Le ticket dois être validé par un employé pour pouvoir tourner la roue.
+                </p>
+
             </Modal>
         </div>
     );

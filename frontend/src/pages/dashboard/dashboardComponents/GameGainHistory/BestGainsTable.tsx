@@ -11,7 +11,7 @@ import {
     Form,
     Input, message,
     Row,
-    Select, Space, Switch,
+    Select, Space, Spin, Switch,
     Table,
     Tag
 } from "antd";
@@ -36,6 +36,7 @@ import TeaBoxImg from "@/assets/images/teaBox.png";
 import TeaBoxSignatureImg from "@/assets/images/teaBoxSignature.png";
 import SurpriseBoxImg from "@/assets/images/surprise.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 
 interface DataType {
     status: string;
@@ -242,192 +243,199 @@ function BestGainsTable({selectedStoreId, data}: storeManagersTableProps) {
 
     const customEmptyText = (
         <div className={styles.emptyTableTextDiv}>
-            <span>Aucun Client trouvé
+            <span>Aucun Gain trouvé
             </span>
             <span><StopOutlined/></span>
         </div>
     );
 
+    const [loading, setLoading] = useState(false);
 
-    // @ts-ignore
+
     return (
         <>
-            <Row className={`${styles.fullWidthElement}`}>
-                <Col className={styles.fullWidthElement}>
-                    <ConfigProvider locale={frFR}>
-                        <Table
-                            className={`${styles.tableProfileManagement} tableClientManagement`}
-                            locale={{emptyText: customEmptyText}}
-                            columns={columns}
-                            rowKey={(record) => record.id}
-                            dataSource={data as any}
-                            pagination={false}
-                        />
-                    </ConfigProvider>
-                </Col>
-            </Row>
 
-            <Modal
-                title={
-                    <>
+            {!loading && (
+                <>
+                    <Row className={`${styles.fullWidthElement}`}>
+                        <h2>
+                            Historique des gains
+                        </h2>
+                        <Col className={styles.fullWidthElement}>
+                            <ConfigProvider locale={frFR}>
+                                <Table
+                                    className={`${styles.tableProfileManagement} tableClientManagement`}
+                                    locale={{emptyText: customEmptyText}}
+                                    columns={columns}
+                                    rowKey={(record) => record.id}
+                                    dataSource={data as any}
+                                    pagination={false}
+                                />
+                            </ConfigProvider>
+                        </Col>
+                    </Row>
+
+                    <Modal
+                        className={`${styles.modalDetails} detailsModalGain`}
+                        title={
+                            <>
                     <span className={`${styles.modalTitle}`}>
                         Détails du gain
                     </span>
-                    </>
-                }
-                centered
-                open={isModalOpen}
-                onOk={() => setIsModalOpen(false)}
-                onCancel={() => setIsModalOpen(false)}
-                width={700}
-            >
-                <Card className={`${styles.InfoCards} infoHistoryCard`} title={
-                    <span>
-                    <BarcodeOutlined style={{marginRight: 8}}/> Ticket
+                            </>
+                        }
+                        centered
+                        open={isModalOpen}
+                        onOk={() => setIsModalOpen(false)}
+                        onCancel={() => setIsModalOpen(false)}
+                        width={1000}
+                    >
+                        <Card className={`${styles.InfoCards} infoHistoryCard`} title={
+                            <span>
+                    <BarcodeOutlined style={{marginRight: 8}}/> Ticket #{selectedRow?.ticket_code}
                     </span>
-                }>
-                    <div className={`${styles.InfoCardLeft}`}>
-                        <p>
-                            <strong>Code :</strong><span>#{selectedRow?.ticket_code}</span>
-                        </p>
-                        <p>
-                            <strong>Date de génération
-                                :</strong><span>{selectedRow?.ticket_generated_at.date} à {selectedRow?.ticket_generated_at.time} </span>
-                        </p>
-                        <p>
-                            <strong>Date d'impression
-                                :</strong><span>{selectedRow?.ticket_printed_at.date} à {selectedRow?.ticket_printed_at.time}</span>
-                        </p>
-                    </div>
-                    <div className={`${styles.InfoCardRight}`}>
-                        <p>
-                            <strong>Date de gain
-                                :</strong><span>{selectedRow?.win_date.date} à {selectedRow?.win_date.time}</span>
-                        </p>
-                        <p>
-                            <strong>Date de remise
-                                :</strong><span>{selectedRow?.updated_at.date} à {selectedRow?.updated_at.time}</span>
-                        </p>
+                        }>
+                            <div className={`${styles.InfoCardLeft}`}>
+                                <p>
+                                    <strong>Date de génération
+                                        : <br/>
+                                    </strong><span>{selectedRow?.ticket_generated_at.date} à {selectedRow?.ticket_generated_at.time} </span>
+                                </p>
+                                <p>
+                                    <strong>Date d'impression
+                                        : <br/></strong><span>{selectedRow?.ticket_printed_at.date} à {selectedRow?.ticket_printed_at.time}</span>
+                                </p>
+                            </div>
+                            <div className={`${styles.InfoCardRight}`}>
+                                <p>
+                                    <strong>Date de gain
+                                        : <br/></strong><span>{selectedRow?.win_date.date} à {selectedRow?.win_date.time}</span>
+                                </p>
+                                <p>
+                                    <strong>Date de remise
+                                        : <br/></strong><span>{selectedRow?.updated_at.date} à {selectedRow?.updated_at.time}</span>
+                                </p>
 
-                    </div>
-                </Card>
+                            </div>
+                        </Card>
 
-                <Card title={
-                    <span>
+                        <Card title={
+                            <span>
           <GiftOutlined style={{marginRight: 8}}/> Récompense
         </span>
-                } className={`${styles.InfoCards} infoHistoryCard`} style={{marginTop: 16}}>
-                    <div className={`${styles.InfoCardLeft}`}>
-                        <p>
-                            <strong>Gain :</strong><span>{selectedRow?.prize.label}</span>
-                        </p>
-                        <p>
-                            <strong>Date de gain :</strong><span>{selectedRow?.win_date.date}</span>
-                        </p>
-                        <p>
-                            <strong>Date de remise :</strong><span>{selectedRow?.updated_at.date}</span>
-                        </p>
-                    </div>
-                    <div className={`${styles.InfoCardRight}`}>
-                        {renderPrizeImage(selectedRow?.prize.id)}
-                    </div>
-                </Card>
-                <Card className={`${styles.InfoCards} infoHistoryCard`} title={
-                    <span>
+                        } className={`${styles.InfoCards} infoHistoryCard`} style={{marginTop: 16}}>
+                            <div className={`${styles.InfoCardLeft}`}>
+                                <p>
+                                    <strong>Gain :</strong><span>{selectedRow?.prize.label}</span>
+                                </p>
+                                <p>
+                                    <strong>Date de gain :</strong><span>{selectedRow?.win_date.date}</span>
+                                </p>
+                                <p>
+                                    <strong>Date de remise :</strong><span>{selectedRow?.updated_at.date}</span>
+                                </p>
+                            </div>
+                            <div className={`${styles.InfoCardRight}`}>
+                                {renderPrizeImage(selectedRow?.prize.id)}
+                            </div>
+                        </Card>
+                        <Card className={`${styles.InfoCards} infoHistoryCard`} title={
+                            <span>
           <UserOutlined style={{marginRight: 8}}/> Participant
         </span>
-                } style={{marginTop: 16}}>
-                    <div className={`${styles.InfoCardLeft}`}>
-                        <p>
-                            <strong>Nom Prénom
-                                :</strong><span>{selectedRow?.user.lastname} {selectedRow?.user.firstname}</span>
-                        </p>
-                        <p>
-                            <strong>Date de naissance :</strong><span>{selectedRow?.employee.dateOfBirth}</span>
-                        </p>
-                        <p>
-                            <strong>Email :</strong><span>{selectedRow?.user.email}</span>
-                        </p>
-                    </div>
-                    <div className={`${styles.InfoCardRight}`}>
-                        <p>
-                            <strong>Identifiant :</strong><span>#{selectedRow?.user.id}</span>
-                        </p>
-                        <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.user.phone}</span>
-                        </p>
+                        } style={{marginTop: 16}}>
+                            <div className={`${styles.InfoCardLeft}`}>
+                                <p>
+                                    <strong>Nom Prénom
+                                        : <br/></strong><span>{selectedRow?.user.lastname} {selectedRow?.user.firstname}</span>
+                                </p>
+                                <p>
+                                    <strong>Date de naissance
+                                        : <br/></strong><span>{selectedRow?.employee.dateOfBirth}</span>
+                                </p>
+                                <p>
+                                    <strong>Email : <br/></strong><span>{selectedRow?.user.email}</span>
+                                </p>
+                            </div>
+                            <div className={`${styles.InfoCardRight}`}>
+                                <p>
+                                    <strong>Identifiant : <br/></strong><span>#{selectedRow?.user.id}</span>
+                                </p>
+                                <p>
+                                    <strong>Téléphone : <br/></strong><span>{selectedRow?.user.phone}</span>
+                                </p>
 
-                    </div>
-                </Card>
+                            </div>
+                        </Card>
 
-                <Card className={`${styles.InfoCards} infoHistoryCard`}
-                      title={
-                          <span>
+                        <Card className={`${styles.InfoCards} infoHistoryCard`}
+                              title={
+                                  <span>
                               <PrinterOutlined style={{marginRight: 8}}/> Caissier
                           </span>
-                      }
-                      style={{marginTop: 16}}>
-                    <div className={`${styles.InfoCardLeft}`}>
-                        <p>
-                            <strong>Nom Prénom
-                                :</strong><span>{selectedRow?.employee.lastname} {selectedRow?.employee.firstname}</span>
-                        </p>
-                        <p>
-                            <strong>Email :</strong><span>{selectedRow?.employee.email}</span>
-                        </p>
-                    </div>
-                    <div className={`${styles.InfoCardRight}`}>
-                        <p>
-                            <strong>Identifiant :</strong><span>#{selectedRow?.employee.id}</span>
-                        </p>
-                        <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.employee.phone}</span>
-                        </p>
+                              }
+                              style={{marginTop: 16}}>
+                            <div className={`${styles.InfoCardLeft}`}>
+                                <p>
+                                    <strong>Nom Prénom
+                                        : <br/></strong><span>{selectedRow?.employee.lastname} {selectedRow?.employee.firstname}</span>
+                                </p>
+                                <p>
+                                    <strong>Email : <br/></strong><span>{selectedRow?.employee.email}</span>
+                                </p>
+                            </div>
+                            <div className={`${styles.InfoCardRight}`}>
+                                <p>
+                                    <strong>Identifiant : <br/></strong><span>#{selectedRow?.employee.id}</span>
+                                </p>
+                                <p>
+                                    <strong>Téléphone : <br/></strong><span>{selectedRow?.employee.phone}</span>
+                                </p>
 
-                    </div>
-                </Card>
+                            </div>
+                        </Card>
 
 
-                <Card className={`${styles.InfoCards} infoHistoryCard`}  title={
-                    <span>
+                        <Card className={`${styles.InfoCards} infoHistoryCard`} title={
+                            <span>
                               <ShopOutlined style={{marginRight: 8}}/> Magasin
                           </span>
-                } style={{marginTop: 16}}>
-                    <div className={`${styles.InfoCardLeft}`}>
-                        <p>
-                            <strong>Magasin :</strong><span>{selectedRow?.store.name}</span>
-                        </p>
-                        <p>
-                            <strong>Adresse :</strong><span>{selectedRow?.store.address}</span>
-                        </p>
-                        <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.store.phone}</span>
-                        </p>
-                        <p>
-                            <strong>Email :</strong><span>{selectedRow?.store.email}</span>
-                        </p>
-                    </div>
-                    <div className={`${styles.InfoCardRight}`}>
-                        <p>
-                            <strong>SIREN :</strong><span>{selectedRow?.store.siren}</span>
-                        </p>
-                        <p>
-                            <strong>Code Postal :</strong><span>{selectedRow?.store.postal_code}</span>
-                        </p>
-                        <p>
-                            <strong>Ville :</strong><span>{selectedRow?.store.city}</span>
-                        </p>
-                        <p>
-                            <strong>Pays :</strong><span>{selectedRow?.store.country}</span>
-                        </p>
-                    </div>
-                </Card>
+                        } style={{marginTop: 16}}>
+                            <div className={`${styles.InfoCardLeft}`}>
+                                <p>
+                                    <strong>Magasin : <br/></strong><span>{selectedRow?.store.name}</span>
+                                </p>
+                                <p>
+                                    <strong>Adresse : <br/></strong><span>{selectedRow?.store.address}</span>
+                                </p>
+                                <p>
+                                    <strong>Téléphone : <br/></strong><span>{selectedRow?.store.phone}</span>
+                                </p>
+                                <p>
+                                    <strong>Email : <br/></strong><span>{selectedRow?.store.email}</span>
+                                </p>
+                            </div>
+                            <div className={`${styles.InfoCardRight}`}>
+                                <p>
+                                    <strong>SIREN : <br/></strong><span>{selectedRow?.store.siren}</span>
+                                </p>
+                                <p>
+                                    <strong>Code Postal : <br/></strong><span>{selectedRow?.store.postal_code}</span>
+                                </p>
+                                <p>
+                                    <strong>Ville : <br/></strong><span>{selectedRow?.store.city}</span>
+                                </p>
+                                <p>
+                                    <strong>Pays : <br/></strong><span>{selectedRow?.store.country}</span>
+                                </p>
+                            </div>
+                        </Card>
 
-            </Modal>
-
+                    </Modal>
+                </>
+            )}
 
         </>
-
 
     );
 }

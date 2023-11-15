@@ -149,3 +149,26 @@ export async function getGainTicket(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 }
+
+
+export async function getGainTicketHistory(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const baseUrl = '/winner_tickets/history';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}

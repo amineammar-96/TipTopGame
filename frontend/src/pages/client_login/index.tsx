@@ -10,6 +10,10 @@ import LoginClientForm from './components/LoginClientForm';
 import RegisterClientForm from './components/RegisterClientForm';
 import RedirectService from '../../app/service/RedirectService';
 Dayjs.locale('fr');
+import Image from 'next/image';
+import loginFormImg from "@/assets/images/loginForm.jpg";
+import registerFormImg from "@/assets/images/registerForm.jpg";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 
 export default function userLogin() {
 
@@ -18,6 +22,10 @@ export default function userLogin() {
 
     const handleFormStepChange = () => {
         setFormStep(formStep === 1 ? 2 : 1);
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
     };
 
   useEffect(() => {
@@ -25,21 +33,47 @@ export default function userLogin() {
   }, [])
 
 
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, [formStep]);
 
   return (
+      <>
+      {loading && (
+          <>
+          <SpinnigLoader></SpinnigLoader>
+          </>
+      )}
+
+          {!loading && (
+              <>
     <div>
-      <Row className={`${styles.loginPageMainDiv}`}>
+      <Row className={`${styles.loginPageMainDiv} m-0`}>
         {formStep == 1 ? (
           <>
             <Col className={`${styles.loginPageMainDivLeftSide} p-0 m-0`} xl={8} sm={0} md={6}>
-              <img src="https://w.forfun.com/fetch/73/73f4ad6aa6336135d9891534eae06695.jpeg" alt="Landing Image" />
+                <Image
+                    src={loginFormImg}
+                    alt="Landing Image"
+                >
+
+                </Image>
             </Col>
           </>
 
         ) : (
           <>
             <Col className={`${styles.loginPageMainDivLeftSide} p-0 m-0`} xl={7}  md={4} sm={0}>
-              <img src="https://w.forfun.com/fetch/73/73f4ad6aa6336135d9891534eae06695.jpeg" alt="Landing Image" />
+                <Image
+                src={registerFormImg}
+                alt="Landing Image"
+                >
+
+                </Image>
             </Col>
 
           </>
@@ -63,6 +97,11 @@ export default function userLogin() {
         )}
       </Row>
     </div>
+              </>
+          )}
+
+
+      </>
   )
 }
 

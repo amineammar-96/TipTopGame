@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
 class UserController extends AbstractController
 {
@@ -94,7 +94,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    //getClients
 
     public function getClients(Request $request): JsonResponse
     {
@@ -115,11 +114,6 @@ class UserController extends AbstractController
             ->innerJoin('u.role', 'ur')
             ->where('ur.name = :role')
             ->setParameter('role', 'ROLE_CLIENT');
-
-
-
-
-
 
 
 
@@ -193,15 +187,14 @@ class UserController extends AbstractController
 
     public function getParticipants(Request $request): JsonResponse
     {
-
-        $firstname =  $request->get('firstname' , null);
-        $lastname =  $request->get('lastname' , null);
-        $status =  $request->get('status' , null);
-        $store =  $request->get('store' , null);
-        $page = $request->get('page' , 1);
-        $limit = $request->get('limit' , 10);
-        $email =  $request->get('email' , null);
-        $sexe =  $request->get('genre' , null);
+        $firstname = $request->get('firstname', null);
+        $lastname = $request->get('lastname', null);
+        $status = $request->get('status', null);
+        $store = $request->get('store', null);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+        $email = $request->get('email', null);
+        $sexe = $request->get('genre', null);
 
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('u')
@@ -211,70 +204,64 @@ class UserController extends AbstractController
             ->where('ur.name = :role')
             ->setParameter('role', 'ROLE_CLIENT');
 
-
-
-
-
-
-
-
-        if ($firstname != "" && $firstname != null) {
+        if ($firstname !== null && $firstname !== "") {
             $qb->andWhere('u.firstname LIKE :firstname')
                 ->setParameter('firstname', '%' . $firstname . '%');
         }
 
-        if ($lastname != "" && $lastname != null) {
+        if ($lastname !== null && $lastname !== "") {
             $qb->andWhere('u.lastname LIKE :lastname')
                 ->setParameter('lastname', '%' . $lastname . '%');
         }
 
-        if ($status != "" && $status != null) {
+        if ($status !== null && $status !== "") {
             $qb->andWhere('u.status = :status')
                 ->setParameter('status', $status);
         }
 
-        if ($store != "" && $store != null) {
+        if ($store !== null && $store !== "") {
             $qb->innerJoin('u.stores', 's')
                 ->andWhere('s.id = :store')
                 ->setParameter('store', $store);
         }
 
-        if ($email != "" && $email != null) {
+        if ($email !== null && $email !== "") {
             $qb->andWhere('u.email LIKE :email')
                 ->setParameter('email', '%' . trim($email) . '%');
         }
 
-        if ($sexe != "" && $sexe != null) {
+        if ($sexe !== null && $sexe !== "") {
             $qb->andWhere('LOWER(u.gender) LIKE :gender')
                 ->setParameter('gender', '%' . strtolower(trim($sexe)) . '%');
         }
 
         $userRole = $this->getUser()->getRoles()[0];
-        if($userRole == Role::ROLE_STOREMANAGER){
+        if ($userRole == Role::ROLE_STOREMANAGER) {
             $qb->innerJoin('u.stores', 's')
                 ->andWhere('s.id = :store')
                 ->setParameter('store', $this->getUser()->getStores()[0]->getId());
         }
 
-        $totalCount = count($qb->getQuery()->getResult());
-
+        $qbAux = clone $qb;
+        $totalCount = count($qbAux->getQuery()->getResult());
 
         $page = $page ?? 1;
         $pageSize = $limit ?? 10;
-        $qb->setFirstResult(($page - 1) * $pageSize)
+        $paginator = new ORMPaginator($qb);
+
+        $totalCount = count($paginator);
+
+        $paginator->getQuery()
+            ->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
-
-        $users = $qb->getQuery()->getResult();
-
-
+        $users = $paginator->getIterator()->getArrayCopy();
 
         $usersJson = [];
         foreach ($users as $user) {
             $usersJson[] =
                 $user->getUserJson();
         }
-
 
         return $this->json([
             'users' => $usersJson,

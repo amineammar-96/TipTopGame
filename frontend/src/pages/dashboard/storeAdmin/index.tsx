@@ -17,10 +17,10 @@ import ClientManagementPageDashboard
 import ParticipantManagementPageDashboard
     from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
 import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 
 function storeAdminDashboard() {
 
-    const { redirectUserToHomePage } = RedirectService();
 
 
     const [selectedMenuItem, setSelectedMenuItem] = useState<string>("dashboardItem");
@@ -37,6 +37,39 @@ function storeAdminDashboard() {
         localStorage.setItem("selectedMenuItem", menuItemKey);
     };
 
+    const [userRrole , setUserRole] = useState<string | null>(null);
+    const [loading , setLoading] = useState<boolean>(true);
+    const [userToken , setUserToken] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+        setUserToken(localStorage.getItem('loggedInUserToken'));
+        if (userToken == null && userToken == "") {
+            window.location.href = '/store_login';
+        }
+        setLoading(true)
+    }, []);
+
+    useEffect(() => {
+        setLoading(true);
+        if (userRrole == "ROLE_STOREMANAGER") {
+            window.location.href = '/dashboard/storeManager';
+        }
+        if (userRrole == "ROLE_EMPLOYEE") {
+            window.location.href = '/dashboard/storeEmployee';
+        }
+        if (userRrole == "ROLE_CLIENT") {
+            window.location.href = '/dashboard/client';
+        }
+
+        if (userRrole == "ROLE_ADMIN") {
+            setLoading(false);
+        }
+
+
+
+    }, [userRrole]);
+
+
     const [collapsed, setCollapsed] = useState(false);
 
     const toggleCollapsed = () => {
@@ -44,33 +77,41 @@ function storeAdminDashboard() {
     };
 
         return (
-            <div>
-
-                <Row>
-                    <Col md={collapsed ? '': 4 }>
-                        <Sidebar collapsed={collapsed} toggleCollapsed={toggleCollapsed} onMenuItemClick={handleMenuItemClick} selectedMenuItem={selectedMenuItem}></Sidebar>
-                    </Col>
-                    <Col md={collapsed ? '': 20 } className={styles.mainPageDiv}>
+            <>
+                {loading && (
+                    <SpinnigLoader></SpinnigLoader>
+                )}
+            {!loading && (
+                <>
+                    <div>
                         <Row>
-                            <TopNavBar></TopNavBar>
+                            <Col md={collapsed ? '': 4 }>
+                                <Sidebar collapsed={collapsed} toggleCollapsed={toggleCollapsed} onMenuItemClick={handleMenuItemClick} selectedMenuItem={selectedMenuItem}></Sidebar>
+                            </Col>
+                            <Col md={collapsed ? '': 20 } className={styles.mainPageDiv}>
+                                <Row>
+                                    <TopNavBar></TopNavBar>
+                                </Row>
+                                <Row className={styles.mainContent}>
+                                    {selectedMenuItem==="dashboardItem" && <HomePage></HomePage>}
+                                    {selectedMenuItem==="storesManagementItem" && <StoresManagement></StoresManagement>}
+                                    {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
+                                    {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
+                                    {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
+                                    {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
+                                    {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
+                                    {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
+
+
+
+
+                                </Row>
+                            </Col>
                         </Row>
-                        <Row className={styles.mainContent}>
-                            {selectedMenuItem==="dashboardItem" && <HomePage></HomePage>}
-                            {selectedMenuItem==="storesManagementItem" && <StoresManagement></StoresManagement>}
-                            {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
-                            {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
-                            {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
-                            {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
-                            {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
-                            {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
-
-
-
-
-                        </Row>
-                    </Col>
-                </Row>
-            </div>
+                    </div>
+                </>
+            )}
+            </>
         );
 
 }

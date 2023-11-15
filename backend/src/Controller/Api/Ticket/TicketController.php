@@ -320,6 +320,57 @@ class TicketController extends AbstractController
 
     }
 
+
+    public function getWinnerTicketsHistory(Request $request): JsonResponse
+    {
+
+        $ticket_code = $request->get('ticket_code', null);
+        $store = $request->get('store', null);
+        $employee = $request->get('caissier', null);
+        $client = $request->get('client', null);
+        $prize = $request->get('prize', null);
+        $employeeId = $request->get('employee', null);
+
+
+
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 9);
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('t')
+            ->from(Ticket::class, 't');
+
+
+        $qb->andWhere('t.status = :status')
+            ->setParameter('status', Ticket::STATUS_WINNER);
+
+
+
+        $qb->orderBy('t.updated_at', 'DESC');
+
+
+        $totalCount = count($qb->getQuery()->getResult());
+
+        $currentPage = $page ?? 1;
+        $pageSize = $limit ?? 9;
+        $qb->setFirstResult(($currentPage - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+        $results = $qb->getQuery()->getResult();
+
+        $jsonTickets = [];
+        foreach ($results as $ticket) {
+            $jsonTickets[] =
+                $ticket->getTicketJson();
+        }
+
+
+        return $this->json([
+            'gains' => $jsonTickets,
+            'totalCount' => $totalCount
+
+        ], 200);
+    }
     public function getWinnerTickets(Request $request): JsonResponse
     {
 

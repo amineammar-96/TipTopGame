@@ -9,7 +9,7 @@ export default function index() {
 
   return (
       <div>
-        <Row className={`${styles.loginPageMainDiv}`}>
+        <Row className={`${styles.loginPageMainDiv} m-0`}>
               <>
                 <Col className={`${styles.loginPageMainDivRightSide} pt-3`} md={12} >
                   <LoginAdminstForm></LoginAdminstForm>

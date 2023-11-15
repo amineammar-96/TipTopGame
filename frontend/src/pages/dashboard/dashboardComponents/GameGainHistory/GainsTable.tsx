@@ -281,6 +281,7 @@ function GainsTable({selectedStoreId, data}: storeManagersTableProps) {
             </Row>
 
             <Modal
+                className={`${styles.modalDetails} detailsModalGain`}
                 title={
                     <>
                     <span className={`${styles.modalTitle}`}>
@@ -292,34 +293,32 @@ function GainsTable({selectedStoreId, data}: storeManagersTableProps) {
                 open={isModalOpen}
                 onOk={() => setIsModalOpen(false)}
                 onCancel={() => setIsModalOpen(false)}
-                width={700}
+                width={1000}
             >
                 <Card className={`${styles.InfoCards} infoHistoryCard`} title={
                     <span>
-                    <BarcodeOutlined style={{marginRight: 8}}/> Ticket
+                    <BarcodeOutlined style={{marginRight: 8}}/> Ticket #{selectedRow?.ticket_code}
                     </span>
                 }>
                     <div className={`${styles.InfoCardLeft}`}>
                         <p>
-                            <strong>Code :</strong><span>#{selectedRow?.ticket_code}</span>
-                        </p>
-                        <p>
                             <strong>Date de génération
-                                :</strong><span>{selectedRow?.ticket_generated_at.date} à {selectedRow?.ticket_generated_at.time} </span>
+                                : <br/>
+                            </strong><span>{selectedRow?.ticket_generated_at.date} à {selectedRow?.ticket_generated_at.time} </span>
                         </p>
                         <p>
                             <strong>Date d'impression
-                                :</strong><span>{selectedRow?.ticket_printed_at.date} à {selectedRow?.ticket_printed_at.time}</span>
+                                : <br/></strong><span>{selectedRow?.ticket_printed_at.date} à {selectedRow?.ticket_printed_at.time}</span>
                         </p>
                     </div>
                     <div className={`${styles.InfoCardRight}`}>
                         <p>
                             <strong>Date de gain
-                                :</strong><span>{selectedRow?.win_date.date} à {selectedRow?.win_date.time}</span>
+                                : <br/></strong><span>{selectedRow?.win_date.date} à {selectedRow?.win_date.time}</span>
                         </p>
                         <p>
                             <strong>Date de remise
-                                :</strong><span>{selectedRow?.updated_at.date} à {selectedRow?.updated_at.time}</span>
+                                : <br/></strong><span>{selectedRow?.updated_at.date} à {selectedRow?.updated_at.time}</span>
                         </p>
 
                     </div>
@@ -353,21 +352,22 @@ function GainsTable({selectedStoreId, data}: storeManagersTableProps) {
                     <div className={`${styles.InfoCardLeft}`}>
                         <p>
                             <strong>Nom Prénom
-                                :</strong><span>{selectedRow?.user.lastname} {selectedRow?.user.firstname}</span>
+                                : <br/></strong><span>{selectedRow?.user.lastname} {selectedRow?.user.firstname}</span>
                         </p>
                         <p>
-                            <strong>Date de naissance :</strong><span>{selectedRow?.employee.dateOfBirth}</span>
+                            <strong>Date de naissance
+                                : <br/></strong><span>{selectedRow?.employee.dateOfBirth}</span>
                         </p>
                         <p>
-                            <strong>Email :</strong><span>{selectedRow?.user.email}</span>
+                            <strong>Email : <br/></strong><span>{selectedRow?.user.email}</span>
                         </p>
                     </div>
                     <div className={`${styles.InfoCardRight}`}>
                         <p>
-                            <strong>Identifiant :</strong><span>#{selectedRow?.user.id}</span>
+                            <strong>Identifiant : <br/></strong><span>#{selectedRow?.user.id}</span>
                         </p>
                         <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.user.phone}</span>
+                            <strong>Téléphone : <br/></strong><span>{selectedRow?.user.phone}</span>
                         </p>
 
                     </div>
@@ -383,55 +383,55 @@ function GainsTable({selectedStoreId, data}: storeManagersTableProps) {
                     <div className={`${styles.InfoCardLeft}`}>
                         <p>
                             <strong>Nom Prénom
-                                :</strong><span>{selectedRow?.employee.lastname} {selectedRow?.employee.firstname}</span>
+                                : <br/></strong><span>{selectedRow?.employee.lastname} {selectedRow?.employee.firstname}</span>
                         </p>
                         <p>
-                            <strong>Email :</strong><span>{selectedRow?.employee.email}</span>
+                            <strong>Email : <br/></strong><span>{selectedRow?.employee.email}</span>
                         </p>
                     </div>
                     <div className={`${styles.InfoCardRight}`}>
                         <p>
-                            <strong>Identifiant :</strong><span>#{selectedRow?.employee.id}</span>
+                            <strong>Identifiant : <br/></strong><span>#{selectedRow?.employee.id}</span>
                         </p>
                         <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.employee.phone}</span>
+                            <strong>Téléphone : <br/></strong><span>{selectedRow?.employee.phone}</span>
                         </p>
 
                     </div>
                 </Card>
 
 
-                <Card className={`${styles.InfoCards} infoHistoryCard`}  title={
+                <Card className={`${styles.InfoCards} infoHistoryCard`} title={
                     <span>
                               <ShopOutlined style={{marginRight: 8}}/> Magasin
                           </span>
                 } style={{marginTop: 16}}>
                     <div className={`${styles.InfoCardLeft}`}>
                         <p>
-                            <strong>Magasin :</strong><span>{selectedRow?.store.name}</span>
+                            <strong>Magasin : <br/></strong><span>{selectedRow?.store.name}</span>
                         </p>
                         <p>
-                            <strong>Adresse :</strong><span>{selectedRow?.store.address}</span>
+                            <strong>Adresse : <br/></strong><span>{selectedRow?.store.address}</span>
                         </p>
                         <p>
-                            <strong>Téléphone :</strong><span>{selectedRow?.store.phone}</span>
+                            <strong>Téléphone : <br/></strong><span>{selectedRow?.store.phone}</span>
                         </p>
                         <p>
-                            <strong>Email :</strong><span>{selectedRow?.store.email}</span>
+                            <strong>Email : <br/></strong><span>{selectedRow?.store.email}</span>
                         </p>
                     </div>
                     <div className={`${styles.InfoCardRight}`}>
                         <p>
-                            <strong>SIREN :</strong><span>{selectedRow?.store.siren}</span>
+                            <strong>SIREN : <br/></strong><span>{selectedRow?.store.siren}</span>
                         </p>
                         <p>
-                            <strong>Code Postal :</strong><span>{selectedRow?.store.postal_code}</span>
+                            <strong>Code Postal : <br/></strong><span>{selectedRow?.store.postal_code}</span>
                         </p>
                         <p>
-                            <strong>Ville :</strong><span>{selectedRow?.store.city}</span>
+                            <strong>Ville : <br/></strong><span>{selectedRow?.store.city}</span>
                         </p>
                         <p>
-                            <strong>Pays :</strong><span>{selectedRow?.store.country}</span>
+                            <strong>Pays : <br/></strong><span>{selectedRow?.store.country}</span>
                         </p>
                     </div>
                 </Card>

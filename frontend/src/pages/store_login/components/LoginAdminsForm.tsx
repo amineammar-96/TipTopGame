@@ -49,7 +49,16 @@ import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 export default function LoginAdminsForm() {
     const { redirectAdminToToDashboard } = RedirectService();
 
+    const [loggedInUser, setLoggedInUser] = useState<any>(null);
     useEffect(() => {
+        setLoading(true);
+        const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+        setLoggedInUser(user);
+        if (user) {
+            setTimeout(() => {
+                setLoading(false);
+            }, 2000);
+        }
         redirectAdminToToDashboard();
     }, []);
 
@@ -81,29 +90,31 @@ export default function LoginAdminsForm() {
 
 
     function login(formData: FieldType) {
-        setLoading(true);
-        loginAdmin(formData).then((res) => {
-            setLoginError(false);
-            console.log("res : ", res);
-            const loggedInUserToken = res.token;
-            const loggedInUser = res.userJson;
+        if(formData.email && formData.password) {
+            setLoading(true);
+            loginAdmin(formData).then((res) => {
+                setLoginError(false);
+                console.log("res : ", res);
+                const loggedInUserToken = res.token;
+                const loggedInUser = res.userJson;
 
-            localStorage.setItem("loggedInUserToken",loggedInUserToken);
-            localStorage.setItem("loggedInUserId" , loggedInUser.id);
-            localStorage.setItem("loggedInUserEmail" , loggedInUser.email);
-            localStorage.setItem("loggedInUserRole" , loggedInUser.role);
-            localStorage.setItem("loggedInUser" , JSON.stringify(loggedInUser));
+                localStorage.setItem("loggedInUserToken", loggedInUserToken);
+                localStorage.setItem("loggedInUserId", loggedInUser.id);
+                localStorage.setItem("loggedInUserEmail", loggedInUser.email);
+                localStorage.setItem("loggedInUserRole", loggedInUser.role);
+                localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
 
-            redirectAdminToToDashboard();
+                redirectAdminToToDashboard();
 
 
-        }).catch((err) => {
-            setLoading(false);
-            setLoginError(true);
-            message.destroy();
-            message.error('E-mail ou mot de passe incorrect !');
-            console.log(err);
-        });
+            }).catch((err) => {
+                setLoading(false);
+                setLoginError(true);
+                message.destroy();
+                message.error('E-mail ou mot de passe incorrect !');
+                console.log(err);
+            });
+        }
     }
 
 
@@ -122,17 +133,19 @@ export default function LoginAdminsForm() {
                             <Row className={'justify-content-start'}>
                                 <Col md={1}>
                                     <a href="/">
-                                        <ArrowLeftOutlined/>
+                                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
                                     </a>
                                 </Col>
                                 <Col>
-                                    <h1>Connexion à votre compte</h1>
+                                    <h1>Connexion à votre compte
+                                        TipTop (Espace Administateur)
+                                    </h1>
                                 </Col>
                             </Row>
                         </Col>
 
                         <Col className={`d-flex justify-content-end`}>
-                            <LoginOutlined className={`${styles.loginIcon}`}/>
+                            <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
                         </Col>
 
                     </Row>
@@ -207,7 +220,7 @@ export default function LoginAdminsForm() {
                                         />
                                     </Form.Item>
 
-                                    <Row>
+                                    <Row className={`d-flex w-100 justify-content-between align-items-center`}>
                                         <Col className={`m-0 py-2`}>
                                             <Form.Item<FieldType>
                                                 name="remember"
@@ -218,17 +231,14 @@ export default function LoginAdminsForm() {
                                                     active</Checkbox>
                                             </Form.Item>
                                         </Col>
-
-
-                                    </Row>
-
-                                    <Row>
-
-                                        <Col>
+                                        <Col className={`d-flex w-100 justify-content-end align-items-center`}>
                                             <a href="#" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
                                                 ? <MailOutlined className={`${styles.resetPasswordIcon}`}/></a>
                                         </Col>
+
                                     </Row>
+
+
 
                                     <Form.Item className={`py-3 w-100`}>
                                         <Button onClick={() => {

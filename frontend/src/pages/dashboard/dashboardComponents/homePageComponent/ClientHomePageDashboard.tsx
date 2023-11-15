@@ -1,10 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import TicketImage from "@/assets/images/ticket.png";
-import CodeScanner from "@/assets/images/scan.png";
-import RemainsTickes from "@/assets/images/remainsTickes.png";
-import ClientsImg from "@/assets/images/clients.png";
-import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
+import TiptopEmployeeImg from "@/assets/images/tiptopEmployee.png";
+
 import RouletteImg from "@/assets/images/roulette.png";
 import {Avatar, Card, Col, Row} from 'antd';
 import Image from 'next/image';
@@ -16,7 +13,7 @@ import {
 import CalendarImg from "@/assets/images/calendar.png";
 import PriceImg from "@/assets/images/price.png";
 import PlayImg from "@/assets/images/play.png";
-import GiftsImg from "@/assets/images/gifts.png";
+import GiftsImg from "@/assets/images/surprisePlus.png";
 
 import StoresList from "@/pages/dashboard/dashboardComponents/homePageComponent/components/StoresListHomePage";
 import {
@@ -46,6 +43,7 @@ import {
     PrizesWinStatsByStore
 } from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesWinStatsByStore";
 import style from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
+import {getClientDashboardCardsCounters} from "@/app/api";
 
 const dateFormat = 'DD/MM/YYYY';
 
@@ -78,6 +76,31 @@ function HomePage() {
             //}));
         }
     };
+
+    const [userRole , setUserRole] = useState<string | null>(null);
+    const [userToken , setUserToken] = useState<string | null>(null);
+    const [clientCounter, setClientCounter] = useState<any>(null);
+    useEffect(() => {
+        const userRoleAux = localStorage.getItem('loggedInUserRole');
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+        setUserToken(localStorage.getItem('loggedInUserToken'));
+        if (userRoleAux == "ROLE_CLIENT" ) {
+            getClientDashboardCounters();
+        }
+    }, []);
+    function getClientDashboardCounters() {
+        getClientDashboardCardsCounters().then((res) => {
+            console.log(res.counters);
+            setClientCounter(res.counters);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    useEffect(() => {
+        console.log(clientCounter, 'clientCounterclientCounterclientCounter');
+
+    }, [clientCounter]);
 
     useEffect(() => {
         const userLoggedIn = localStorage.getItem("loggedInUser");
@@ -132,72 +155,16 @@ function HomePage() {
                 <h1 className={`mx-3`}>Tableau de bord </h1>
                 <div className={`${styles.homePageAdminCardsDiv}`}>
 
-                    <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                        <Col className={`w-100 d-flex`} sm={24} md={16} lg={16} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <h5 className={`${styles.cardsTitle}`}>Informations personnelles</h5>
-                                <Avatar  className={`${style.unhoverableElement} ${styles.dashboardAvatar}`} src="https://images.prismic.io/utopix-next-website/Mzk0NGJkOWEtY2ZlYS00MjVjLTkwNTAtOGY5OWQzN2IzNGVi_762cec57-2eaf-4eaf-9a0d-2e7860147e48_profilhomme7.jpg?ixlib=js-3.8.0&w=3840&auto=format&fit=max" />
-
-                                <div className={`${styles.topCardElementTextBody}`}>
-                                    <ul>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitleLabel}`}>Nom et prénom:</span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.lastname} {userForm.firstname}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitleLabel}`}>E-mail:</span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.email}
-                                            </span>
-                                        </li>
-                                    </ul>
-                                    <ul>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitleLabel}`}>Sexe</span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.gender}
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitleLabel}`}>
-                                                Date de naissance
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {`${formatDate(userForm.dateOfBirth.date)}`}
-                                            </span>
-                                        </li>
-                                    </ul>
+                    <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
 
 
-                                </div>
-                            </div>
-                        </Col>
+                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
 
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement} ${styles.topCardElementAux}`}>
+                        <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>21</div>
-                                    <div className={`${styles.cardTitle}`}>
-                                        Tickets
+                                    <div className={`${styles.counter}`}>
+                                        {clientCounter?.["playedTickets"]}
                                     </div>
-                                </div>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={BarcodeTicketImg}  alt={"tickets"}></Image>
-                                </div>
-                            </div>
-                            <div className={`${styles.topCardElement} ${styles.topCardElementAux}`}>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>21</div>
                                     <div className={`${styles.cardTitle}`}>
                                         Tours Joués
                                     </div>
@@ -207,78 +174,42 @@ function HomePage() {
                                 </div>
                             </div>
                         </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={16} lg={16} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <h5 className={`${styles.cardsTitle}`}>
-                                Magasin Associé
-                                </h5>
+                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
 
-                                {userForm.stores.length > 0 &&
-                                    (
-                                        <div className={`${styles.topCardElementTextBody}`}>
-                                            <ul>
-                                                <li>
-                                                    <span className={`${styles.topCardElementTextBodyTitleLabel}`}>
-                                                        Nom du magasin
-                                                    </span>
-                                                </li>
-                                                <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.stores[0]['name'] as any}
-                                            </span>
-                                                </li>
-                                                <li>
-                                                    <span className={`${styles.topCardElementTextBodyTitleLabel}`}>
-                                                        Adresse:
-                                                    </span>
-                                                </li>
-                                                <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.stores[0]['address'] as any}
-                                            </span>
-                                                </li>
-                                            </ul>
-                                            <ul>
-                                                <li>
-                                                    <span className={`${styles.topCardElementTextBodyTitleLabel}`}>
-                                                        Ville
-                                                    </span>
-                                                </li>
-                                                <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.stores[0]["city"] as any}
-                                            </span>
-                                                </li>
-                                                <li>
-                                            <span className={`${styles.topCardElementTextBodyTitleLabel}`}>
-                                                Code Postal
-                                            </span>
-                                                </li>
-                                                <li>
-                                            <span className={`${styles.topCardElementTextBodyTitle}`}>
-                                                {userForm.stores[0]["postal_code"] as any}
-                                            </span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    )
-                                }
-                            </div>
-
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={GiftsImg}  alt={"tickets"}></Image>
-                                </div>
+                        <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>154321</div>
+                                    <div className={`${styles.counter}`}>
+                                        {clientCounter?.["confirmedTickets"]}
+                                    </div>
                                     <div className={`${styles.cardTitle}`}>
                                         Cadeaux Réclamés
                                     </div>
                                 </div>
+                                <div className={`${styles.topCardElementIcon}`}>
+                                    <Image src={GiftsImg}  alt={"GiftsImg"}></Image>
+                                </div>
                             </div>
+
                         </Col>
+
+                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                            <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                <div className={`${styles.topCardElementText}`}>
+                                    <div className={`${styles.counter}`}>
+                                        {clientCounter?.["pendingTickets"]}
+                                    </div>
+                                    <div className={`${styles.cardTitle}`}>
+                                        En attente de validation
+                                    </div>
+                                </div>
+                                <div className={`${styles.topCardElementIcon}`}>
+                                    <Image src={TiptopEmployeeImg}  alt={"GiftsImg"}></Image>
+                                </div>
+                            </div>
+
+                        </Col>
+
 
                     </Row>
 

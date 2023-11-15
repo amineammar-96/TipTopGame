@@ -8,6 +8,7 @@ min-height: 100vh !important;
     width: 100% !important;
     height: 100%;
     object-fit: cover;
+  max-height: 100vh;
 
 }
 
@@ -189,11 +190,11 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--black) ;
+    background-color: var(--blue) ;
   }
 
   .loginBtnSubmit:hover{
-    background-color: var(--black) !important ;
+    background-color: var(--blue) !important ;
    opacity: 0.9;
   }
 
@@ -273,3 +274,16 @@ min-height: 100vh !important;
     transition: color 0.3s ease !important;
     transition: background-color 0.3s ease !important;
 }
+
+.leftArrowIcon {
+    font-size: 1.2rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+  color: var(--blue);
+
+}
+
+    .leftArrowIcon:hover {
+        color: var(--blue);
+        opacity: 0.9;
+    }

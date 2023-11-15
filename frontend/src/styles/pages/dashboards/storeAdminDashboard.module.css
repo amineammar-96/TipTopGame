@@ -1051,10 +1051,15 @@
     left: 0;
 }
 
+.logoDivSideBar:hover{
+    transform: scale(1.1,01);
+}
+
 .logoSideBar {
     width: 2.4rem;
     height: 2.4rem;
 }
+
 
 .logoDivSideBar strong {
     font-size: 1.3rem;
@@ -1298,7 +1303,10 @@
 }
 
 .InfoCards {
-
+background: #ffffff;
+    color: white;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.42);
+    min-height: 15rem !important;
 }
 
 
@@ -1311,14 +1319,51 @@
     text-align: left;
     width: 100%;
     padding: 1rem 2rem;
+    font-size: 0.7rem;
 }
 .InfoCardRight {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-content: center;
     align-items: flex-start;
     flex-direction: column;
     text-align: left;
     width: 100%;
     padding: 1rem 2rem;
+}
+
+.roleTopNavBar {
+    position: absolute;
+    right: 45%;
+    top: 1.2rem;
+    font-weight: bold;
+    font-size: .8rem;
+    max-width: 10rem;
+}
+
+.clientTopCardDashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: bold !important;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.42);
+    padding: 20px;
+}
+
+.clientTopCardDashboard img {
+    width: 5rem;
+    height: 5rem;
+    margin: 0;
+}
+
+.modalDetails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1rem;
+    width: 100%;
 }

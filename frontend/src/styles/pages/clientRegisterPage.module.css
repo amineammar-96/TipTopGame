@@ -195,14 +195,14 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--black) ;
+    background-color: var(--blue) ;
     max-width: 38rem !important;
     width: 37.5rem !important;
 
   }
 
   .loginBtnSubmit:hover{
-    background-color: var(--black) !important ;
+    background-color: var(--blue) !important ;
    opacity: 0.9;
   }
 
@@ -238,7 +238,7 @@ min-height: 100vh !important;
 }
 
 .loginLogo img{
-    width: 40% !important;
+    width: 100% !important;
 }
 
 .containerLoginFooterLinks {
@@ -280,4 +280,16 @@ min-height: 100vh !important;
     color: var(--navbar-link-text-color-hover) !important;
     transition: color 0.3s ease !important;
     transition: background-color 0.3s ease !important;
+}
+
+.leftArrowIcon {
+    font-size: 1.3rem;
+    margin: 0 20px;
+    color:  #7BC558;
+}
+
+.leftArrowIcon:hover{
+    color: #7BC558;
+    opacity: 0.9;
+  font-size: 1.41rem;
 }

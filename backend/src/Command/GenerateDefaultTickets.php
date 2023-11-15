@@ -56,8 +56,8 @@ class GenerateDefaultTickets extends Command
         $generatedTicketCodes = [];
 
         for ($i = 0; $i < $ticketCount; $i++) {
-            do {$randomTicketCode = 'TK' . substr(uniqid(), -8);
-                $uppercaseTicketCode = strtoupper($randomTicketCode);
+            do {
+                $randomTicketCode = 'TK' . substr(uniqid(), -8);
             } while (in_array($randomTicketCode, $generatedTicketCodes));
 
             $generatedTicketCodes[] = $randomTicketCode;
@@ -87,7 +87,6 @@ class GenerateDefaultTickets extends Command
             }
         }
 
-        // Persist the generated tickets in the database
         $this->entityManager->flush();
 
         $output->writeln('500,000 tickets generated with the winning rating of each prize.');

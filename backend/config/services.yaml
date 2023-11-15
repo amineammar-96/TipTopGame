@@ -43,8 +43,14 @@ services:
     
     App\Command\GenerateDefaultTickets:
         tags: ['console.command']
+
+
     App\Command\GenerateFakeData:
         tags: [ 'console.command' ]
 
-    
-   
+    App\Command\PrintRandomTickets:
+        tags: [ 'console.command' ]
+
+
+
+

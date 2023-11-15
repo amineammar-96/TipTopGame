@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TicketRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -51,6 +53,14 @@ class Ticket
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketHistory::class)]
+    private Collection $ticketHistories;
+
+    public function __construct()
+    {
+        $this->ticketHistories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -232,5 +242,35 @@ class Ticket
             "date" =>  $updatedAt?->format('d/m/Y'),
             "time" =>  $updatedAt?->format('H:i')
         ];
+    }
+
+    /**
+     * @return Collection<int, TicketHistory>
+     */
+    public function getTicketHistories(): Collection
+    {
+        return $this->ticketHistories;
+    }
+
+    public function addTicketHistory(TicketHistory $ticketHistory): static
+    {
+        if (!$this->ticketHistories->contains($ticketHistory)) {
+            $this->ticketHistories->add($ticketHistory);
+            $ticketHistory->setTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketHistory(TicketHistory $ticketHistory): static
+    {
+        if ($this->ticketHistories->removeElement($ticketHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($ticketHistory->getTicket() === $this) {
+                $ticketHistory->setTicket(null);
+            }
+        }
+
+        return $this;
     }
 }

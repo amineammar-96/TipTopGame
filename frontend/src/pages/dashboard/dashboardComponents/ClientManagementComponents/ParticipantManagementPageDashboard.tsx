@@ -410,7 +410,7 @@ function ParticipantManagementPageDashboard() {
 
 
                                         <div className={`${styles.clientsTableDashboard}`}>
-                                            <ParticipantsTable key={clientsCount} selectedStoreId={"3"} data={data as any} ></ParticipantsTable>
+                                            <ParticipantsTable key={clientsCount} selectedStoreId={null} data={data as any} ></ParticipantsTable>
                                         </div>
 
 

@@ -19,10 +19,10 @@ import ParticipantManagementPageDashboard
 import PrintTicketsPage from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/PrintTicketsPage";
 import ConfirmTicketGain from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/ConfirmTicketGain";
 import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 
 function storeAdminDashboard() {
 
-    const { redirectUserToHomePage } = RedirectService();
 
 
     const [selectedMenuItem, setSelectedMenuItem] = useState<string>("dashboardItem");
@@ -33,6 +33,38 @@ function storeAdminDashboard() {
             setSelectedMenuItem(selectedMenuItemSaved);
         }
     }, [selectedMenuItem]);
+
+    const [userRrole , setUserRole] = useState<string | null>(null);
+    const [loading , setLoading] = useState<boolean>(true);
+    const [userToken , setUserToken] = useState<string | null>(null);
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole'));
+        setUserToken(localStorage.getItem('loggedInUserToken'));
+        if (userToken == null && userToken == "") {
+            window.location.href = '/store_login';
+        }
+        setLoading(true)
+    }, []);
+
+    useEffect(() => {
+        setLoading(true);
+        if (userRrole == "ROLE_STOREMANAGER") {
+            window.location.href = '/dashboard/storeManager';
+        }
+        if (userRrole == "ROLE_EMPLOYEE") {
+            //window.location.href = '/dashboard/storeEmployee';
+            setLoading(false);
+        }
+        if (userRrole == "ROLE_CLIENT") {
+            window.location.href = '/dashboard/client';
+        }
+
+        if (userRrole == "ROLE_ADMIN") {
+            window.location.href = '/dashboard/storeAdmin';
+        }
+
+
+    }, [userRrole]);
 
     const handleMenuItemClick = (menuItemKey: string) => {
         setSelectedMenuItem(menuItemKey);
@@ -46,6 +78,12 @@ function storeAdminDashboard() {
     };
 
         return (
+            <>
+                {loading && (
+                    <SpinnigLoader></SpinnigLoader>
+                )}
+                {!loading && (
+                    <>
             <div>
 
                 <Row>
@@ -73,6 +111,10 @@ function storeAdminDashboard() {
                     </Col>
                 </Row>
             </div>
+                        </>
+                )}
+
+            </>
         );
 
 }

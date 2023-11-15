@@ -193,3 +193,23 @@ get_winner_tickets:
     path: /api/winner_tickets
     controller: App\Controller\Api\Ticket\TicketController::getWinnerTickets
     methods: GET
+
+#winner_tickets_history
+get_winner_tickets_history:
+    path: /api/winner_tickets/history
+    controller: App\Controller\Api\Ticket\TicketController::getWinnerTicketsHistory
+    methods: GET
+
+
+#client_dashboard_counters
+get_client_dashboard_counters:
+    path: /api/client/dashboard/counters
+    controller: App\Controller\Api\Dashboard\DashboardController::getClientDashboardCounters
+    methods: GET
+
+
+#admin_dashboard_counters
+get_admin_dashboard_counters:
+    path: /api/admin/dashboard/counters
+    controller: App\Controller\Api\Dashboard\DashboardController::getAdminDashboardCounters
+    methods: GET

@@ -30,7 +30,7 @@ class CreateDefaultRoles extends Command
 
     protected function configure()
     {
-        // Add any arguments or options if needed
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

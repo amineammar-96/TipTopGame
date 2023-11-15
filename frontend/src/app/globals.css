@@ -93,6 +93,11 @@ body {
  
 }
 
+
+.ant-checkbox-checked .ant-checkbox-inner:hover{
+  background-color:var(--blue) !important;
+  border-color: var(--blue) !important;
+}
 .ant-checkbox-inner:after{
   inset-inline-start: 33.5% !important;
 }

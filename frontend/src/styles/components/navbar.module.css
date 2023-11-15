@@ -46,6 +46,13 @@
 .navbarBrand{
     margin: 0 10rem;
 }
+.logoTipTopNavBar {
+    position: absolute;
+    left: 0 !important;
+    top: 20% !important;
+    width: 15rem !important;
+    height: 3rem !important;
+}
 
 .rightDivNavBar{
     /* color: var(--navbar-link-text-color) !important; */
@@ -60,6 +67,41 @@
 
 }
 
+
+
+.navLinkStoreBtnDashboard {
+    background-color: #2D2F2C !important;
+    color: white !important;
+    border: 1px solid #2D2F2C !important;
+    border-radius: 50px !important;
+    padding: 7px 15px !important;
+
+}
+
+.navLinkStoreBtnDashboard:hover {
+    background-color: #2D2F2C !important;
+    border: 1px solid #2D2F2C !important;
+    color: white !important;
+    opacity: 0.9 !important;
+}
+
+
+
+.navLinkStoreBtnSignOut {
+    background-color: #FF5555 !important;
+    color: white !important;
+    border: 1px solid #FF5555 !important;
+    border-radius: 50px !important;
+    padding: 7px 15px !important;
+
+}
+
+.navLinkStoreBtnSignOut:hover {
+    background-color: #FF5555 !important;
+    border: 1px solid #FF5555 !important;
+    color: white !important;
+    opacity: 0.9 !important;
+}
 
 .navLinkStoreBtn {
     background-color: rgb(255, 255, 255) !important;
@@ -105,3 +147,7 @@
     font-weight: bold !important;
     
   }
+
+.linksDivNavBar {
+    padding-left: 5rem !important;
+}

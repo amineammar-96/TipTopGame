@@ -463,7 +463,7 @@ function ConfirmTicketGain() {
                                 filterOption={filterOption as any}
                                 className={`mt-2`} placeholder="Choisir un client"
                                 notFoundContent={
-                                <span className={`m-4`}>Aucun client trouvé</span>
+                                <span className={`m-4`}>Aucun gain trouvé</span>
                         }
                         >
                             <Option value="" label={`Tous les clients`}>

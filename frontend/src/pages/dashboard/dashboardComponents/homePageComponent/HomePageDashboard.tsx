@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import TicketImage from "@/assets/images/ticket.png";
 import CodeScanner from "@/assets/images/scan.png";
@@ -44,6 +44,7 @@ import {
 import {
     PrizesWinStatsByStore
 } from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesWinStatsByStore";
+import {getAdminDashboardCardsCounters, getClientDashboardCardsCounters} from "@/app/api";
 
 const dateFormat = 'DD/MM/YYYY';
 
@@ -68,6 +69,26 @@ function HomePage() {
         setSelectedStoreId(value);
     };
 
+    const [userRole, setUserRole] = useState<string>('');
+    const [token, setToken] = useState<string>('');
+    const [adminDashboardCardsCounters, setAdminDashboardCardsCounters] = useState<any>({});
+    useEffect(() => {
+        const tokenAux = localStorage.getItem('loggedInUserToken');
+        const userRoleAux = localStorage.getItem('loggedInUserRole');
+        if (token && userRole) {
+            setToken(tokenAux as string);
+            setUserRole(userRoleAux as string);
+        }
+        if (userRoleAux == "ROLE_ADMIN") {
+            getAdminDashboardCardsCounters().then((res) => {
+                setAdminDashboardCardsCounters(res.counters);
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+
+    }, []);
+
     return (
         <div className={styles.homePageContent}>
 
@@ -83,7 +104,9 @@ function HomePage() {
 
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>500.000</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["tickets"]}
+                                    </div>
 
                                     <div className={`${styles.cardTitle}`}>Total Des Lots</div>
                                 </div>
@@ -95,7 +118,9 @@ function HomePage() {
                                     <Image src={CodeScanner}  alt={"tickets"}></Image>
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>9533</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["printedTickets"]}
+                                    </div>
 
                                     <div className={`${styles.cardTitle}`}>Bons Imprimés</div>
                                 </div>
@@ -107,7 +132,9 @@ function HomePage() {
                                     <Image src={TicketImage}  alt={"tickets"}></Image>
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>458234</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["ticketStock"]}
+                                    </div>
 
                                     <div className={`${styles.cardTitle}`}>Lots Restants</div>
                                 </div>
@@ -119,7 +146,9 @@ function HomePage() {
                                     <Image src={UsersImg}  alt={"tickets"}></Image>
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>114232</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["clients"]}
+                                    </div>
 
                                     <div className={`${styles.cardTitle}`}>Clients Inscrits</div>
                                 </div>
@@ -131,7 +160,9 @@ function HomePage() {
                                     <Image src={ClientsImg}  alt={"tickets"}></Image>
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>5432</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["participants"]}
+                                    </div>
                                     <div className={`${styles.cardTitle}`}>Participants Actifs</div>
 
                                 </div>
@@ -143,7 +174,9 @@ function HomePage() {
                                     <Image src={RouletteImg}  alt={"tickets"}></Image>
                                 </div>
                                 <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>154321</div>
+                                    <div className={`${styles.counter}`}>
+                                        {adminDashboardCardsCounters["playedTicket"]}
+                                    </div>
                                     <div className={`${styles.cardTitle}`}>Tickets Utilisés</div>
                                 </div>
                             </div>

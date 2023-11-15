@@ -395,7 +395,7 @@ function GameGainHistoryPage() {
                                         filterOption={filterOption as any}
                                         className={`mt-2`} placeholder="Choisir un client"
                                         notFoundContent={
-                                            <span className={`m-4`}>Aucun client trouvé</span>
+                                            <span className={`m-4`}>Aucun gain trouvé</span>
                                         }
                                 >
                                     {renderStoresClients()}
@@ -448,7 +448,7 @@ function GameGainHistoryPage() {
                                     filterOption={filterOption as any}
                                     className={`mt-2`} placeholder="Choisir un client"
                                     notFoundContent={
-                                        <span className={`m-4`}>Aucun client trouvé</span>
+                                        <span className={`m-4`}>Aucun gain trouvé</span>
                                     }
                             >
                                 {renderStoresEmployees()}

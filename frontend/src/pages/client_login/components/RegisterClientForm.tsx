@@ -7,7 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 import '../../../app/globals.css'
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
 import {DatePicker, ConfigProvider} from 'antd';
 
 import type {DatePickerProps} from 'antd';
@@ -238,11 +238,16 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
     return (
         <div className={`${styles.loginForm} `}>
             <Row className={`${styles.loginFormTopHeader} p-0 m-0`}>
+                <Col md={1}>
+                    <a href="/">
+                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
+                    </a>
+                </Col>
                 <Col>
                     <h1>Inscrivez-vous</h1>
                 </Col>
 
-                <Col className={`d-flex justify-content-end`}>
+                <Col className={`d-flex justify-content-end`} style={{maxWidth: '5rem'}}>
                     <UserAddOutlined className={`${styles.loginIcon}`}/>
                 </Col>
 
@@ -461,7 +466,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                 </Col>
             </Row>
 
-            <Row className="px-3 py-2">
+            {/*<Row className="px-3 py-2">
                 <Col className={`w-100 d-flex`}>
                     <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
                         <div className={`${styles.containerLoginFooterLinks} d-flex `}>
@@ -483,7 +488,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                     </Navbar>
                 </Col>
 
-            </Row>
+            </Row>*/}
 
             <Row>
                 <Col>
