@@ -213,3 +213,9 @@ get_admin_dashboard_counters:
     path: /api/admin/dashboard/counters
     controller: App\Controller\Api\Dashboard\DashboardController::getAdminDashboardCounters
     methods: GET
+
+#dashaboardStats
+get_dashboard_stats:
+    path: /api/dashboard/stats
+    controller: App\Controller\Api\Dashboard\DashboardController::getDashboardStats
+    methods: GET

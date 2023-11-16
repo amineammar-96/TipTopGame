@@ -44,29 +44,50 @@ import {
 import {
     PrizesWinStatsByStore
 } from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesWinStatsByStore";
-import {getAdminDashboardCardsCounters, getClientDashboardCardsCounters} from "@/app/api";
+import {getAdminDashboardCardsCounters, getClientDashboardCardsCounters, getDashboardStatsData} from "@/app/api";
+import { PrizesStatsByStatusesChart } from './components/PrizesStatsByStatusesChart';
+import { GameStatusesTendanceStatsChart } from './components/GameStatusesTendanceStatsChart';
+import { PrizeStatsByGenderByAgeChart } from './components/PrizeStatsByGenderByAgeChart';
+import { PrizesCostTendance } from './components/PrizesCostTendance';
 
 const dateFormat = 'DD/MM/YYYY';
+
+export interface SeachParams {
+    startDate?: string;
+    endDate?: string;
+    storeId?: string;
+}
+
+const search: SeachParams = {
+    startDate: '01/01/2022',
+    endDate: '30/12/2024',
+    storeId: '',
+};
 
 function HomePage() {
     const [selectedStoreId, setSelectedStoreId] = useState<string>('');
     const [isStoresUpdated, setIsStoresUpdated] = useState(false);
     const { RangePicker } = DatePicker;
 
-    const handleDateChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-        if (dateString && date) {
-            console.log(date.format('DD/MM/YYYY'));
-            let ch = date.format('DD/MM/YYYY');
-            //setUserForm((prevFormData) => ({
-            //  ...prevFormData,
-            // dateOfBirth: ch,
-            //}));
-        }
+    const [searchForm, setSearchForm] = useState<SeachParams>(search);
+
+
+    const handleDateChange: any = (date : any, dateString :any)  => {
+
+
+        setSearchForm((prevFormData) => ({
+            ...prevFormData,
+            startDate: dateString[0],
+            endDate: dateString[1],
+        }));
     };
 
     const handleStoreChange = (value: string) => {
         setSelectedStoreId(value);
+        setSearchForm((prevFormData) => ({
+            ...prevFormData,
+            storeId: value,
+        }));
     };
 
     const [userRole, setUserRole] = useState<string>('');
@@ -89,6 +110,213 @@ function HomePage() {
 
     }, []);
 
+
+    const [statsData, setStatsData] = useState<any>({});
+    useEffect(() => {
+        getDashboardStatsData(searchForm).then((res) => {
+            setStatsData(res);
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }, [searchForm]);
+
+
+    const [gainByPrizeData, setGainByPrizeData] = useState<any>([]);
+    const [gainByPrizeChartToggle, setGainByPrizeChartToggle] = useState(0);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByPrize"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByPrizeChartToggle(gainByPrizeChartToggle + 1);
+            setGainByPrizeData(finalData);
+        }
+    }, [statsData]);
+
+    const [gainByGenderData, setGainByGenderData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByGender"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByGenderData(finalData);
+        }
+    }, [statsData]);
+
+    const [gainByCityData, setGainByCityData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByCity"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByCityData(finalData);
+        }
+    }, [statsData]);
+
+
+    const [gainByAgeData, setGainByAgeData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByAge"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByAgeData(finalData);
+        }
+    }, [statsData]);
+
+
+    const [gainByStoresData, setGainByStoresData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByStores"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByStoresData(finalData);
+        }
+    }, [statsData]);
+
+
+    const [topGainTableData, setTopGainTableData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["topGain"]
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+
+
+            setTopGainTableData(finalData);
+        }
+    }, [statsData]);
+
+
+    const [gainTendanceData, setGainTendanceData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["participationTendance"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainTendanceData(finalData);
+        }
+    }, [statsData]);
+
+    const [ticketsByStatuses, setTicketsByStatuses] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["ticketsByStatuses"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setTicketsByStatuses(finalData);
+        }
+    }, [statsData]);
+
+    const [gainByGenderByAge, setGainByGenderByAge] = useState<any>([]);
+
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["gainByGenderByAge"];
+            console.log(dataAux , "dataAux");
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setGainByGenderByAge(finalData);
+        }
+    }, [statsData]);
+
+
+    const [playGameTendanceData, setPlayGameTendanceData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["playGameTendance"];
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setPlayGameTendanceData(finalData);
+        }
+    }, [statsData]);
+
+
+
+    const [prizesCostTendanceData, setPrizesCostTendanceData] = useState<any>([]);
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0) {
+            let dataAux = statsData["stats"]["prizesCostTendance"];
+            console.log(dataAux , "dataAux");
+            let finalData:any[] = [];
+            Object.entries(dataAux).map(([key, value]) => {
+                let data = {
+                    "label": key,
+                    "value": value,
+                };
+                finalData.push(data);
+            });
+            setPrizesCostTendanceData(finalData);
+        }
+    }, [statsData]);
+
+
+
+
+
+    // @ts-ignore
     return (
         <div className={styles.homePageContent}>
 
@@ -206,9 +434,10 @@ function HomePage() {
 
                                             <RangePicker
                                                 className={`${styles.datePickerDashboardHomePage}`}
-                                                onChange={()=>{
-                                                    handleDateChange
+                                                onChange={(date:any , dateString:any )=>{
+                                                    handleDateChange(date  , dateString)
                                                 }}
+                                                value={[dayjs(searchForm.startDate, dateFormat), dayjs(searchForm.endDate, dateFormat)]}
                                                 placeholder={['Date de début', 'Date de fin']}
                                                 format={dateFormat}
                                                 cellRender={(current) => {
@@ -240,7 +469,9 @@ function HomePage() {
                                                     </div>
                                                     <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
                                                         <div className={`${styles.topCardElementTextDatesTitle}`}>Date de début</div>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>12/23/2023</div>
+                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>
+                                                            {statsData["startDate"]}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </Col>
@@ -251,7 +482,9 @@ function HomePage() {
                                                     </div>
                                                     <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
                                                         <div className={`${styles.topCardElementTextDatesTitle}`}>Date de fin</div>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>12/23/2023</div>
+                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>
+                                                            {statsData["endDate"]}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </Col>
@@ -263,7 +496,9 @@ function HomePage() {
                                                         <Image src={PlayImg}  alt={"Nombres de jeu"}></Image>
                                                     </div>
                                                     <div className={`${styles.topCardElementText}`}>
-                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>234.000</div>
+                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>
+                                                            {statsData["gameCount"]}
+                                                        </div>
 
                                                         <div className={`${styles.topCardElementTextDatesTitle}`}>Nombres de jeu</div>
                                                     </div>
@@ -275,7 +510,9 @@ function HomePage() {
                                                         <Image src={PriceImg}  alt={"Montants des gains "}></Image>
                                                     </div>
                                                     <div className={`${styles.topCardElementText}`}>
-                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>500.000 €</div>
+                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>
+                                                            {statsData["totalGainAmount"]}
+                                                            €</div>
 
                                                         <div className={`${styles.topCardElementTextDatesTitle}`}>Charges Totales</div>
                                                     </div>
@@ -284,17 +521,32 @@ function HomePage() {
                                         </Row>
                                     </div>
 
-                                    <h5 className={'mb-0'}>
-                                        Répartition Des Cadeaux En Fonction De Sexe
+                                    <GameStatusesTendanceStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainTendanceData}/>
+
+
+                                </Col>
+                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                    <h5 className={`mt-5`}>
+                                        Répartition Des Tickets en Fonction de Statut
                                     </h5>
-                                    <PrizesStatsWithSexChart/>
+                                    <PrizesStatsByStatusesChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={ticketsByStatuses} />
+                                </Col>
+                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                    <h5 className={`mt-5`}>
+                                        Analyse des Tickets
+                                    </h5>
+                                    <GamePlayedStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={playGameTendanceData}/>
+
+                                    <PrizesCostTendance key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={prizesCostTendanceData}/>
+
 
                                 </Col>
                                 <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
                                     <h5>
                                         Répartition des Tickets Distribués
                                     </h5>
-                                    <PrizesChartDoughunt/>
+                                    <PrizesChartDoughunt key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByPrizeData}/>
+
                                 </Col>
 
                                 <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
@@ -302,25 +554,37 @@ function HomePage() {
                                     <h5>
                                         Participants Les Plus Engagés
                                     </h5>
-                                    <TopTeenParticipants/>
+                                    <TopTeenParticipants key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataTable={topGainTableData} />
                                     <h5 className={`mt-5`}>
                                         Répartition Des Cadeaux En Fonction De L'âge
                                     </h5>
-                                    <PrizesStatsWithAgeChart/>
+                                    <PrizesStatsWithAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByAgeData} />
+
                                 </Col>
                                 <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
                                     <h5>
                                         Analyse des Participants
                                     </h5>
 
-                                    <CityStatsChart/>
 
-                                    <GamePlayedStatsChart/>
+                                    <PrizesStatsWithSexChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderData}/>
+
+                                    <PrizeStatsByGenderByAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderByAge}/>
+
+                                    {
+                                        gainByCityData.length > 0 && (
+                                            <>
+                                                <CityStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByCityData}/>
+                                            </>
+                                        )
+                                    }
+
+
 
                                     <h5>
                                         Répartition des Gagnants par Magasin
                                     </h5>
-                                    <PrizesWinStatsByStore/>
+                                    <PrizesWinStatsByStore key={gainByPrizeChartToggle} dataChart={gainByStoresData}/>
 
                                 </Col>
 

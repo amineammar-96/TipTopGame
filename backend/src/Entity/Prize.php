@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PrizeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrizeRepository::class)]
@@ -32,6 +33,9 @@ class Prize
 
     #[ORM\OneToMany(mappedBy: 'prize', targetEntity: Ticket::class)]
     private Collection $tickets;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $price = null;
 
     public function __construct()
     {
@@ -144,5 +148,17 @@ class Prize
             'prize_value' => $this->getPrizeValue(),
             'winning_rate' => $this->getWinningRate(),
         ];
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(string $price): static
+    {
+        $this->price = $price;
+
+        return $this;
     }
 }

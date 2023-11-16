@@ -57,6 +57,8 @@ class Ticket
     #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketHistory::class)]
     private Collection $ticketHistories;
 
+
+
     public function __construct()
     {
         $this->ticketHistories = new ArrayCollection();
@@ -235,7 +237,7 @@ class Ticket
         return $this;
     }
 
-    private function getUpdatedAtJson(): array
+    public function getUpdatedAtJson(): array
     {
         $updatedAt = $this->getUpdatedAt();
         return [
@@ -273,4 +275,7 @@ class Ticket
 
         return $this;
     }
+
+
+
 }

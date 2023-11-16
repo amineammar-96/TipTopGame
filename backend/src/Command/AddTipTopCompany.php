@@ -38,6 +38,7 @@ class AddTipTopCompany extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $store=$this->addCompany();
+        $this->generateAnonymousProfile($this->entityManager , $output);
         $userManager=$this->addStoreManagerProfile();
         $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $userManager, $store);
 
@@ -105,6 +106,29 @@ class AddTipTopCompany extends Command
         $this->entityManager->flush();
 
         return $userManager;
+
+    }
+
+    private function generateAnonymousProfile(EntityManagerInterface $entityManager, OutputInterface $output): void
+    {
+        $roleRepository = $entityManager->getRepository(Role::class);
+        $anonymousRole = $roleRepository->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+        $anonymousUser = new User();
+        $anonymousUser->setLastname('Anonymous');
+        $anonymousUser->setFirstname('Anonymous');
+        $anonymousUser->setGender('Homme');
+        $anonymousUser->setEmail('anonymous@anonymous.fr');
+        $anonymousUser->setRole($anonymousRole);
+        $anonymousUser->setStatus(User::STATUS_OPEN);
+        $anonymousUser->setDateOfBirth(new \DateTime('1980-01-06'));
+
+        $plainedPassword = 'anonymous';
+        $hashedPassword = $this->passwordEncoder->hashPassword($anonymousUser, $plainedPassword);
+        $anonymousUser->setPassword($hashedPassword);
+
+        $entityManager->persist($anonymousUser);
+        $entityManager->flush();
+        $output->writeln('Anonymous profile added to the role table.');
 
     }
 }

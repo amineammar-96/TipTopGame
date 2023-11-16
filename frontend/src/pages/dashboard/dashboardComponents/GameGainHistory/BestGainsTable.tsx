@@ -250,8 +250,12 @@ function BestGainsTable({selectedStoreId, data}: storeManagersTableProps) {
     );
 
     const [loading, setLoading] = useState(false);
-
-
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, []);
     return (
         <>
 
@@ -270,6 +274,8 @@ function BestGainsTable({selectedStoreId, data}: storeManagersTableProps) {
                                     rowKey={(record) => record.id}
                                     dataSource={data as any}
                                     pagination={false}
+                                    loading={loading}
+
                                 />
                             </ConfigProvider>
                         </Col>

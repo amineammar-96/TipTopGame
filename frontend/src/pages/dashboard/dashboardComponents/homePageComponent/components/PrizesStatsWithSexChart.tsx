@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, {useEffect,useState} from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -22,7 +22,33 @@ ChartJS.register(
     Legend
 );
 
-export function PrizesStatsWithSexChart() {
+export function PrizesStatsWithSexChart(dataChart: any) {
+
+
+    const[chartLabels, setChartLabels] = useState<string[]>([]);
+    const[chartData, setChartData] = useState<number[]>([]);
+
+    useEffect(() => {
+
+        if(dataChart['dataChart']){
+            let values = Object.values(dataChart['dataChart']);
+            let obj: any = {};
+
+            values.forEach((value: any) => {
+                obj[value['label']] = value['value'];
+            });
+
+            let keys = Object.keys(obj);
+            let valuesAux = Object.values(obj);
+
+
+            setChartLabels(keys as string[]);
+            setChartData(valuesAux as number[]);
+
+
+        }
+    }, []);
+
 
 
     const options = {
@@ -35,7 +61,7 @@ export function PrizesStatsWithSexChart() {
         responsive: true,
         plugins: {
             legend: {
-                position: 'right' as const,
+                position: 'top' as const,
             },
             title: {
                 display: true,
@@ -44,20 +70,20 @@ export function PrizesStatsWithSexChart() {
         },
     };
 
-    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+    const labels = chartLabels;
 
      const data = {
         labels,
         datasets: [
             {
                 label: 'Hommes',
-                data: labels.map(() => 34),
+                data: chartData.map((item:any) => item.homme),
                 borderColor: '#42B2FF',
                 backgroundColor: '#42B2FF',
             },
             {
                 label: 'Femmes',
-                data: labels.map(() => 334),
+                data: chartData.map((item:any) => item.femme),
                 borderColor: '#EBB3E6',
                 backgroundColor: '#EBB3E6',
             },

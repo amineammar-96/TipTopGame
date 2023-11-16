@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 
-export function PrizesStatsWithAgeChart(dataChart: any) {
+export function PrizesStatsByStatusesChart(dataChart: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState<number[]>([]);
@@ -16,26 +16,19 @@ export function PrizesStatsWithAgeChart(dataChart: any) {
     useEffect(() => {
 
         if(dataChart['dataChart']){
-            let values = Object.values(dataChart['dataChart']);
-            let obj: any = {};
+            if (dataChart['dataChart']) {
+                let values = Object.values(dataChart['dataChart']);
+                let chartData = values.map((value: any) => value['value']);
 
-            values.forEach((value: any) => {
-                obj[value['label']] = value['value'];
-            });
-
-            let keys = Object.keys(obj);
-            let valuesAux = Object.values(obj);
-
-
-            setChartLabels(keys as string[]);
-            setChartData(valuesAux as number[]);
+                setChartData(chartData as number[]);
+            }
 
 
         }
     }, []);
 
     const data = {
-        labels: ['18-24 ans', '25-34 ans', '35-44 ans', '45-55 ans', '55+ ans'],
+        labels: ["Imprimé" , "En attente de validation", "Cadeau Remis", "Annulé", "Expiré"],
         datasets: [
             {
                 label: 'Lots gagnés',
@@ -43,16 +36,16 @@ export function PrizesStatsWithAgeChart(dataChart: any) {
                 backgroundColor: [
                     '#42B2FF',
                     '#E3E94B',
-                    '#7BC558',
                     '#EBB3E6',
                     '#ff7b7b',
+                    '#fa6084'
                 ],
                 borderColor: [
                     '#42B2FF',
                     '#E3E94B',
-                    '#7BC558',
                     '#EBB3E6',
                     '#ff7b7b',
+                    '#fa6084'
                 ],
                 borderWidth: 1,
             },
@@ -70,7 +63,18 @@ export function PrizesStatsWithAgeChart(dataChart: any) {
                     label: function (context: any) {
                         let label = context.label || '';
                         let value = context.parsed || 0;
-                        let percentage = ((value / chartData.reduce((a, b) => a + b, 0)) * 100).toFixed(2) + '%';
+
+                        if (isNaN(value)) {
+                            return `${label}: N/A`;
+                        }
+
+                        let total = chartData.reduce((acc:any, data:any) => acc + data.value, 0);
+
+                        if (isNaN(total) || total === 0) {
+                            return `${label}: ${value} tickets`;
+                        }
+
+                        let percentage = ((value / total) * 100).toFixed(2) + '%';
                         return `${label}: ${value} (${percentage})`;
                     },
                 },

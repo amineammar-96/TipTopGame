@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Card, Col, Row, Spin} from 'antd';
+import {Card, Col, Modal, Row, Spin} from 'antd';
 import Image from 'next/image';
 import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -58,6 +58,12 @@ interface DataType {
         name: string;
     };
     employee: {
+        id: string;
+        firstname: string;
+        lastname: string;
+        email: string;
+    };
+    user: {
         id: string;
         firstname: string;
         lastname: string;
@@ -163,6 +169,9 @@ function TicketsPageDashboard() {
     }
 
     const renderPrizeImage = (prizeId: string) => {
+        if(prizeId==null) {
+            return (<></>);
+        }
         switch (prizeId.toString()) {
             case "1":
                 return (
@@ -187,6 +196,14 @@ function TicketsPageDashboard() {
             default:
                 return (<></>);
         }
+    }
+
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedTicket, setSelectedTicket] = useState<DataType>();
+
+    const openDetailsModal = (ticket: DataType) => {
+        setSelectedTicket(ticket);
+        setIsDetailsModalOpen(true);
     }
 
     const renderTickets = () => {
@@ -264,10 +281,7 @@ function TicketsPageDashboard() {
                                     )}
                                     {ticket.status=="2" && (
                                         <>
-                                            <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Caisser:</strong> {ticket.employee.lastname}  {ticket.employee.firstname} (#{ticket.employee.id}) </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Caisser E-mail:</strong> {ticket.employee.email}  </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Magasin associé:</strong> {ticket.store.name}  </p>
-                                            <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
+                                             <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
                                         </>
                                          )}
                                     {ticket.status=="3" && (
@@ -289,7 +303,9 @@ function TicketsPageDashboard() {
 
                                         )}
 
-                                    <Button className={`${styles.eyeIcon} mt-3`}  title={`Plus de détails`} icon={<EyeOutlined />} size={"large"} >
+                                    <Button onClick={()=> {
+                                        openDetailsModal(ticket);
+                                    }} className={`${styles.eyeIcon} mt-3`}  title={`Plus de détails`} icon={<EyeOutlined />} size={"large"} >
                                     Consulter
                                     </Button>
 
@@ -615,7 +631,7 @@ function TicketsPageDashboard() {
                                         Résultat de recherche
                                     </h6>
                                        <h6>
-                                           {data?.length} Utilisateur(s) trouvé(s) sur {totalTicketsCount}
+                                           {data?.length} Ticket(s) trouvé(s) sur {totalTicketsCount}
                                        </h6>
 
                                    </Col>
@@ -655,6 +671,160 @@ function TicketsPageDashboard() {
                 </div>
             </div>
 
+            <Modal
+                title={
+                <>
+                <h3 className={`mt-5`}>
+                    Détails de Ticket
+                </h3>
+                </>
+                }
+                open={isDetailsModalOpen}
+                onOk={() => {
+                    setIsDetailsModalOpen(false);
+                }}
+                onCancel={() => {
+                    setIsDetailsModalOpen(false);
+                }}
+                footer={[
+                    <Button key="back" onClick={() => {
+                        setIsDetailsModalOpen(false);
+                    }}>
+                        Fermer
+                    </Button>,
+                ]}
+            >
+                <div className={`${styles.ticketDetailsModal}`}>
+                    <div className={`${styles.ticketDetailsModalLeft}`}>
+                        <div className={`${styles.ticketDetailsModalLeftHeader}`}>
+                            <p className={`${styles.ticketStatusTag}
+                                     ${selectedTicket?.status=="1" && styles.ticketStatusTagGenerated}
+                                        ${selectedTicket?.status=="2" && styles.ticketStatusTagPrinted}
+                                        ${selectedTicket?.status=="3" && styles.ticketStatusTagWaiting}
+                                        ${selectedTicket?.status=="4" && styles.ticketStatusTagWin}
+                                        ${selectedTicket?.status=="5" && styles.ticketStatusTagExpired}
+                                        ${selectedTicket?.status=="6" && styles.ticketStatusTagCanceled}
+                                     `}>
+                                {selectedTicket?.status=="1" && (
+                                    <Tag icon={<CheckCircleOutlined />} color="success">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())}
+                                    </Tag>
+
+                                )}
+                                {selectedTicket?.status=="2" && (
+                                    <Tag icon={<PrinterOutlined/>} color="success">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())}
+                                    </Tag>
+
+                                )}
+                                {selectedTicket?.status=="3" && (
+                                    <Tag icon={<ClockCircleOutlined />} color="success">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())}
+                                    </Tag>
+
+                                )}
+                                {selectedTicket?.status=="4" && (
+                                    <Tag icon={<CheckCircleOutlined />} color="default">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())}
+                                    </Tag>
+
+                                )}
+                                {selectedTicket?.status=="5" && (
+                                    <Tag icon={<CheckCircleOutlined />} color="default">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())
+                                        }
+                                    </Tag>
+                                )}
+                            </p>
+                            <p className={`${styles.barCode}`}><strong>Code de Ticket:</strong> <span className={styles.barCodeText}>#{selectedTicket?.ticket_code} <div className={`${styles.ticketCardIconsBarCode}`}>
+                                        <Image src={BarcodeTicketImg} alt={"Code a barre"}></Image>
+                                    </div>
+                                    </span>
+                            </p>
+
+                            {(selectedTicket?.status!="1") && (<>
+                                <p>
+                                    <strong>Date d'impression : <br/>
+                                    </strong>
+                                    <span>
+                                    {selectedTicket?.ticket_printed_at.date} à {selectedTicket?.ticket_printed_at.time}
+                                </span>
+                                </p>
+                                    {selectedTicket?.status=="3" && (
+                                        <p>
+                                            <strong>Participant : <br/>
+                                            </strong>
+                                            <span>
+                                                {selectedTicket?.user.firstname} {selectedTicket?.user.lastname}
+                                            </span>
+                                        </p>
+                                    )}
+                                <p>
+                                    <strong>Caissier : <br/>
+                                    </strong>
+                                    <span>
+                                    {selectedTicket?.employee.firstname} {selectedTicket?.employee.lastname}
+                                </span>
+                                </p>
+
+                                    <p>
+                                        <strong>Magasin : <br/>
+                                        </strong>
+                                        <span>
+                                    {selectedTicket?.store.name}
+                                </span>
+                                    </p>
+
+                                </>
+                            )}
+
+
+
+
+                            {(userRole === 'ROLE_ADMIN' || selectedTicket?.status=="4") &&  (
+                                <>
+                                    <p><strong>Gain:</strong></p>
+                                    <div className={`${styles.ticketCardIconsPrize}`}>
+                                        {renderPrizeImage(selectedTicket?.prize.id as string)}
+                                    </div>
+                                    <p className={`${styles.prizeLabel}`}>{selectedTicket?.prize.label}</p>
+                                </>
+                            )}
+
+
+
+                            {selectedTicket?.status=="1" && (
+                                <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de Génération:</strong>Le {selectedTicket?.ticket_generated_at.date} à {selectedTicket?.ticket_generated_at.time} </p>
+                            )}
+                            {selectedTicket?.status!="1" && (
+                                <>
+                                    <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {selectedTicket?.ticket_printed_at.date} à {selectedTicket?.ticket_printed_at.time} </p>
+                                </>
+                            )}
+                            {selectedTicket?.status=="3" && (
+                                <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Date de jeu:</strong>Le {selectedTicket?.updated_at.date} à {selectedTicket?.updated_at.time} </p>
+                            )}
+                            {selectedTicket?.status=="4" && (
+                                <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Date de Gain:</strong>Le {selectedTicket?.win_date.date} à {selectedTicket?.win_date.time} </p>
+                            )}
+
+                            {selectedTicket?.status=="3" && (userRole=="ROLE_ADMIN" || userRole=="ROLE_STOREMANAGER") &&
+                                (
+                                    <a
+                                        onClick={() => {
+
+                                        }}
+                                        className={`${styles.cancelTicketBtn} mt-3`}  title={`Annuler le ticket`}  >
+                                        Annuler le ticket <CloseCircleOutlined />
+                                    </a>
+
+                                )}
+
+
+                        </div>
+                    </div>
+                </div>
+            </Modal>
 
         </div>
     );

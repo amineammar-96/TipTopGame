@@ -326,8 +326,8 @@
 .spinWheelBtn {
     z-index: -1 !important;
     position: absolute !important;
-    bottom: 35vw !important;
-    right: 44% !important;
+    bottom: 30rem !important;
+    right: 34rem !important;
     width: 15rem !important;
     font-size: 2rem;
     height: 5rem;

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\Ticket;
 
+use App\Entity\TicketHistory;
 use App\Entity\User;
 use Exception;
 use App\Entity\Role;
@@ -243,12 +244,24 @@ class TicketController extends AbstractController
             ], 404);
         }
 
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => Role::ROLE_ANONYMOUS]);
+
 
         $ticket->setTicketPrintedAt(new \DateTime());
         $ticket->setStatus(Ticket::STATUS_PRINTED);
         $ticket->setEmployee($user);
         $ticket->setStore($userStore);
         $ticket->setUpdatedAt(new \DateTime());
+
+
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($ticket);
+        $ticketHistory->setEmployee($user);
+        $ticketHistory->setUser($anonymousUser);
+        $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+        $ticketHistory->setUpdatedAt(new \DateTime());
+
+        $this->entityManager->persist($ticketHistory);
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
@@ -259,7 +272,6 @@ class TicketController extends AbstractController
 
     }
 
-    //confirmTicketPlay
     public function confirmTicketPlay(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -282,6 +294,15 @@ class TicketController extends AbstractController
         $ticket->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
         $ticket->setUpdatedAt(new \DateTime());
         $ticket->setWinDate(new \DateTime());
+
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($ticket);
+        $ticketHistory->setEmployee($ticket->getEmployee());
+        $ticketHistory->setUser($this->getUser());
+        $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
+        $ticketHistory->setUpdatedAt(new \DateTime());
+        $this->entityManager->persist($ticketHistory);
+
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
@@ -311,6 +332,17 @@ class TicketController extends AbstractController
 
         $ticket->setStatus(Ticket::STATUS_WINNER);
         $ticket->setUpdatedAt(new \DateTime());
+
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($ticket);
+        $ticketHistory->setEmployee($this->getUser());
+        $ticketHistory->setUser($ticket->getUser());
+        $ticketHistory->setStatus(Ticket::STATUS_WINNER);
+        $ticketHistory->setUpdatedAt(new \DateTime());
+
+        $this->entityManager->persist($ticketHistory);
+
+
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 

@@ -3,7 +3,10 @@
 namespace App\Command;
 
 use App\Entity\Prize;
+use App\Entity\Role;
 use App\Entity\Ticket;
+use App\Entity\TicketHistory;
+use App\Entity\User;
 use App\Repository\PrizeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -51,7 +54,7 @@ class GenerateDefaultTickets extends Command
             return $sum + $prize->getWinningRate();
         }, 0);
 
-        $ticketCount = 20000;
+        $ticketCount = 50000;
         $tickets = [];
         $generatedTicketCodes = [];
 
@@ -74,6 +77,12 @@ class GenerateDefaultTickets extends Command
                 }
             }
 
+            $adminRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ADMIN]);
+            $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $adminRole]);
+            $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
+
+
             if ($winningPrize) {
                 $ticket = new Ticket();
                 $ticket->setPrize($winningPrize);
@@ -82,8 +91,15 @@ class GenerateDefaultTickets extends Command
                 $ticket->setTicketPrintedAt(null);
                 $ticket->setWinDate(null);
                 $ticket->setStatus(Ticket::STATUS_GENERATED);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($anonymousUser);
+                $ticketHistory->setEmployee($user);
+                $ticketHistory->setStatus(Ticket::STATUS_GENERATED);
+                $ticketHistory->setUpdatedAt(new \DateTime());
                 $this->entityManager->persist($ticket);
-                $tickets[] = $ticket;
+                $this->entityManager->persist($ticketHistory);
             }
         }
 

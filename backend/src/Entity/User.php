@@ -353,7 +353,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         ];
     }
 
-    private function getAge(): int
+    public function getAge(): int
     {
         $now = new \DateTime();
         $interval = $this->getDateOfBirth()->diff($now);

@@ -286,7 +286,6 @@ function PlayGameComponent() {
                     setPlayGame(false);
                 }).catch((error) => {
                     setPlayGame(false);
-                    console.log(error);
                     if (error.response) {
                         if (error.response.status === 401) {
                             logoutAndRedirectAdminsUserToLoginPage();
@@ -387,17 +386,28 @@ function PlayGameComponent() {
             });
         }).catch((error) => {
             //setLoading(false);
-            console.log(error);
+            console.log(error.response.data.message);
+            console.log(error.response , 'responseresponseresponse');
+
             if (error.response) {
                 if (error.response.status === 401) {
                     logoutAndRedirectAdminsUserToLoginPage();
                 } else if (error.response.status === 404) {
-                    Modal.error({
-                        className: 'modalError',
-                        title: 'Code invalide !',
-                        content: 'Votre code est invalide, veuillez réessayer.',
-                        okText: "D'accord",
-                    });
+                    if (error.response.data.message=="Ticket already played") {
+                        Modal.info({
+                            className: 'modalError',
+                            title: 'Code déjà joué !',
+                            content: 'Votre code est plus valide, il a déjà été joué.',
+                            okText: "D'accord",
+                        });
+                    }else {
+                        Modal.error({
+                            className: 'modalError',
+                            title: 'Code invalide !',
+                            content: 'Votre code est invalide, veuillez réessayer.',
+                            okText: "D'accord",
+                        });
+                    }
                 }
             }
         });

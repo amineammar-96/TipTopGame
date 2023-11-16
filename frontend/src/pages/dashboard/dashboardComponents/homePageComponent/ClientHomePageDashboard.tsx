@@ -306,7 +306,7 @@ function HomePage() {
                                                         <div className={`${styles.topCardElementTextDatesCounter}`}>500.000 €</div>
 
                                                         <div className={`${styles.topCardElementTextDatesTitle}`}>Gain Totales</div>
-                                                    </div>d
+                                                    </div>
                                                 </div>
                                             </Col>
                                         </Row>

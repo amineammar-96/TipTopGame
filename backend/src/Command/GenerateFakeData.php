@@ -6,11 +6,13 @@ use App\Entity\Prize;
 use App\Entity\Role;
 use App\Entity\Store;
 use App\Entity\Ticket;
+use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Repository\PrizeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -46,16 +48,20 @@ class GenerateFakeData extends Command
         $this->setDescription('Generate fake data for stores, tickets, user, (managers , employee,client) table.');
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $randomTickets = $this->getRandomTickets();
-        $this->generateFakeStores($output);
-        $this->generateFakeManager($output);
-        $this->generateFakeEmployee($output);
-        $this->generateFakeClient($output);
+        //$this->generateFakeStores($output);
+        //$this->generateFakeManager($output);
+        //$this->generateFakeEmployee($output);
+        //$this->generateFakeClient($output);
         $this->generateFakeGain($output , $randomTickets);
-
 
 
         $output->writeln('Fake data generated.');
@@ -77,11 +83,11 @@ class GenerateFakeData extends Command
             ->getQuery()
             ->getSingleScalarResult();
 
-        $offset = mt_rand(0, max(0, $totalTickets - 1000));
+        $offset = mt_rand(0, max(0, $totalTickets - 3000));
 
         return $ticketRepository->createQueryBuilder('t')
             ->setFirstResult($offset)
-            ->setMaxResults(1000)
+            ->setMaxResults(2000)
             ->getQuery()
             ->getResult();
     }
@@ -89,7 +95,13 @@ class GenerateFakeData extends Command
     private function generateFakeStores($output)
     {
         $faker = Factory::create();
-        $storeCount = 20;
+        $storeCount = 10;
+
+        $cities = ["Paris" , "Lyon" , "Marseille" , "Madrid" , "Bordeaux"];
+
+
+
+
 
         for ($i = 0; $i < $storeCount; $i++) {
             $store = new Store();
@@ -98,7 +110,7 @@ class GenerateFakeData extends Command
             $store->setHeadquartersAddress($faker->address);
             $store->setEmail($faker->email);
             $store->setPostalCode($faker->postcode);
-            $store->setCity($faker->city);
+            $store->setCity($cities[array_rand($cities)]);
             $store->setCountry($faker->country);
             $store->setCapital($faker->randomFloat(2, 1000, 1000000));
             $store->setStatus($faker->randomElement([1, 2]));
@@ -108,7 +120,7 @@ class GenerateFakeData extends Command
             $this->entityManager->persist($store);
         }
 
-        $output->writeln('20 stores added to the store table.');
+        $output->writeln('10 stores added to the store table.');
         $this->entityManager->flush();
     }
 
@@ -126,7 +138,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 40; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -148,7 +160,7 @@ class GenerateFakeData extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln('200 managers added to the user table. (relationship too)');
+        $output->writeln('40 managers added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -208,7 +220,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 500; $i++) {
+        for ($i = 0; $i < 600; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -229,55 +241,62 @@ class GenerateFakeData extends Command
         }
         $this->entityManager->flush();
 
-        $output->writeln('500 clients added to the user table. (relationship too)');
+        $output->writeln('600 clients added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
-    private function generateFakeGain(OutputInterface $output, array $randomTickets)
+    /**
+     * @throws Exception
+     */
+    private function generateFakeGain(OutputInterface $output, array $randomTickets): void
     {
         $clientRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_CLIENT]);
         $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
 
         if (!$clientRole || !$employeeRole) {
             $output->writeln('Error: CLIENT or EMPLOYEE role not found.');
-            return Command::FAILURE;
+            return;
         }
 
         $clients = $this->getRandomUsersByRole($clientRole, 100);
 
         $employees = $this->getRandomUsersByRole($employeeRole, 100);
 
+        //$statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER , Ticket::STATUS_CANCELLED , Ticket::STATUS_EXPIRED];
+        $statuses = [Ticket::STATUS_WINNER];
         foreach ($randomTickets as $ticket) {
+            $randomDate = new \DateTimeImmutable('now - ' . mt_rand(0, 5) . ' days');
+            $randomStatus = $statuses[array_rand($statuses)];
+
+
             $client = $clients[array_rand($clients)];
             $client->addTicket($ticket);
             $employee = $employees[array_rand($employees)];
-            $ticket->setStatus(Ticket::STATUS_PRINTED);
-            $ticket->setTicketPrintedAt(new \DateTimeImmutable());
-            $ticket->setWinDate(new \DateTimeImmutable());
-            $ticket->setTicketGeneratedAt(new \DateTimeImmutable());
-            $ticket->setUpdatedAt(new \DateTimeImmutable());
+            $ticket->setStatus(
+                $randomStatus
+            );
+            $ticket->setTicketPrintedAt($randomDate);
+            $ticket->setWinDate($randomDate);
+            $ticket->setTicketGeneratedAt($randomDate);
+            $ticket->setUpdatedAt($randomDate);
             $ticket->setEmployee($employee);
             $ticket->setStore($employee->getStores()[0]);
             $employee->addTicket($ticket);
             $ticket->setUser($client);
+
+
+
             $this->entityManager->persist($ticket);
             $this->entityManager->persist($client);
             $this->entityManager->persist($employee);
-        }
 
-        foreach ($randomTickets as $ticket) {
-            $ticket->setStatus(Ticket::STATUS_WINNER);
-            $ticket->setTicketPrintedAt(new \DateTimeImmutable());
-            $ticket->setWinDate(new \DateTimeImmutable());
-            $ticket->setTicketGeneratedAt(new \DateTimeImmutable());
-            $ticket->setUpdatedAt(new \DateTimeImmutable());
-            $this->entityManager->persist($ticket);
-        }
+            $this->createTicketHistory($ticket , $randomDate , $randomStatus , $employees , $clients);
+            }
+
 
         $this->entityManager->flush();
 
         $output->writeln('Fake gains generated and linked to clients and employees.');
-        return Command::SUCCESS;
     }
 
     private function getRandomUsersByRole(Role $role, int $count): array
@@ -290,5 +309,113 @@ class GenerateFakeData extends Command
 
         shuffle($users);
         return array_slice($users, 0, $count);
+    }
+
+    private function createTicketHistory(mixed $ticket, \DateTimeImmutable $randomDate, mixed $randomStatus, array $employees, array $clients): void
+    {
+        switch ($randomStatus) {
+            case Ticket::STATUS_PRINTED:
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+                break;
+            case Ticket::STATUS_PENDING_VERIFICATION:
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+                break;
+            case Ticket::STATUS_WINNER:
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_WINNER);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+                break;
+            case Ticket::STATUS_CANCELLED:
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_CANCELLED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+                break;
+            case Ticket::STATUS_EXPIRED:
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+
+                $ticketHistory = new TicketHistory();
+                $ticketHistory->setTicket($ticket);
+                $ticketHistory->setUser($clients[array_rand($clients)]);
+                $ticketHistory->setEmployee($employees[array_rand($employees)]);
+                $ticketHistory->setStatus(Ticket::STATUS_EXPIRED);
+                $ticketHistory->setUpdatedAt($randomDate);
+                $this->entityManager->persist($ticketHistory);
+                break;
+        }
     }
 }

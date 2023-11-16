@@ -1,130 +1,123 @@
 "use client";
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 
-import { Table } from 'antd';
+import {ConfigProvider, Table} from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
+import {StopOutlined} from "@ant-design/icons";
+import frFR from "antd/lib/locale/fr_FR";
 
 interface DataType {
-    key: React.Key;
-    name: string;
-    chinese: number;
-    math: number;
-    english: number;
+    key: number;
+    username: string;
+    tickets: number;
+    gains: number;
+    amount: string;
+    level: number;
 }
-export function TopTeenParticipants() {
+export function TopTeenParticipants(dataTable: any) {
+
+    const[chartLabels, setChartLabels] = useState<string[]>([]);
+    const[chartData, setChartData] = useState<number[]>([]);
+
+    useEffect(() => {
+
+        if(dataTable){
+
+            let obj: any = {};
+
+            dataTable["dataTable"].forEach((value: any) => {
+                obj[value['label']] = value['value'];
+            });
+
+            let keys = Object.keys(obj);
+            let valuesAux = Object.values(obj);
+
+
+            setChartLabels(keys as string[]);
+            setChartData(valuesAux as number[]);
+
+
+        }
+    }, []);
 
 
     const columns: ColumnsType<DataType> = [
         {
-            title: 'Name',
-            dataIndex: 'name',
+            title: 'Classement',
+            dataIndex: 'key',
+            sorter: {
+                compare: (a, b) => a.key - b.key,
+                multiple: 1,
+            },
         },
         {
-            title: 'Chinese Score',
-            dataIndex: 'chinese',
+            title: 'Name',
+            dataIndex: 'username',
+        },
+        {
+            title: 'Tickets récoltés',
+            dataIndex: 'tickets',
             sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
+                compare: (a, b) => a.tickets - b.tickets,
                 multiple: 3,
             },
         },
         {
-            title: 'Math Score',
-            dataIndex: 'math',
+            title: 'Gagnant',
+            dataIndex: 'gains',
+            render: (gains: number) => {
+                return <>
+                    <span>
+                        {gains} Fois
+                    </span>
+                </>
+            },
             sorter: {
-                compare: (a, b) => a.math - b.math,
+                compare: (a, b) => a.gains - b.gains,
                 multiple: 2,
             },
         },
         {
-            title: 'English Score',
-            dataIndex: 'english',
+            title: 'Points de fidélité',
+            dataIndex: 'level',
+            render: (level: number) => {
+                return <>
+                    <span>
+                        {level} Points
+                    </span>
+                </>
+            },
             sorter: {
-                compare: (a, b) => a.english - b.english,
-                multiple: 1,
+                compare: (a, b) => a.level - b.level,
+                multiple: 2,
             },
         },
+
     ];
 
-    const data: DataType[] = [
-        {
-            key: '1',
-            name: 'John Brown',
-            chinese: 98,
-            math: 60,
-            english: 70,
-        },
-        {
-            key: '2',
-            name: 'Jim Green',
-            chinese: 98,
-            math: 66,
-            english: 89,
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            chinese: 98,
-            math: 90,
-            english: 70,
-        },
-        {
-            key: '4',
-            name: 'Jim Red',
-            chinese: 88,
-            math: 99,
-            english: 89,
-        },
-        {
-            key: '5',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-        {
-            key: '6',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-        {
-            key: '7',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-        {
-            key: '8',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-        {
-            key: '9',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-        {
-            key: '10',
-            name: 'Jake White',
-            chinese: 98,
-            math: 92,
-            english: 87,
-        },
-    ];
+    const data: DataType[] = chartData as any;
+
+    const customEmptyText = (
+        <div className={styles.emptyTableTextDiv}>
+            <span>Aucun Historique trouvé
+            </span>
+            <span><StopOutlined/></span>
+        </div>
+    );
+
 
     const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
     };
     return <div className={styles.tableStats}>
-        <Table columns={columns} dataSource={data} onChange={onChange} />
+        <ConfigProvider locale={frFR}>
+        <Table columns={columns} dataSource={data} onChange={onChange}
+               locale={{emptyText: customEmptyText}}
+
+        />
+        </ConfigProvider>
     </div>;
 }
 

@@ -67,7 +67,7 @@ function StoresList({ globalSelectedStoreId, onSelectStore  }: {  globalSelected
         let allStoresOption = {
             key: 'allStores',
             label: 'Tous les magasins',
-            value: 'allStores',
+            value: '',
         };
         options.push(allStoresOption as OptionType);
         storesList.forEach((store , index) => {

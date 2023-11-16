@@ -6,6 +6,7 @@ use App\Entity\Prize;
 use App\Entity\Role;
 use App\Entity\Store;
 use App\Entity\Ticket;
+use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Repository\PrizeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,23 +73,40 @@ class PrintRandomTickets extends Command
     }
 
     //printRandomTickets
+
+    /**
+     * @throws \Exception
+     */
     private function printRandomTickets(OutputInterface $output , array $randomTickets): void
     {
         $userRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
         $employees = $this->entityManager->getRepository(User::class)->findBy(['role' => $userRole]);
 
         $output->writeln('Printing random tickets...');
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
 
         foreach ($randomTickets as $ticket) {
             $employee = $employees[array_rand($employees)];
             $store = $employee->getStores()[0];
+            $randomDate = new \DateTimeImmutable('now - ' . mt_rand(0, 5) . ' days');
 
             $ticket->setStore($store);
             $ticket->setStatus(Ticket::STATUS_PRINTED);
             $ticket->setEmployee($employee);
-            $ticket->setTicketPrintedAt(new \DateTimeImmutable());
-            $ticket->setUpdatedAt(new \DateTimeImmutable());
+            $ticket->setTicketPrintedAt($randomDate);
+            $ticket->setUpdatedAt($randomDate);
             $ticket->setUser(null);
+
+            $ticketHistory = new TicketHistory();
+            $ticketHistory->setTicket($ticket);
+            $ticketHistory->setEmployee($ticket->getEmployee());
+            $ticketHistory->setUser($anonymousUser);
+            $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+            $ticketHistory->setUpdatedAt($randomDate);
+            $this->entityManager->persist($ticketHistory);
+
 
             $this->entityManager->persist($ticket);
         }

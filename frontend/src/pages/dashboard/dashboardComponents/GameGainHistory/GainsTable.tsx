@@ -255,7 +255,7 @@ function GainsTable({selectedStoreId, data}: storeManagersTableProps) {
 
     const customEmptyText = (
         <div className={styles.emptyTableTextDiv}>
-            <span>Aucun Client trouvé
+            <span>Aucun Gain trouvé
             </span>
             <span><StopOutlined/></span>
         </div>

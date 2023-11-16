@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     CategoryScale,
     LinearScale,
@@ -21,7 +21,32 @@ ChartJS.register(
     Legend
 );
 
-export function CityStatsChart() {
+export function CityStatsChart(dataChart: any) {
+
+    const[chartLabels, setChartLabels] = useState<string[]>([]);
+    const[chartData, setChartData] = useState<number[]>([]);
+
+    useEffect(() => {
+
+        if(dataChart['dataChart']){
+            let values = Object.values(dataChart['dataChart']);
+            let obj: any = {};
+
+            values.forEach((value: any) => {
+                obj[value['label']] = value['value'];
+            });
+
+            let keys = Object.keys(obj);
+            let valuesAux = Object.values(obj);
+
+
+            setChartLabels(keys as string[]);
+            setChartData(valuesAux as number[]);
+
+
+        }
+    }, []);
+
 
     const options = {
         plugins: {
@@ -45,34 +70,56 @@ export function CityStatsChart() {
         },
     };
 
-    const labels = ['Paris', 'Lyon', 'Marseille', 'Bordeaux', 'May'];
+    const labels = chartLabels;
 
     const data = {
         labels,
         datasets: [
             {
-                label: 'Dataset 1',
-                data: labels.map(() => 12),
-                backgroundColor: '#42B2FF',
-                stack: 'Stack 0',
-            },
-            {
-                label: 'Dataset 2',
-                data: labels.map(() => 4),
-                backgroundColor: '#FF5555',
-                stack: 'Stack 2',
-            },
-            {
-                label: 'Dataset 3',
-                data: labels.map(() => 7),
-                backgroundColor: '#EBB3E6',
-                stack: 'Stack 1',
+                label: 'Lots gagnés',
+                data: chartData,
+                backgroundColor: [
+                    '#42B2FF',
+                    '#E3E94B',
+                    '#7BC558',
+                    '#EBB3E6',
+                    '#FF5555',
+                    '#FF9F40',
+                    '#41ffee',
+                    '#8a5021',
+                    '#00ff00',
+                    '#ffff00',
+                    '#ff0000',
+                    '#d7f18b',
+                    '#ff7b7b',
+                    '#8c00ff',
+                    '#f550f8',
+
+                ],
+                borderColor: [
+                    '#42B2FF',
+                    '#E3E94B',
+                    '#7BC558',
+                    '#EBB3E6',
+                    '#FF5555',
+                    '#FF9F40',
+                    '#41ffee',
+                    '#8a5021',
+                    '#00ff00',
+                    '#ffff00',
+                    '#ff0000',
+                    '#d7f18b',
+                    '#ff7b7b',
+                    '#8c00ff',
+                    '#f550f8',
+                ],
+                borderWidth: 1,
             },
         ],
     };
 
     return <div className={styles.barChartDiv}>
-        <Bar className={styles.barChartElement} options={options} data={data}/>
+                    <Bar className={styles.barChartElement} options={options} data={data}/>
     </div>;
 }
 

@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import {
     Chart as ChartJS,
@@ -13,27 +13,67 @@ import { PolarArea } from 'react-chartjs-2';
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
 
-export function PrizesWinStatsByStore() {
+export function PrizesWinStatsByStore(dataChart: any) {
+
+    const[chartLabels, setChartLabels] = useState<string[]>([]);
+    const[chartData, setChartData] = useState<number[]>([]);
+
+    useEffect(() => {
+
+        if(dataChart['dataChart']){
+            let values = Object.values(dataChart['dataChart']);
+            let obj: any = {};
+
+            values.forEach((value: any) => {
+                obj[value['label']] = value['value'];
+            });
+
+            let keys = Object.keys(obj);
+            let valuesAux = Object.values(obj);
+
+
+            setChartLabels(keys as string[]);
+            setChartData(valuesAux as number[]);
+
+
+        }
+    }, []);
 
     const data = {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange','Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: chartLabels,
         datasets: [
             {
-                label: 'Participants Gagnants',
-                data: [12, 19, 3, 5, 2, 3,12, 19, 3, 5, 2, 3],
+                label: 'Lots gagnés',
+                data: chartData,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 206, 86, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(153, 102, 255, 0.5)',
-                    'rgba(255, 159, 64, 0.5)',
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 206, 86, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(153, 102, 255, 0.5)',
-                    'rgba(255, 159, 64, 0.5)',
+                    'rgba(66, 178, 255, 0.6)',
+                    'rgba(227, 233, 75, 0.6)',
+                    'rgba(128, 83, 127, 0.6)',
+                    'rgba(239, 54, 222, 0.6)',
+                    'rgba(255, 85, 85, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(65, 255, 238, 0.6)',
+                    'rgba(138, 80, 33, 0.6)',
+                    'rgba(0, 255, 0, 0.6)',
+                    'rgba(255, 255, 0, 0.6)',
+                    'rgba(0, 255, 255, 0.6)',
+                    'rgba(255, 0, 0, 0.6)',
+                    'rgba(215, 241, 139, 0.6)',
+                ],
+                borderColor: [
+                    '#42B2FF',
+                    '#E3E94B',
+                    '#80537f',
+                    '#ef36de',
+                    '#FF5555',
+                    '#FF9F40',
+                    '#41ffee',
+                    '#8a5021',
+                    '#00ff00',
+                    '#ffff00',
+                    '#00ffff',
+                    '#ff0000',
+                    '#d7f18b',
                 ],
                 borderWidth: 1,
             },

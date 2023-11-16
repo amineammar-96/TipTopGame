@@ -21,30 +21,27 @@ class TicketRepository extends ServiceEntityRepository
         parent::__construct($registry, Ticket::class);
     }
 
-//    /**
-//     * @return Ticket[] Returns an array of Ticket objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByDateAndStore($startDate, $endDate, $store)
+    {
+        $startDate = \DateTime::createFromFormat('d/m/Y', $startDate)->format('Y-m-d H:i:s');
+        $endDate = \DateTime::createFromFormat('d/m/Y', $endDate)->format('Y-m-d H:i:s');
 
-//    public function findOneBySomeField($value): ?Ticket
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.updated_at BETWEEN :startDate AND :endDate')
+            ->andWhere('t.updated_at IS NOT NULL')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate);
+
+        if ($store) {
+            $qb->andWhere('t.store = :store')
+                ->setParameter('store', $store);
+        }
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
+
 
 
     /**

@@ -18,6 +18,7 @@ class Role
     const ROLE_CLIENT = self::PREFIX . self::DELIMITER . 'CLIENT';
     const ROLE_STOREMANAGER = self::PREFIX . self::DELIMITER . 'STOREMANAGER';
     const ROLE_EMPLOYEE = self::PREFIX . self::DELIMITER . 'EMPLOYEE';
+    const ROLE_ANONYMOUS = self::PREFIX . self::DELIMITER . 'ANONYMOUS';
    
 
     /**
