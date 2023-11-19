@@ -106,7 +106,7 @@ function storeAdminDashboard() {
                             {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                             {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
 
-                            {selectedMenuItem==="generalSettingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
+                            {selectedMenuItem==="settingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
 
                         </Row>
                     </Col>
