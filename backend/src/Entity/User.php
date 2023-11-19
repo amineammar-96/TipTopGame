@@ -71,6 +71,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: TicketHistory::class)]
     private Collection $ticketHistories;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserPersonalInfo $userPersonalInfo = null;
+
+    #[ORM\Column]
+    private ?bool $is_active = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $activited_at = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $token_expired_at = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -350,6 +371,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'dateOfBirth' => $this->getDateOfBirth()->format('d/m/Y'),
             'age' => $this->getAge(),
             'gender' => $this->getGender(),
+            'store'=> count($this->getStores())>0 ? $this->getStores()[0]->getStoreJson() : null,
+            'address' => $this->getUserPersonalInfo()?->getAddress(),
+            'postalCode' => $this->getUserPersonalInfo()?->getPostalCode(),
+            'city' => $this->getUserPersonalInfo()?->getCity(),
+            'is_activated' => $this->isIsActive(),
+            'created_at' => [
+                'date' => $this->getCreatedAt()->format('d/m/Y'),
+                'time' => $this->getCreatedAt()->format('H:i'),
+            ],
+            'activated_at' => [
+                'date' => $this->getActivitedAt()?->format('d/m/Y'),
+                'time' => $this->getActivitedAt()?->format('H:i'),
+            ],
+
+            'updated_at' => [
+                'date' => $this->getUpdatedAt()?->format('d/m/Y'),
+                'time' => $this->getUpdatedAt()?->format('H:i'),
+            ]
+
+
+        ];
+    }
+
+    public function getUserPersonalInfoJson(): array
+    {
+        if ($this->getUserPersonalInfo() === null) {
+            return [];
+        }
+        return [
+            'id' => $this->getId(),
+            'lastname' => $this->getLastname(),
+            'firstname' => $this->getFirstname(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'status' => $this->getStatus(),
+            'role' => $this->getRole()->getName(),
+            'stores' => $this->getUserStoresJson(),
+            'dateOfBirth' => $this->getDateOfBirth()->format('d/m/Y'),
+            'age' => $this->getAge(),
+            'gender' => $this->getGender(),
+            'userPersonalInfo' => $this->getUserPersonalInfo()->getUserPersonalInfoJson(),
         ];
     }
 
@@ -419,4 +481,101 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getUserPersonalInfo(): ?UserPersonalInfo
+    {
+        return $this->userPersonalInfo;
+    }
+
+    public function setUserPersonalInfo(?UserPersonalInfo $userPersonalInfo): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($userPersonalInfo === null && $this->userPersonalInfo !== null) {
+            $this->userPersonalInfo->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($userPersonalInfo !== null && $userPersonalInfo->getUser() !== $this) {
+            $userPersonalInfo->setUser($this);
+        }
+
+        $this->userPersonalInfo = $userPersonalInfo;
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->is_active;
+    }
+
+    public function setIsActive(bool $is_active): static
+    {
+        $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getActivitedAt(): ?\DateTimeInterface
+    {
+        return $this->activited_at;
+    }
+
+    public function setActivitedAt(?\DateTimeInterface $activited_at): static
+    {
+        $this->activited_at = $activited_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): static
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiredAt(): ?\DateTimeInterface
+    {
+        return $this->token_expired_at;
+    }
+
+    public function setTokenExpiredAt(?\DateTimeInterface $token_expired_at): static
+    {
+        $this->token_expired_at = $token_expired_at;
+
+        return $this;
+    }
+
+
+
 }

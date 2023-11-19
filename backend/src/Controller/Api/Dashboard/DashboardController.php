@@ -58,8 +58,15 @@ class DashboardController extends AbstractController
     }
 
 
-    public function getAdminDashboardCounters(): JsonResponse
+    public function getAdminDashboardCounters(Request $request): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
+        $startDate = $data['startDate'] ?? null;
+        $endDate = $data['endDate'] ?? null;
+        $storeId=  $data['storeId'] ?? null;
+
+
         $counters = [
             'tickets' => 0,
             'printedTickets' => 0,
@@ -67,9 +74,13 @@ class DashboardController extends AbstractController
             'clients' => 0,
             'participants' => 0,
             'playedTicket' => 0,
+            "confirmedTickets" => 0,
         ];
 
-        $tickets = $this->entityManager->getRepository(Ticket::class)->findAll();
+        $user = $this->getUser();
+        $userRole = $user->getRoles()[0];
+
+        $tickets = $this->entityManager->getRepository(Ticket::class)->findTicketsRelatedToUser($user , $startDate, $endDate, $storeId , $userRole);
         $counters['tickets'] = count($tickets);
 
         foreach ($tickets as $ticket) {
@@ -80,11 +91,15 @@ class DashboardController extends AbstractController
             if ($ticket->getStatus() == Ticket::STATUS_PENDING_VERIFICATION || $ticket->getStatus() == Ticket::STATUS_WINNER) {
                 $counters['playedTicket']++;
             }
+
+            if ($ticket->getStatus() == Ticket::STATUS_WINNER) {
+                $counters['confirmedTickets']++;
+            }
         }
 
         $counters['ticketStock'] = $counters['tickets'] - $counters['printedTickets'];
 
-        $users = $this->entityManager->getRepository(User::class)->findAll();
+        $users = $this->entityManager->getRepository(User::class)->findUsersOnRole($user , $storeId);
         foreach ($users as $user) {
             if ($user->getRoles()[0] == 'ROLE_CLIENT') {
                 $counters['clients']++;
@@ -108,7 +123,9 @@ class DashboardController extends AbstractController
         $storeId=  $request->get('storeId') ?? null;
 
 
-        $tickets = $this->entityManager->getRepository(Ticket::class)->findByDateAndStore($startDate, $endDate, $storeId);
+        $user = $this->getUser();
+
+        $tickets = $this->entityManager->getRepository(Ticket::class)->findByDateAndStore($startDate, $endDate, $storeId,$user);
 
         $counters = [
             'tickets' => count($tickets),

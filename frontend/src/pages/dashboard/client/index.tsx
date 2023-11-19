@@ -9,7 +9,7 @@ import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 
 import { Space, Spin } from 'antd';
-import ClientHomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/ClientHomePageDashboard";
+import ClientHomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/HomePageDashboard";
 import StoresManagement from "@/pages/dashboard/dashboardComponents/storeManagementComponent/StoresManagement";
 import ProfilesManagement from "@/pages/dashboard/dashboardComponents/profilesManagementComponent/ProfilesManagement";
 import TicketsPageDashboard from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
@@ -22,6 +22,8 @@ import PlayGameComponent from "@/pages/dashboard/client/components/PlayGameCompo
 
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
+import GeneralSettingsTemplates
+    from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
 
 
 function ClientDashboard() {
@@ -118,6 +120,7 @@ function ClientDashboard() {
                         {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                         {selectedMenuItem==="playGameItem" && <PlayGameComponent></PlayGameComponent>}
                         {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
+                        {selectedMenuItem==="settingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
 
 
 

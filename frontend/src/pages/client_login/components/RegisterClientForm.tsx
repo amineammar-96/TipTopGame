@@ -16,21 +16,14 @@ import locale from 'antd/locale/fr_FR';
 
 
 import styles from '../../../styles/pages/clientRegisterPage.module.css';
-import Icon, {
-    LoginOutlined,
+import{
     FacebookFilled,
-    TwitterSquareFilled,
     GoogleSquareFilled,
     EyeOutlined,
     EyeInvisibleOutlined,
     MailOutlined,
-    AppstoreFilled,
     UserAddOutlined,
     PhoneOutlined,
-    PlayCircleOutlined,
-    StarFilled,
-    ExclamationCircleOutlined,
-    UsergroupAddOutlined,
 
 } from '@ant-design/icons';
 

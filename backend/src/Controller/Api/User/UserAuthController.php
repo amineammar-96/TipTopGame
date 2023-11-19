@@ -2,7 +2,9 @@
 // src/Controller/ApiController.php
 
 namespace App\Controller\Api\User;
+use App\Entity\EmailService;
 use App\Entity\User;
+use App\Service\Mailer\PostManMailerService;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Role;
@@ -26,10 +28,12 @@ class UserAuthController extends AbstractController {
     private $entityManager;
 
     private UserPasswordHasherInterface $passwordEncoder;
+    private  PostManMailerService $postManMailerService;
 
-    public function __construct( EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder ) {
+    public function __construct( EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder , PostManMailerService $postManMailerService ) {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->postManMailerService = $postManMailerService;
 
     }
 
@@ -231,9 +235,29 @@ class UserAuthController extends AbstractController {
                     $hashedPassword = $this->passwordEncoder->hashPassword( $user, $password );
                     $user->setPassword( $hashedPassword );
                     $user->setRole( $role );
+                    $user->setIsActive(false);
+                    $user->setCreatedAt( new \DateTime() );
+
                     $user->setStatus( User::STATUS_OPEN );
                     $this->entityManager->persist( $user );
                     $this->entityManager->flush();
+
+                    $this->postManMailerService->sendEmailTemplate( EmailService::EMAILSERVICE_CLIENT_CREATE_ACCOUNT, $user, [
+                        'password' => $password,
+                        'ticket' => null,
+                        'token' => null,
+                    ] );
+
+                    $activationToken = bin2hex(random_bytes(32));
+                    $user->setToken($activationToken);
+                    $user->setTokenExpiredAt((new \DateTime())->modify('+1 day'));
+
+                    $this->postManMailerService->sendEmailTemplate( EmailService::EMAILSERVICE_ACCOUNT_ACTIVATION_CLIENT, $user, [
+                        'password' => $password,
+                        'ticket' => null,
+                        'token' => $activationToken,
+                        'expirationDate' => $user->getTokenExpiredAt()->format('d/m/Y'),
+                    ]);
 
                     return new JsonResponse( [ 'status' => 'success', 'message' => 'User registered successfully' ], 200 );
                 } else {
@@ -244,4 +268,7 @@ class UserAuthController extends AbstractController {
             }
 
         }
+
+
+
     }

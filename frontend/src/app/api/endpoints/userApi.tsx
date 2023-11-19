@@ -186,21 +186,21 @@ export async function getClientDashboardCardsCounters() {
     return await fetchJson('/client/dashboard/counters', config);
 }
 
-export async function getAdminDashboardCardsCounters() {
+export async function getAdminDashboardCardsCounters(searchParams: any) {
     const token = localStorage.getItem('loggedInUserToken');
     const config: AxiosRequestConfig = {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
-
         },
+        data: JSON.stringify(searchParams),
     };
 
     return await fetchJson('/admin/dashboard/counters', config);
+
 }
 
-//getDashboardStatsData
 
 export async function getDashboardStatsData(searchParams: any) {
     const token = localStorage.getItem('loggedInUserToken');
@@ -223,4 +223,44 @@ export async function getDashboardStatsData(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 
+}
+
+export async function getUserPersonalInfo(id:string) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson('/user/'+id+'/personal_info', config);
+}
+
+
+export async function sendActivationAccountEmailForUser(id:string) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson('/user/'+id+'/send_activation_email', config);
+}
+
+//checkActivationTokenValidity
+export async function checkActivationTokenValidityClient(data: any) {
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/client/check_activation_token_validity`, config)
 }

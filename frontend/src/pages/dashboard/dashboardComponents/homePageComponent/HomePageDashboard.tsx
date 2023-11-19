@@ -6,7 +6,7 @@ import RemainsTickes from "@/assets/images/remainsTickes.png";
 import ClientsImg from "@/assets/images/clients.png";
 import UsersImg from "@/assets/images/users.png";
 import RouletteImg from "@/assets/images/roulette.png";
-import { Card, Col, Row } from 'antd';
+import {Card, Checkbox, Col, Radio, Row} from 'antd';
 import Image from 'next/image';
 import {CityStatsChart} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/CityStatsChart";
 import {
@@ -49,25 +49,31 @@ import { PrizesStatsByStatusesChart } from './components/PrizesStatsByStatusesCh
 import { GameStatusesTendanceStatsChart } from './components/GameStatusesTendanceStatsChart';
 import { PrizeStatsByGenderByAgeChart } from './components/PrizeStatsByGenderByAgeChart';
 import { PrizesCostTendance } from './components/PrizesCostTendance';
+import GiftsImg from "@/assets/images/surprisePlus.png";
+import TiptopEmployeeImg from "@/assets/images/tiptopEmployee.png";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import DashboardSpinnigLoader from "@/app/components/widgets/DashboardSpinnigLoader";
 
 const dateFormat = 'DD/MM/YYYY';
 
-export interface SeachParams {
-    startDate?: string;
-    endDate?: string;
-    storeId?: string;
+interface SeachParams {
+    startDate?: string| null;
+    endDate?: string| null;
+    storeId?: string| null;
+    selectedPeriod?: string;
 }
 
 const search: SeachParams = {
     startDate: '01/01/2022',
     endDate: '30/12/2024',
     storeId: '',
+    selectedPeriod: '',
 };
 
 function HomePage() {
     const [selectedStoreId, setSelectedStoreId] = useState<string>('');
-    const [isStoresUpdated, setIsStoresUpdated] = useState(false);
     const { RangePicker } = DatePicker;
+    const [loading, setLoading] = useState<boolean>(true);
 
     const [searchForm, setSearchForm] = useState<SeachParams>(search);
 
@@ -79,6 +85,7 @@ function HomePage() {
             ...prevFormData,
             startDate: dateString[0],
             endDate: dateString[1],
+            selectedPeriod: 'xxx',
         }));
     };
 
@@ -96,28 +103,33 @@ function HomePage() {
     useEffect(() => {
         const tokenAux = localStorage.getItem('loggedInUserToken');
         const userRoleAux = localStorage.getItem('loggedInUserRole');
-        if (token && userRole) {
-            setToken(tokenAux as string);
-            setUserRole(userRoleAux as string);
-        }
-        if (userRoleAux == "ROLE_ADMIN") {
-            getAdminDashboardCardsCounters().then((res) => {
+        setToken(tokenAux as string);
+        setUserRole(userRoleAux as string);
+    }, []);
+
+    useEffect(() => {
+        const userRoleAux = localStorage.getItem('loggedInUserRole');
+        if (userRoleAux == "ROLE_ADMIN" || userRoleAux == "ROLE_STOREMANAGER" || userRoleAux == "ROLE_EMPLOYEE") {
+            getAdminDashboardCardsCounters(searchForm).then((res) => {
                 setAdminDashboardCardsCounters(res.counters);
             }).catch((err) => {
                 console.log(err);
             });
         }
 
-    }, []);
+    }, [searchForm]);
 
 
     const [statsData, setStatsData] = useState<any>({});
+    const [secondLoading, setSecondLoading] = useState<boolean>(false);
     useEffect(() => {
         getDashboardStatsData(searchForm).then((res) => {
             setStatsData(res);
+            setLoading(false);
             console.log(res);
         }).catch((err) => {
             console.log(err);
+            setLoading(false);
         });
     }, [searchForm]);
 
@@ -313,289 +325,593 @@ function HomePage() {
     }, [statsData]);
 
 
+    const [clientCounter, setClientCounter] = useState<any>(null);
+    useEffect(() => {
+        const userRoleAux = localStorage.getItem('loggedInUserRole');
+        if (userRoleAux == "ROLE_CLIENT" ) {
+            getClientDashboardCounters();
+        }
+    }, []);
+    function getClientDashboardCounters() {
+        getClientDashboardCardsCounters().then((res) => {
+            console.log(res.counters);
+            setClientCounter(res.counters);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+
+    const handleRadioChange = (e:any) => {
+
+
+        let today = dayjs();
+        let startDate = dayjs();
+        let endDate = dayjs();
+
+        if (e.target.value === 'day') {
+            startDate = today;
+            endDate = today;
+        }
+        else if (e.target.value === '3days') {
+            startDate = today.subtract(3, 'day');
+            endDate = today;
+        }
+        else if (e.target.value === 'week') {
+            startDate = today.subtract(7, 'day');
+            endDate = today;
+        } else if (e.target.value === 'month') {
+            startDate = today.subtract(30, 'day');
+            endDate = today;
+        }else if (e.target.value === '2weeks') {
+            startDate = today.subtract(14, 'day');
+            endDate = today;
+        }else if (e.target.value === '3month') {
+            startDate = today.subtract(90, 'day');
+            endDate = today;
+        }else if (e.target.value === '') {
+            startDate = today.subtract(365, 'day');
+            endDate = today;
+        }
+
+        setSearchForm({
+            ...searchForm,
+            startDate: startDate.format(dateFormat),
+            endDate: endDate.format(dateFormat),
+            selectedPeriod: e.target.value,
+        });
 
 
 
-    // @ts-ignore
+    };
+
+
     return (
-        <div className={styles.homePageContent}>
+       <>
+           {loading && (
+               <>
+                <DashboardSpinnigLoader></DashboardSpinnigLoader>
+               </>
+           )}
 
-            <div className={`${styles.homePageContentTopHeader}`}>
-                <h1 className={`mx-3`}>Tableau de bord </h1>
-                <div className={`${styles.homePageAdminCardsDiv}`}>
+           {!loading && (
+               <>
+                   <div className={styles.homePageContent}>
 
-                    <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={RemainsTickes}  alt={"tickets"}></Image>
+                       <div className={`${styles.homePageContentTopHeader}`}>
+                           <h1 className={`mx-3`}>Tableau de bord </h1>
+                           <div className={`${styles.homePageAdminCardsDiv}`}>
 
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["tickets"]}
-                                    </div>
+                               <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
 
-                                    <div className={`${styles.cardTitle}`}>Total Des Lots</div>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={CodeScanner}  alt={"tickets"}></Image>
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["printedTickets"]}
-                                    </div>
+                                   <Col className={`w-100 pt-0 mt-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={24} lg={24} span={6}>
+                                       <div className={`${styles.headetFilterDiv}`}>
+                                           {userRole === "ROLE_ADMIN" && (
+                                               <>
+                                                   <StoresList globalSelectedStoreId={selectedStoreId} onSelectStore={handleStoreChange}></StoresList>
+                                               </>
+                                           )}
+                                           <ConfigProvider locale={locale}>
+                                               <RangePicker
+                                                   className={`${styles.datePickerDashboardHomePage}`}
+                                                   onChange={(date:any , dateString:any )=>{
+                                                       handleDateChange(date  , dateString)
+                                                   }}
+                                                   value={[dayjs(searchForm.startDate, dateFormat), dayjs(searchForm.endDate, dateFormat)]}
+                                                   placeholder={['Date de début', 'Date de fin']}
+                                                   format={dateFormat}
+                                                   cellRender={(current) => {
+                                                       const style: React.CSSProperties = {};
+                                                       if (current.date() === 1) {
+                                                           style.border = '1px solid #1677ff';
+                                                           style.borderRadius = '50%';
+                                                       }
+                                                       return (
+                                                           <div className="ant-picker-cell-inner" style={style}>
+                                                               {current.date()}
+                                                           </div>
+                                                       );
+                                                   }}
+                                               />
+                                           </ConfigProvider>
+                                       </div>
+                                   </Col>
+                                   <Col className={`w-100 ${styles.periodsSelector}`} sm={24} md={24} lg={24} span={24}>
+                                       <Radio.Group className={`${styles.periodsSelectorRadioGroup}`} onChange={handleRadioChange} value={searchForm.selectedPeriod}>
 
-                                    <div className={`${styles.cardTitle}`}>Bons Imprimés</div>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={TicketImage}  alt={"tickets"}></Image>
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["ticketStock"]}
-                                    </div>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="day">
+                                               1 Jour
+                                           </Radio>
 
-                                    <div className={`${styles.cardTitle}`}>Lots Restants</div>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={UsersImg}  alt={"tickets"}></Image>
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["clients"]}
-                                    </div>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3days">
+                                               3 Jours
+                                           </Radio>
 
-                                    <div className={`${styles.cardTitle}`}>Clients Inscrits</div>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={ClientsImg}  alt={"tickets"}></Image>
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["participants"]}
-                                    </div>
-                                    <div className={`${styles.cardTitle}`}>Participants Actifs</div>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="week">
+                                               7 Jours
+                                           </Radio>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="2weeks">
+                                               14 Jours
+                                           </Radio>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="month">
+                                               30 Jours
+                                           </Radio>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3month">
+                                               90 Jours
+                                           </Radio>
+                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="">
+                                               1 an
+                                           </Radio>
 
-                                </div>
-                            </div>
-                        </Col>
-                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                            <div className={`${styles.topCardElement}`}>
-                                <div className={`${styles.topCardElementIcon}`}>
-                                    <Image src={RouletteImg}  alt={"tickets"}></Image>
-                                </div>
-                                <div className={`${styles.topCardElementText}`}>
-                                    <div className={`${styles.counter}`}>
-                                        {adminDashboardCardsCounters["playedTicket"]}
-                                    </div>
-                                    <div className={`${styles.cardTitle}`}>Tickets Utilisés</div>
-                                </div>
-                            </div>
-                        </Col>
-
-                    </Row>
-
-                </div>
-            </div>
-
-            <div className={`${styles.homePageContentStats}`}>
-                <h2 className={`mx-3`}>Vue d'Ensemble du Jeu (Statistiques)</h2>
-                <div className={`${styles.homePageAdminStatsDiv}`}>
-
-                    <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                        <div className={`${styles.boxShadowDiv}`}>
-                            <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                                <Col className={`w-100 mb-0 pb-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={24} lg={24} span={6}>
-                                    <h5 className={`px-3 mb-0 pb-0`}>
-                                        Filtres de Recherche
-                                    </h5>
-                                </Col>
-                                <Col className={`w-100 pt-0 mt-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={24} lg={24} span={6}>
-                                    <div className={`${styles.headetFilterDiv}`}>
-                                        <StoresList globalSelectedStoreId={selectedStoreId} onSelectStore={handleStoreChange}></StoresList>
-                                        <ConfigProvider locale={locale}>
-
-                                            <RangePicker
-                                                className={`${styles.datePickerDashboardHomePage}`}
-                                                onChange={(date:any , dateString:any )=>{
-                                                    handleDateChange(date  , dateString)
-                                                }}
-                                                value={[dayjs(searchForm.startDate, dateFormat), dayjs(searchForm.endDate, dateFormat)]}
-                                                placeholder={['Date de début', 'Date de fin']}
-                                                format={dateFormat}
-                                                cellRender={(current) => {
-                                                    const style: React.CSSProperties = {};
-                                                    if (current.date() === 1) {
-                                                        style.border = '1px solid #1677ff';
-                                                        style.borderRadius = '50%';
-                                                    }
-                                                    return (
-                                                        <div className="ant-picker-cell-inner" style={style}>
-                                                            {current.date()}
-                                                        </div>
-                                                    );
-                                                }}
-                                            />
-                                        </ConfigProvider>
-                                    </div>
-                                </Col>
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-                                    <h5 className={'mb-0'}>
-                                        Résultat De Recherche
-                                    </h5>
-                                    <div className={`${styles.fullWidthElement}`}>
-                                        <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                                            <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
-                                                <div className={`${styles.topCardElement}`}>
-                                                    <div className={`${styles.topCardElementIconBadge}`}>
-                                                        <Image src={CalendarImg}  alt={"Dates"}></Image>
-                                                    </div>
-                                                    <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>Date de début</div>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>
-                                                            {statsData["startDate"]}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                            <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
-                                                <div className={`${styles.topCardElement}`}>
-                                                    <div className={`${styles.topCardElementIconBadge}`}>
-                                                        <Image src={CalendarImg}  alt={"Dates"}></Image>
-                                                    </div>
-                                                    <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>Date de fin</div>
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>
-                                                            {statsData["endDate"]}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                                            <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
-                                                <div className={`${styles.topCardElement}`}>
-                                                    <div className={`${styles.topCardElementIconBadge}`}>
-                                                        <Image src={PlayImg}  alt={"Nombres de jeu"}></Image>
-                                                    </div>
-                                                    <div className={`${styles.topCardElementText}`}>
-                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>
-                                                            {statsData["gameCount"]}
-                                                        </div>
-
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>Nombres de jeu</div>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                            <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
-                                                <div className={`${styles.topCardElement}`}>
-                                                    <div className={`${styles.topCardElementIconBadge}`}>
-                                                        <Image src={PriceImg}  alt={"Montants des gains "}></Image>
-                                                    </div>
-                                                    <div className={`${styles.topCardElementText}`}>
-                                                        <div className={`${styles.topCardElementTextDatesCounter}`}>
-                                                            {statsData["totalGainAmount"]}
-                                                            €</div>
-
-                                                        <div className={`${styles.topCardElementTextDatesTitle}`}>Charges Totales</div>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </div>
-
-                                    <GameStatusesTendanceStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainTendanceData}/>
+                                       </Radio.Group>
+                                   </Col>
+                               </Row>
 
 
-                                </Col>
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-                                    <h5 className={`mt-5`}>
-                                        Répartition Des Tickets en Fonction de Statut
-                                    </h5>
-                                    <PrizesStatsByStatusesChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={ticketsByStatuses} />
-                                </Col>
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-                                    <h5 className={`mt-5`}>
-                                        Analyse des Tickets
-                                    </h5>
-                                    <GamePlayedStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={playGameTendanceData}/>
-
-                                    <PrizesCostTendance key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={prizesCostTendanceData}/>
+                           </div>
+                       </div>
 
 
-                                </Col>
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-                                    <h5>
-                                        Répartition des Tickets Distribués
-                                    </h5>
-                                    <PrizesChartDoughunt key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByPrizeData}/>
+                       {userRole === "ROLE_CLIENT" && (
+                           <>
+                               <div className={`${styles.homePageContentTopHeader}`}>
 
-                                </Col>
+                                   <div className={`${styles.homePageAdminCardsDiv}`}>
 
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-
-                                    <h5>
-                                        Participants Les Plus Engagés
-                                    </h5>
-                                    <TopTeenParticipants key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataTable={topGainTableData} />
-                                    <h5 className={`mt-5`}>
-                                        Répartition Des Cadeaux En Fonction De L'âge
-                                    </h5>
-                                    <PrizesStatsWithAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByAgeData} />
-
-                                </Col>
-                                <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
-                                    <h5>
-                                        Analyse des Participants
-                                    </h5>
+                                       <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
 
 
-                                    <PrizesStatsWithSexChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderData}/>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
 
-                                    <PrizeStatsByGenderByAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderByAge}/>
+                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {clientCounter?.["playedTickets"]}
+                                                       </div>
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           Tours Joués
+                                                       </div>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={RouletteImg}  alt={"tickets"}></Image>
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
 
-                                    {
-                                        gainByCityData.length > 0 && (
-                                            <>
-                                                <CityStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByCityData}/>
-                                            </>
-                                        )
-                                    }
+                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {clientCounter?.["confirmedTickets"]}
+                                                       </div>
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           Cadeaux Réclamés
+                                                       </div>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={GiftsImg}  alt={"GiftsImg"}></Image>
+                                                   </div>
+                                               </div>
+
+                                           </Col>
+
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {clientCounter?.["pendingTickets"]}
+                                                       </div>
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           En attente de validation
+                                                       </div>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={TiptopEmployeeImg}  alt={"GiftsImg"}></Image>
+                                                   </div>
+                                               </div>
+
+                                           </Col>
+
+
+                                       </Row>
+
+                                   </div>
+                               </div>
+                           </>
+                       )}
 
 
 
-                                    <h5>
-                                        Répartition des Gagnants par Magasin
-                                    </h5>
-                                    <PrizesWinStatsByStore key={gainByPrizeChartToggle} dataChart={gainByStoresData}/>
+                       {userRole === "ROLE_ADMIN" && (
+                           <>
+                               <div className={`${styles.homePageContentTopHeader}`}>
+                                   <div className={`${styles.homePageAdminCardsDiv}`}>
 
-                                </Col>
+                                       <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={RemainsTickes}  alt={"tickets"}></Image>
 
-                            </Row>
-                        </div>
-                    </Row>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {adminDashboardCardsCounters["tickets"]}
+                                                       </div>
 
-                </div>
-            </div>
+                                                       <div className={`${styles.cardTitle}`}>Total Des Lots</div>
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={CodeScanner}  alt={"tickets"}></Image>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {adminDashboardCardsCounters["printedTickets"]}
+                                                       </div>
 
-        </div>
+                                                       <div className={`${styles.cardTitle}`}>Bons Imprimés</div>
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={TicketImage}  alt={"tickets"}></Image>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {
+                                                               userRole === "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       {adminDashboardCardsCounters["ticketStock"]}
+                                                                   </>
+                                                               )
+                                                           }
+
+                                                           {
+                                                               userRole != "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       {adminDashboardCardsCounters["confirmedTickets"]}
+                                                                   </>
+                                                               )
+                                                           }
+                                                       </div>
+
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           {
+                                                               userRole === "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Lots Restants
+                                                                   </>
+                                                               )
+                                                           }
+
+                                                           {
+                                                               userRole != "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Lots Confirmés
+                                                                   </>
+                                                               )
+                                                           }
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={UsersImg}  alt={"tickets"}></Image>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {adminDashboardCardsCounters["clients"]}
+                                                       </div>
+
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           {
+                                                               userRole === "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Clients Inscrits
+                                                                   </>
+                                                               )
+                                                           }
+
+                                                           {
+                                                               userRole != "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Clients associés
+                                                                   </>
+                                                               )
+                                                           }
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={ClientsImg}  alt={"tickets"}></Image>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {adminDashboardCardsCounters["participants"]}
+                                                       </div>
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           {
+                                                               userRole === "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Participants Actifs
+                                                                   </>
+                                                               )
+                                                           }
+
+                                                           {
+                                                               userRole != "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Participants associés
+                                                                   </>
+                                                               )
+                                                           }
+                                                       </div>
+
+                                                   </div>
+                                               </div>
+                                           </Col>
+                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                               <div className={`${styles.topCardElement}`}>
+                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                       <Image src={RouletteImg}  alt={"tickets"}></Image>
+                                                   </div>
+                                                   <div className={`${styles.topCardElementText}`}>
+                                                       <div className={`${styles.counter}`}>
+                                                           {adminDashboardCardsCounters["playedTicket"]}
+                                                       </div>
+                                                       <div className={`${styles.cardTitle}`}>
+                                                           {
+                                                               userRole === "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Tickets Joués
+                                                                   </>
+                                                               )
+                                                           }
+
+                                                           {
+                                                               userRole != "ROLE_ADMIN" && (
+                                                                   <>
+                                                                       Tours de roue joués
+                                                                   </>
+                                                               )
+                                                           }
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </Col>
+
+                                       </Row>
+
+                                   </div>
+                               </div>
+                           </>
+                       )}
+
+                       <div className={`${styles.homePageContentStats}`}>
+
+
+
+
+
+                           <h2 className={`mx-3`}>Vue d'Ensemble du Jeu (Statistiques)</h2>
+                                   <div className={`${styles.homePageAdminStatsDiv}`}>
+
+                                       <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                           <div className={`${styles.boxShadowDiv}`}>
+                                               <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+
+                                                   {secondLoading && (
+                                                       <>
+                                                           <DashboardSpinnigLoader></DashboardSpinnigLoader>
+                                                       </>
+                                                   )}
+
+
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                                       <h5 className={'mb-0'}>
+                                                           Résultat De Recherche
+                                                       </h5>
+                                                       <div className={`${styles.fullWidthElement}`}>
+                                                           <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                                               <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
+                                                                   <div className={`${styles.topCardElement}`}>
+                                                                       <div className={`${styles.topCardElementIconBadge}`}>
+                                                                           <Image src={CalendarImg}  alt={"Dates"}></Image>
+                                                                       </div>
+                                                                       <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>Date de début</div>
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>
+                                                                               {statsData["startDate"]}
+                                                                           </div>
+                                                                       </div>
+                                                                   </div>
+                                                               </Col>
+                                                               <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
+                                                                   <div className={`${styles.topCardElement}`}>
+                                                                       <div className={`${styles.topCardElementIconBadge}`}>
+                                                                           <Image src={CalendarImg}  alt={"Dates"}></Image>
+                                                                       </div>
+                                                                       <div className={`${styles.topCardElementText} ${styles.topCardElementTextDates}`}>
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>Date de fin</div>
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>
+                                                                               {statsData["endDate"]}
+                                                                           </div>
+                                                                       </div>
+                                                                   </div>
+                                                               </Col>
+                                                           </Row>
+                                                           <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                                               <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
+                                                                   <div className={`${styles.topCardElement}`}>
+                                                                       <div className={`${styles.topCardElementIconBadge}`}>
+                                                                           <Image src={PlayImg}  alt={"Nombres de jeu"}></Image>
+                                                                       </div>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementTextDatesCounter}`}>
+                                                                               {statsData["gameCount"]}
+                                                                           </div>
+
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>Nombres de jeu</div>
+                                                                       </div>
+                                                                   </div>
+                                                               </Col>
+                                                               <Col className={`w-100 d-flex`} sm={24} md={24} lg={12} span={12}>
+                                                                   <div className={`${styles.topCardElement}`}>
+                                                                       <div className={`${styles.topCardElementIconBadge}`}>
+                                                                           <Image src={PriceImg}  alt={"Montants des gains "}></Image>
+                                                                       </div>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementTextDatesCounter}`}>
+                                                                               {statsData["totalGainAmount"]}
+                                                                               €</div>
+
+                                                                           <div className={`${styles.topCardElementTextDatesTitle}`}>
+
+                                                                               {(userRole !== "ROLE_CLIENT")&& (
+                                                                                   <span>
+                                                                                       Charges Totales
+                                                                                   </span>
+                                                                               )}
+
+                                                                                 {(userRole === "ROLE_CLIENT")&& (
+                                                                                      <span>
+                                                                                        Montants des gains
+                                                                                      </span>
+                                                                                 )}
+
+                                                                               </div>
+                                                                       </div>
+                                                                   </div>
+                                                               </Col>
+                                                           </Row>
+                                                       </div>
+
+                                                       <GameStatusesTendanceStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainTendanceData}/>
+
+
+                                                   </Col>
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                                       <h5 className={`mt-5`}>
+                                                           Répartition Des Tickets en Fonction de Statut
+                                                       </h5>
+                                                       <PrizesStatsByStatusesChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={ticketsByStatuses} />
+                                                   </Col>
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                                       <h5 className={`mt-5`}>
+                                                           Analyse des Tickets
+                                                       </h5>
+                                                       <GamePlayedStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={playGameTendanceData}/>
+
+                                                       <PrizesCostTendance key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={prizesCostTendanceData}/>
+
+
+                                                   </Col>
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+                                                       <h5>
+                                                           Répartition des Tickets Distribués
+                                                       </h5>
+                                                       <PrizesChartDoughunt key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByPrizeData}/>
+
+                                                   </Col>
+
+                                                   {userRole != "ROLE_CLIENT" && (
+                                                       <>
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+
+                                                       <h5>
+                                                           Participants Les Plus Engagés
+                                                       </h5>
+                                                       <TopTeenParticipants key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataTable={topGainTableData} />
+
+
+                                                               <h5 className={`mt-5`}>
+                                                                   Répartition Des Cadeaux En Fonction De L'âge
+                                                               </h5>
+                                                               <PrizesStatsWithAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByAgeData} />
+                                                   </Col>
+                                                       </>
+                                                   )}
+                                                   <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>
+
+                                                       {userRole != "ROLE_CLIENT" && (
+                                                           <>
+                                                               <h5>
+                                                                   Analyse des Participants
+                                                               </h5>
+                                                               <PrizesStatsWithSexChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderData}/>
+                                                               <PrizeStatsByGenderByAgeChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByGenderByAge}/>
+                                                           </>
+                                                       )}
+
+
+                                                       {
+                                                           userRole === "ROLE_ADMIN" && (
+                                                               <>
+                                                                   <CityStatsChart key={`${gainByPrizeChartToggle }${Math.random().toString(36).substring(7)}`} dataChart={gainByCityData}/>
+                                                               </>
+                                                           )
+                                                       }
+
+
+                                                       {(userRole === "ROLE_ADMIN" && searchForm.storeId=="" )&& (
+                                                           <>
+                                                               <h5>
+                                                                   Répartition des Gagnants par Magasin
+                                                               </h5>
+                                                               <PrizesWinStatsByStore key={gainByPrizeChartToggle} dataChart={gainByStoresData}/>
+
+                                                           </>
+                                                       )}
+
+
+                                                   </Col>
+
+                                               </Row>
+                                           </div>
+                                       </Row>
+
+                                   </div>
+
+
+
+                       </div>
+
+                   </div>
+               </>
+           )}
+       </>
     );
 }
 

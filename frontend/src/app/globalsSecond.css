@@ -11,7 +11,6 @@
   margin: 0;
   padding: 0;
   text-decoration: none;
-  list-style-type: none;
 }
 
 body, * {
@@ -58,4 +57,12 @@ body, * {
   box-shadow: none;
   border-color: #2D2F2C !important;
   outline: none !important;
+}
+
+
+
+
+.ant-modal-footer {
+  display: flex !important;
+  justify-content: flex-end !important;;
 }

@@ -18,6 +18,10 @@ import ParticipantManagementPageDashboard
     from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
 import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import CorrespandancesTemplates
+    from "@/pages/dashboard/dashboardComponents/CorrespandancesTemplatesComponents/CorrespandancesTemplates";
+import GeneralSettingsTemplates
+    from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
 
 function storeAdminDashboard() {
 
@@ -101,6 +105,10 @@ function storeAdminDashboard() {
                                     {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
                                     {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                                     {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
+                                    {selectedMenuItem==="CorrespandancesTemplates" && <CorrespandancesTemplates></CorrespandancesTemplates>}
+                                    {selectedMenuItem==="generalSettingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
+
+
 
 
 

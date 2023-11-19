@@ -25,7 +25,6 @@ import type { MenuProps } from 'antd';
 import {Button, Col, Menu, Row} from 'antd';
 import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
 type MenuItem = Required<MenuProps>['items'][number];
-import logoTeaImage from '@/assets/images/logoTea.png';
 
 function getItem(
     label: React.ReactNode,
@@ -71,8 +70,7 @@ const items: MenuItem[] = [
 
     getItem('Paramètres', 'settingsItem', <SettingOutlined />, [
         getItem('Paramètres Généraux', 'generalSettingsItem' , <SettingOutlined />),
-        getItem('Paramètres de Sécurité', 'securitySettingsItem' , <LockOutlined />),
-        getItem('Modèles E-mails', 'emailManagementItem' , <MailOutlined />),
+        getItem('Modèles E-mails', 'CorrespandancesTemplates' , <MailOutlined />),
     ]),
 
 ];

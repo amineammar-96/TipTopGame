@@ -5,6 +5,7 @@ namespace App\Command;
 
 use App\Entity\Role;
 use App\Entity\Store;
+use App\Entity\UserPersonalInfo;
 use App\Entity\UserStore;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -97,10 +98,23 @@ class AddTipTopCompany extends Command
         $userManager->setEmail('eric.bourdon@gmail.com');
         $userManager->setRole($storesAdminRole);
         $userManager->setStatus(User::STATUS_OPEN);
+        $userManager->setCreatedAt(new \DateTime());
+        $userManager->setIsActive(true);
+        $userManager->setActivitedAt(new \DateTime());
         $userManager->setDateOfBirth(new \DateTime('1980-01-06'));
         $plainPassword = 'azerty123456'; 
         $hashedPassword = $this->passwordEncoder->hashPassword($userManager, $plainPassword);
         $userManager->setPassword($hashedPassword);
+
+        $userPersonalInfo = new UserPersonalInfo();
+        $userPersonalInfo->setUser($userManager);
+        $userPersonalInfo->setAddress('18 rue Léon Frot');
+        $userPersonalInfo->setPostalCode('75011');
+        $userPersonalInfo->setCity('Paris');
+        $userPersonalInfo->setCountry('France');
+        $userPersonalInfo->setPhone('+33 1 43 55 55 55');
+
+        $this->entityManager->persist($userPersonalInfo);
 
         $this->entityManager->persist($userManager);
         $this->entityManager->flush();
@@ -119,12 +133,28 @@ class AddTipTopCompany extends Command
         $anonymousUser->setGender('Homme');
         $anonymousUser->setEmail('anonymous@anonymous.fr');
         $anonymousUser->setRole($anonymousRole);
+
         $anonymousUser->setStatus(User::STATUS_OPEN);
+        $anonymousUser->setCreatedAt(new \DateTime());
+        $anonymousUser->setIsActive(true);
+        $anonymousUser->setActivitedAt(new \DateTime());
+
         $anonymousUser->setDateOfBirth(new \DateTime('1980-01-06'));
 
         $plainedPassword = 'anonymous';
         $hashedPassword = $this->passwordEncoder->hashPassword($anonymousUser, $plainedPassword);
         $anonymousUser->setPassword($hashedPassword);
+
+
+        $userPersonalInfo = new UserPersonalInfo();
+        $userPersonalInfo->setUser($anonymousUser);
+        $userPersonalInfo->setAddress('18 rue Léon Frot');
+        $userPersonalInfo->setPostalCode('75011');
+        $userPersonalInfo->setCity('Paris');
+        $userPersonalInfo->setCountry('France');
+        $userPersonalInfo->setPhone('+33 1 43 55 55 55');
+
+        $entityManager->persist($userPersonalInfo);
 
         $entityManager->persist($anonymousUser);
         $entityManager->flush();

@@ -1,26 +1,11 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import {Card, Col, Row, Spin} from 'antd';
-import Image from 'next/image';
-import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
-import InfuserImg from "@/assets/images/infuser.png";
-import TeaBoxImg from "@/assets/images/teaBox.png";
-import TeaBoxSignatureImg from "@/assets/images/teaBoxSignature.png";
-import SurprisePlusImg from "@/assets/images/surprisePlus.png";
-import SurpriseBoxImg from "@/assets/images/surprise.png";
 import {getTickets, getPrizes, getClients} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
 import {Button, Form, Input, Select, Space, theme} from 'antd';
-import {DownOutlined, EyeOutlined} from "@ant-design/icons";
-import {
-    CheckCircleOutlined,
-    ClockCircleOutlined,
-    CloseCircleOutlined,
-    ExclamationCircleOutlined,
-    MinusCircleOutlined,
-    SyncOutlined,
-} from '@ant-design/icons';
-import {Tag } from 'antd';
+import {DownOutlined} from "@ant-design/icons";
+
 const {Option} = Select;
 import {Pagination} from 'antd';
 import StoresList from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/StoresList";

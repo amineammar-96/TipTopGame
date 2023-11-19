@@ -51,6 +51,18 @@ services:
     App\Command\PrintRandomTickets:
         tags: [ 'console.command' ]
 
+    App\Command\GenerateEmailServices:
+        tags: [ 'console.command' ]
+
+    App\Command\GenerateEmailTemplatesVariables:
+        tags: [ 'console.command' ]
+
+    App\Service\Mailer\PostManMailerService:
+        arguments:
+            $mailtrapHost: '%env(MAILTRAP_HOST)%'
+            $mailtrapUser: '%env(MAILTRAP_USER)%'
+            $mailtrapPassword: '%env(MAILTRAP_PASSWORD)%'
+            $mailtrapPort: '%env(MAILTRAP_PORT)%'
 
 
 

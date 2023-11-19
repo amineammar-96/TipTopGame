@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,4 +46,56 @@ class UserRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+//findUsersOnRole
+
+    public function findUsersOnRole($user , $storeId) {
+        $userRole = $user->getRoles()[0];
+        $qb = $this->createQueryBuilder('u');
+
+
+        if($userRole == 'ROLE_ADMIN') {
+            if($storeId) {
+                $qb->innerJoin('u.stores', 's')
+                    ->andWhere('s.id = :store')
+                    ->setParameter('store', $storeId);
+            }
+        }
+
+        if ($userRole == 'ROLE_STOREMANAGER') {
+            $qb->innerJoin('u.stores', 's')
+                    ->andWhere('s.id = :store')
+                    ->setParameter('store', $user->getStores()[0]);
+        }
+
+        if ($userRole == 'ROLE_EMPLOYEE') {
+            $qb->innerJoin('u.tickets', 't')
+                    ->andWhere('t.employee = :employee')
+                    ->setParameter('employee', $user);
+        }
+
+
+
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function checkClientActivationTokenValidity($email , $token): bool
+    {
+        $user = $this->findOneBy(['email' => $email]);
+        $userToken = $user->getToken();
+        $userTokenExpiredAt = $user->getTokenExpiredAt();
+
+        if($userToken == $token && $userTokenExpiredAt > new \DateTime()) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
 }

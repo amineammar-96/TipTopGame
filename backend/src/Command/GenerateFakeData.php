@@ -8,6 +8,7 @@ use App\Entity\Store;
 use App\Entity\Ticket;
 use App\Entity\TicketHistory;
 use App\Entity\User;
+use App\Entity\UserPersonalInfo;
 use App\Repository\PrizeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -56,11 +57,13 @@ class GenerateFakeData extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+
+
         $randomTickets = $this->getRandomTickets();
-        //$this->generateFakeStores($output);
-        //$this->generateFakeManager($output);
-        //$this->generateFakeEmployee($output);
-        //$this->generateFakeClient($output);
+        $this->generateFakeStores($output);
+        $this->generateFakeManager($output);
+        $this->generateFakeEmployee($output);
+        $this->generateFakeClient($output);
         $this->generateFakeGain($output , $randomTickets);
 
 
@@ -147,6 +150,11 @@ class GenerateFakeData extends Command
             $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
             $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
             $user->setStatus(User::STATUS_OPEN);
+
+            $user->setCreatedAt(new \DateTime());
+            $user->setIsActive(Factory::create()->boolean(70));
+            $user->setActivitedAt(new \DateTime());
+
             $user->setPhone(Factory::create()->phoneNumber);
             $plainPassword="azerty";
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
@@ -156,6 +164,16 @@ class GenerateFakeData extends Command
             $store->addUser($user);
             $this->entityManager->persist($store);
             $this->entityManager->persist($user);
+
+            $userPersonalInfo = new UserPersonalInfo();
+            $userPersonalInfo->setUser($user);
+            $userPersonalInfo->setAddress('18 rue Léon Frot');
+            $userPersonalInfo->setPostalCode('75011');
+            $userPersonalInfo->setCity('Paris');
+            $userPersonalInfo->setCountry('France');
+
+            $this->entityManager->persist($userPersonalInfo);
+
         }
 
         $this->entityManager->flush();
@@ -195,6 +213,17 @@ class GenerateFakeData extends Command
             $user->addStore($store);
             $store->addUser($user);
             $user->setStatus(User::STATUS_OPEN);
+            $user->setCreatedAt(new \DateTime());
+            $user->setIsActive(Factory::create()->boolean(70));
+            $user->setActivitedAt(new \DateTime());
+
+            $userPersonalInfo = new UserPersonalInfo();
+            $userPersonalInfo->setUser($user);
+            $userPersonalInfo->setAddress('18 rue Léon Frot');
+            $userPersonalInfo->setPostalCode('75011');
+            $userPersonalInfo->setCity('Paris');
+            $userPersonalInfo->setCountry('France');
+            $userPersonalInfo->setPhone('+33 1 43 55 55 55');
 
             $this->entityManager->persist($store);
             $this->entityManager->persist($user);
@@ -238,6 +267,17 @@ class GenerateFakeData extends Command
             $store->addUser($user);
             $this->entityManager->persist($store);
             $this->entityManager->persist($user);
+
+            $user->setCreatedAt(new \DateTime());
+            $user->setIsActive(Factory::create()->boolean(70));
+            $user->setActivitedAt(new \DateTime());
+            $userPersonalInfo = new UserPersonalInfo();
+            $userPersonalInfo->setUser($user);
+            $userPersonalInfo->setAddress('18 rue Léon Frot');
+            $userPersonalInfo->setPostalCode('75011');
+            $userPersonalInfo->setCity('Paris');
+            $userPersonalInfo->setCountry('France');
+            $userPersonalInfo->setPhone('+33 1 43 55 55 55');
         }
         $this->entityManager->flush();
 

@@ -52,7 +52,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    //updateUserProfileById
     public function updateUserProfileById(int $id, Request $request): JsonResponse
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
@@ -332,4 +331,24 @@ class UserController extends AbstractController
         ]);
 
     }
+
+
+
+
+    public function getUserPersonalInfoById(int $id): JsonResponse
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+        if (!$user) {
+            return $this->json([
+                'error' => 'User not found'
+            ], 404);
+        }
+
+        return new JsonResponse([
+            'user' => $user->getUserJson()
+        ]);
+    }
+
+
+
 }

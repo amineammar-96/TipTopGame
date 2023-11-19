@@ -2,8 +2,10 @@
 
 namespace App\Controller\Api\Ticket;
 
+use App\Entity\EmailService;
 use App\Entity\TicketHistory;
 use App\Entity\User;
+use App\Service\Mailer\PostManMailerService;
 use Exception;
 use App\Entity\Role;
 use App\Entity\Store;
@@ -14,6 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 
 class TicketController extends AbstractController
@@ -22,11 +27,13 @@ class TicketController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
+    private PostManMailerService $postManMailerService;
 
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager , PostManMailerService $postManMailerService)
     {
         $this->entityManager = $entityManager;
+        $this->postManMailerService = $postManMailerService;
 
     }
 
@@ -244,7 +251,10 @@ class TicketController extends AbstractController
             ], 404);
         }
 
-        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => Role::ROLE_ANONYMOUS]);
+
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
 
 
         $ticket->setTicketPrintedAt(new \DateTime());
@@ -304,6 +314,9 @@ class TicketController extends AbstractController
         $this->entityManager->persist($ticketHistory);
 
         $this->entityManager->persist($ticket);
+
+        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
+
         $this->entityManager->flush();
 
         return $this->json([
@@ -311,6 +324,12 @@ class TicketController extends AbstractController
         ], 200);
 
     }
+
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     public function confirmTicketGain(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -339,6 +358,10 @@ class TicketController extends AbstractController
         $ticketHistory->setUser($ticket->getUser());
         $ticketHistory->setStatus(Ticket::STATUS_WINNER);
         $ticketHistory->setUpdatedAt(new \DateTime());
+
+        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WIN_DECLARATION_CLIENT , $ticket->getUser() , ['ticket' => $ticket]);
+
+
 
         $this->entityManager->persist($ticketHistory);
 

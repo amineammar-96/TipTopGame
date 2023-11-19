@@ -152,6 +152,55 @@
 }
 
 
+.resetEmailTemplateForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.resetEmailTemplateForm:hover,
+.resetEmailTemplateForm:focus{
+    background-color: #313638 !important;
+    color: white !important;
+    outline: none !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-color: #313638 !important;
+}
+
+.cancelFormEmailTemplateBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #42B2FF;
+    color: white !important;
+}
+
+.cancelFormEmailTemplateBtn:hover,
+.cancelFormEmailTemplateBtn:focus{
+    opacity: 0.9 !important;
+}
+
+.saveFormEmailTemplateBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #313638 !important;
+}
+
+.saveFormEmailTemplateBtn:hover,
+.saveFormEmailTemplateBtn:focus{
+    background-color: #313638 !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #313638 !important;
+}
+
+
+
+
 
 
 .emptyTableTextDiv {
@@ -233,10 +282,29 @@
 .lastnameColProfileManagement,
 .firstnameColProfileManagement{
     max-width: 150px !important;
+    font-size: .75rem !important;
+}
+
+
+.tableTd{
+    max-width: 150px !important;
+    font-size: .75rem !important;
+    text-align: left !important;
+}
+
+.tableTdText {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    min-width: 13rem;
+    text-align: left !important;
+    font-weight: bold !important;
 }
 
 .genderColProfileManagement{
     width: 10px !important;
+    font-size: 1rem !important;
+
 }
 
 .topHeaderProfileManagementTitle{
@@ -1366,4 +1434,91 @@ background: #ffffff;
     grid-template-rows: 1fr 1fr;
     grid-gap: 1rem;
     width: 100%;
+}
+
+.periodsSelector {
+    font-size: 1.1rem !important;
+    width: 100% !important;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+    margin: 0 -2rem;
+}
+
+.periodsSelectorRadioGroup{
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.periodsSelectorRadio .ant-radio-checked:after {
+    background-color: #7BC558 !important;
+    border-color: #7BC558 !important;
+}
+
+
+.correspandancesDiv {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+    font-weight: 400;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+    padding: 0 1rem;
+}
+
+.correspandancesTabs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    font-weight: 400;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+    padding: 0 1rem;
+    font-size: 1.1rem !important;
+    flex-direction: column;
+}
+
+.headerCorrespandancesTabs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+}
+.headerCorrespandancesTabsTcon {
+    font-size: 1.5rem;
+}
+
+.templatesPersoDiv {
+    border: 1px solid #f6f6f6;
+    background-color: white;
+    padding: 1rem 3rem;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.42);
+    border-radius: 1rem;
+}
+
+.serviceTag {
+    margin: .4rem 1rem;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 0.3rem 0.5rem !important;
+
+}
+
+.autoCompletCkEditorDiv {
+
+}
+
+.profileSettingsAvatar {
+    width: 10rem !important;
+    height: 10rem !important;
+    margin: 0 !important;
+    box-shadow: 0 0 11px 4px rgba(241, 241, 241, 0.84) !important;
+    border-radius: .6rem;
 }

@@ -1,4 +1,6 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import '~react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
 :root{
   --black : #2E3138;
   --blue : #87BE4B;
@@ -149,4 +151,11 @@ body {
 .antdLoginRegisterModal .ant-btn {
   background-color: #2E3138 !important;
   border-color: #2E3138 !important;
+}
+
+.ant-form-item-control-input-content {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  width: 100%;
 }

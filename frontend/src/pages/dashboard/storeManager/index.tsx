@@ -18,6 +18,8 @@ import ParticipantManagementPageDashboard
     from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
 import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import GeneralSettingsTemplates
+    from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
 
 function storeAdminDashboard() {
 
@@ -104,6 +106,7 @@ function storeAdminDashboard() {
                             {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
                             {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
 
+                            {selectedMenuItem==="generalSettingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
 
                         </Row>
                     </Col>

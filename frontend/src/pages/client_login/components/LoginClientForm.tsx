@@ -181,7 +181,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                     initialValues={{ remember: +true }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
-                    autoComplete="off"
+                    autoComplete="on"
                     validateMessages={validateMessages}
                     className={`${styles.loginForm}`}
 

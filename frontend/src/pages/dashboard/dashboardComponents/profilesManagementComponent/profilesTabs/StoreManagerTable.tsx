@@ -260,8 +260,6 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey , onUpdate}: s
             filters,
             ...sorter,
         });
-
-        // `dataSource` is useless since `pageSize` changed
         if (pagination.pageSize !== tableParams.pagination?.pageSize) {
             setData([]);
         }
@@ -272,6 +270,11 @@ function StoreManagerTable({selectedStoreId, profilesRole,roleKey , onUpdate}: s
     const [updateManagerModal, setUpdateManagerModal] = useState(false);
 
     function addNewManager() {
+        setUserForm((managerUserFormDataPrev: any) => ({
+            ...managerUserFormDataPrev,
+            role: profilesRole,
+        }));
+
         setUpdateManagerModal(false);
         showModal();
     }

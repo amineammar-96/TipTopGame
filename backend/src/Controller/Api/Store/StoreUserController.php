@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api\Store;
 
+use App\Entity\EmailService;
 use App\Entity\User;
+use App\Service\Mailer\PostManMailerService;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -29,12 +31,14 @@ class StoreUserController extends AbstractController
      * @var UserPasswordHasherInterface
      */
     private UserPasswordHasherInterface $passwordEncoder;
+    private PostManMailerService $postManMailerService;
 
 
-    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder , PostManMailerService $postManMailerService)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->postManMailerService = $postManMailerService;
 
     }
 
@@ -86,12 +90,12 @@ class StoreUserController extends AbstractController
             ], 404);
         }
 
-        // Initialize the query builder
+
         $qb = $this->entityManager->createQueryBuilder();
         $data = json_decode($request->getContent(), true);
 
 
-        // Select statement
+
         $qb->select('u')
             ->from(User::class, 'u')
             ->innerJoin('u.stores', 's')
@@ -99,7 +103,7 @@ class StoreUserController extends AbstractController
             ->where('s.id = :store_id')
             ->setParameter('store_id', $id);
 
-        // Sorting
+
         $sortField = isset($data['column']) ? $data['column']['dataIndex'] : null;
         $sortOrder = isset($data['order']) ? $data['order'] : null;
 
@@ -133,18 +137,15 @@ class StoreUserController extends AbstractController
 
         $totalCount = count($qb->getQuery()->getResult());
 
-        // Pagination
-
 
         $page = $data['pagination']['current'] ?? 1;
         $pageSize = $data['pagination']['pageSize'] ?? 10;
         $qb->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
-        // Execute the query
         $results = $qb->getQuery()->getResult();
 
-        // Convert results to JSON
+
         $storeManagerUsers = [];
         foreach ($results as $result) {
             $storeManagerUsers[] = $result->getUserJson();
@@ -197,6 +198,7 @@ class StoreUserController extends AbstractController
         $hashedPassword = $this->passwordEncoder->hashPassword( $user, $generatedPassword );
         $user->setPassword( $hashedPassword );
 
+
         $role = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $data['role']]);
         if (!$role) {
             return $this->json([
@@ -211,6 +213,15 @@ class StoreUserController extends AbstractController
         $this->entityManager->persist($store);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $options = [
+          'password' => $generatedPassword,
+            'ticket' => null,
+            'token' => null,
+        ];
+
+        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_EMPLOYEE_CREATE_ACCOUNT , $user , $options);
+
 
         return new JsonResponse([
             'user' => $user->getUserJson()

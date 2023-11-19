@@ -21,7 +21,7 @@ class TicketRepository extends ServiceEntityRepository
         parent::__construct($registry, Ticket::class);
     }
 
-    public function findByDateAndStore($startDate, $endDate, $store)
+    public function findByDateAndStore($startDate, $endDate, $store,$user)
     {
         $startDate = \DateTime::createFromFormat('d/m/Y', $startDate)->format('Y-m-d H:i:s');
         $endDate = \DateTime::createFromFormat('d/m/Y', $endDate)->format('Y-m-d H:i:s');
@@ -37,11 +37,73 @@ class TicketRepository extends ServiceEntityRepository
                 ->setParameter('store', $store);
         }
 
+        $userRoles = $user->getRoles();
+        if (in_array('ROLE_CLIENT', $userRoles)) {
+            $qb->andWhere('t.user = :user')
+                ->setParameter('user', $user);
+        }
+
+        if (in_array('ROLE_STOREMANAGER', $userRoles)) {
+            $qb->andWhere('t.store = :store')
+                ->setParameter('store', $user->getStores()[0]);
+        }
+
+        if (in_array('ROLE_EMPLOYEE', $userRoles)) {
+            $qb->andWhere('t.employee = :employee')
+                ->setParameter('employee', $user);
+        }
+
+
+
+
         return $qb
             ->getQuery()
             ->getResult();
     }
 
+
+    //findTicketsRelatedToUser
+    public function findTicketsRelatedToUser($user, $startDate, $endDate, $storeId , $userRole)
+    {
+        $startDate = \DateTime::createFromFormat('d/m/Y', $startDate)->format('Y-m-d H:i:s');
+        $endDate = \DateTime::createFromFormat('d/m/Y', $endDate)->format('Y-m-d H:i:s');
+
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.updated_at BETWEEN :startDate AND :endDate')
+            ->orWhere('t.ticket_generated_at BETWEEN :startDate AND :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate);
+
+
+        $userRole = $user->getRoles()[0];
+        if ($userRole == 'ROLE_CLIENT') {
+            $qb->andWhere('t.user = :user')
+                ->setParameter('user', $user);
+        }
+
+        if ($userRole == 'ROLE_STOREMANAGER') {
+            $qb->andWhere('t.store = :store')
+                ->setParameter('store', $user->getStores()[0]);
+        }
+
+        if ($userRole == 'ROLE_EMPLOYEE') {
+            $qb->andWhere('t.employee = :employee')
+                ->setParameter('employee', $user);
+        }
+
+        if($userRole == 'ROLE_ADMIN'){
+            if($storeId){
+                $qb->andWhere('t.store = :store')
+                    ->setParameter('store', $storeId);
+            }
+        }
+
+
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
 
 
     /**

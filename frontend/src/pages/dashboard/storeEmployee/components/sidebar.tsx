@@ -1,31 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {
-    AppstoreOutlined,
-    BarChartOutlined,
     BarcodeOutlined,
     BulbOutlined,
     CheckCircleOutlined,
-    ClusterOutlined,
-    ControlOutlined,
     DashboardOutlined,
-    GiftOutlined, GlobalOutlined,
-    GoldOutlined,
+    GiftOutlined,
     HistoryOutlined,
-    LockOutlined,
-    MailOutlined,
     MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    PieChartOutlined, PrinterOutlined,
-    RadarChartOutlined, SearchOutlined,
+    MenuUnfoldOutlined, PrinterOutlined,
+
     SettingOutlined,
-    ShopOutlined, SketchOutlined,
-    UserOutlined
+
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {Button, Col, Menu, Row} from 'antd';
 import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
 type MenuItem = Required<MenuProps>['items'][number];
-import logoTeaImage from '@/assets/images/logoTea.png';
 
 function getItem(
     label: React.ReactNode,
@@ -59,7 +49,7 @@ const items: MenuItem[] = [
         getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
     ]),
 
-    getItem('Paramètres', 'settingsItem', <SettingOutlined />),
+    getItem('Paramètres', 'generalSettingsItem', <SettingOutlined />),
 
 
 
@@ -67,7 +57,7 @@ const items: MenuItem[] = [
 ];
 
 // submenu keys of the first level
-const rootSubmenuKeys = ['dashboardItem', 'prizesValidationItem', 'ticketsItem' , 'printTicketsItem', 'settingsItem'];
+const rootSubmenuKeys = ['dashboardItem', 'prizesValidationItem', 'ticketsItem' , 'printTicketsItem', 'generalSettingsItem'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
     selectedMenuItem: string;

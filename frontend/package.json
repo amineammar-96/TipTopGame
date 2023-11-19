@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.16.1",
+    "@ckeditor/ckeditor5-build-classic": "^40.1.0",
+    "@ckeditor/ckeditor5-image": "^40.1.0",
+    "@ckeditor/ckeditor5-react": "^6.1.0",
     "@types/node": "20.4.8",
     "@types/react": "18.2.18",
     "@types/react-dom": "18.2.7",
@@ -23,18 +26,17 @@
     "next": "13.4.12",
     "next-auth": "^4.24.4",
     "qs": "^6.11.2",
-    "react": "18.2.0",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "18.2.0",
-    "react-facebook-login": "^4.1.1",
+    "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.15.0",
     "react-spin-game": "^1.0.7",
     "react-wheel-of-prizes": "^1.0.9",
     "typescript": "5.1.6"
   },
   "devDependencies": {
     "@types/qs": "^6.9.8",
-    "@types/react-facebook-login": "^4.1.8",
     "https-localhost": "^4.7.1"
   }
 }
