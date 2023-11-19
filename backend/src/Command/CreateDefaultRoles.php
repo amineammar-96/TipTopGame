@@ -46,8 +46,8 @@ class CreateDefaultRoles extends Command
             ['name' => 'ROLE_ADMIN', 'label' => 'Administrateur'],
             ['name' => 'ROLE_STOREMANAGER', 'label' => 'Gestionnaire de Magasin'],
             ['name' => 'ROLE_EMPLOYEE', 'label' => 'Employé'],
-            ['name' => 'ROLE_BAILIFF', 'label' => 'Huissier'],
             ['name' => 'ROLE_CLIENT', 'label' => 'Client'],
+            ['name' => 'ROLE_BAILIFF', 'label' => 'Huissier'],
             ['name' => 'ROLE_ANONYMOUS', 'label' => 'Anonyme'],
         ];
 
