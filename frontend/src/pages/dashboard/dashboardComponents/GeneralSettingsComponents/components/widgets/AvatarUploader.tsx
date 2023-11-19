@@ -1,19 +1,43 @@
 import { Upload, message, Avatar } from 'antd';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {uploadAvatar} from "@/app/api";
 
-const AvatarUploader = () => {
+interface AvatarUploaderProps {
+    onImageChange: (file: any) => void;
+    avatar: string|null;
+}
+const AvatarUploader = ({onImageChange , avatar} : AvatarUploaderProps) => {
     const [avatarUrl, setAvatarUrl] = useState(null);
 
-    const handleChange = (info:any) => {
+    useEffect(() => {
+        if (avatar) setAvatarUrl(avatar as any);
+    }, []);
 
+    const handleChange = (info:any) => {
+        console.log(info);
+
+        if (info.file) {
+
+            console.log('File type:', info.file.type);
+            console.log('File content:', info.file.originFileObj);
+
+            const reader:any = new FileReader();
+            reader.addEventListener('load', () => {
+                onImageChange(info.file.originFileObj);
+                console.log('Reader result:', reader.result);
+                setAvatarUrl(reader.result);
+            });
+
+            const blob = new Blob([info.file.originFileObj], { type: info.file.type });
+            reader.readAsDataURL(blob);
+        }
     };
 
+
+
     const customRequest = ({ onSuccess }:any) => {
-        // Simulate an upload request (replace this with your actual upload logic)
-        setTimeout(() => {
-            onSuccess('ok');
-        }, 0);
+
     };
 
     return (
@@ -21,12 +45,11 @@ const AvatarUploader = () => {
             customRequest={customRequest}
             showUploadList={false}
             onChange={handleChange}
-            beforeUpload={(file) => false} // Prevent automatic upload to handle customRequest
         >
             <Avatar
                 size={64}
                 icon={!avatarUrl ? <UserOutlined /> : null}
-                src={avatarUrl}
+                src={avatarUrl ? avatarUrl : avatar}
                 alt="Avatar"
             />
             <div style={{ marginTop: 8 }}>

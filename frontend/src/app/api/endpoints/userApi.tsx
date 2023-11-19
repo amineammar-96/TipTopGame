@@ -252,7 +252,6 @@ export async function sendActivationAccountEmailForUser(id:string) {
     return await fetchJson('/user/'+id+'/send_activation_email', config);
 }
 
-//checkActivationTokenValidity
 export async function checkActivationTokenValidityClient(data: any) {
     const config: AxiosRequestConfig = {
         method: 'POST',
@@ -263,4 +262,42 @@ export async function checkActivationTokenValidityClient(data: any) {
     };
 
     return await fetchJson(`/client/check_activation_token_validity`, config)
+}
+
+
+
+export async function updateUserProfileInfo(id:string , data: any ) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/user/${id}/update_profile_info`, config)
+
+}
+
+//uploadAvatar
+
+export async function uploadAvatar(id:string , data: any ) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const formData = new FormData();
+    formData.append('avatar_file', data);
+
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        data: formData,
+    };
+
+    return await fetchJson(`/user/${id}/update_avatar`, config)
+
 }

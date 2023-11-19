@@ -101,7 +101,6 @@ class UserPersonalInfo
         return [
             'id' => $this->getId(),
             'address' => $this->getAddress(),
-            'phone' => $this->getPhone(),
             'postal_code' => $this->getPostalCode(),
             'city' => $this->getCity(),
             'country' => $this->getCountry(),

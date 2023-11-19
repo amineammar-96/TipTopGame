@@ -92,6 +92,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $token_expired_at = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Avatar $avatar_image = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -375,6 +378,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'address' => $this->getUserPersonalInfo()?->getAddress(),
             'postalCode' => $this->getUserPersonalInfo()?->getPostalCode(),
             'city' => $this->getUserPersonalInfo()?->getCity(),
+            'country' => $this->getUserPersonalInfo()?->getCountry(),
             'is_activated' => $this->isIsActive(),
             'created_at' => [
                 'date' => $this->getCreatedAt()->format('d/m/Y'),
@@ -388,7 +392,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'updated_at' => [
                 'date' => $this->getUpdatedAt()?->format('d/m/Y'),
                 'time' => $this->getUpdatedAt()?->format('H:i'),
-            ]
+            ],
+            'avatar_image' => $this->getAvatarImage()?->getAvatarUrl(),
+            'avatar' => $this->getAvatarImage()?->getAvatarJson(),
 
 
         ];
@@ -572,6 +578,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTokenExpiredAt(?\DateTimeInterface $token_expired_at): static
     {
         $this->token_expired_at = $token_expired_at;
+
+        return $this;
+    }
+
+    public function getAvatarImage(): ?Avatar
+    {
+        return $this->avatar_image;
+    }
+
+    public function setAvatarImage(?Avatar $avatar_image): static
+    {
+        if ($avatar_image->getUser() !== $this) {
+            $avatar_image->setUser($this);
+        }
+
+        $this->avatar_image = $avatar_image;
 
         return $this;
     }

@@ -1,12 +1,13 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import LogoutService from "@/app/service/LogoutService";
-import {Avatar, Button, Checkbox, Col, Divider, Form, Input, Modal, Row, Select, Tag} from "antd";
+import {Avatar, Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Tag} from "antd";
 import {FastBackwardOutlined, SaveFilled, SendOutlined} from "@ant-design/icons";
-import {getUserPersonalInfo, sendActivationAccountEmailForUser} from "@/app/api";
+import {getUserPersonalInfo, sendActivationAccountEmailForUser, updateUserProfileInfo, uploadAvatar} from "@/app/api";
 import AvatarUploader
     from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/components/widgets/AvatarUploader";
 import Image from "next/image";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface OptionType {
     id: string;
@@ -46,13 +47,19 @@ interface OptionType {
         date: string;
         time: string;
     };
+    avatar:{
+        id: string;
+        filename: string;
+        path: string;
+    };
+    avatar_image:string;
 }
 function PersonalInformations() {
 
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();
     const [loading, setLoading] = useState(false);
-
+    const [rerender, setRerender] = useState(0);
     const [personalInfoForm, setPersonalInfoForm] = useState({
                     id: "",
                     lastname: "",
@@ -91,6 +98,12 @@ function PersonalInformations() {
                         time: "",
                     },
             dateOfBirth: "",
+        avatar:{
+            id: "",
+            filename: "",
+            path: "",
+        },
+        avatar_image:"",
         });
 
     function getPersonalInfo() {
@@ -123,17 +136,36 @@ function PersonalInformations() {
 
 
     function updateProfileInfo(values: any) {
-        console.log('values:', values);
+        updateUserProfileInfo(personalInfoForm.id, values).then((response) => {
+            console.log('response:', response);
+            Modal.success({
+                title: 'Informations personnelles mises à jour',
+                content: 'Vos informations personnelles ont été mises à jour avec succès.',
+            });
+
+        }).catch((error) => {
+            console.log(error);
+            Modal.error({
+                title: 'Erreur',
+                content: 'Une erreur est survenue lors de la mise à jour de vos informations personnelles. Veuillez réessayer plus tard.',
+            });
+        })
     }
 
     const onFinish = (values: any) => {
         //setPersonalInfoForm(values);
         updateProfileInfo(values);
+        setRerender(rerender + 1);
     }
 
 
     const reloadForm = () => {
-        //setPersonalInfoForm(values);
+        getPersonalInfo();
+        setRerender(rerender + 1);
+        Modal.info({
+            title: 'Formulaire réinitialisé',
+            content: 'Le formulaire a été réinitialisé avec succès.',
+        });
     }
 
 
@@ -156,8 +188,47 @@ function PersonalInformations() {
 
     }
 
+    const [imageFile, setImageFile] = useState(null);
+
+    const [userAvatar, setUserAvatar] = useState(null);
+
+    useEffect(() => {
+        if (personalInfoForm) {
+            let imgPath = personalInfoForm.avatar_image;
+
+            if(imgPath != null && imgPath!='') {
+                let urlImage = BASE_URL + imgPath;
+                setUserAvatar(urlImage as any);
+            }else {
+                setUserAvatar(null);
+            }
+        }
+    }, [personalInfoForm]);
+
+
+
+    function uploadImage() {
+        console.log('imageFile:', imageFile);
+        let id = personalInfoForm.id;
+
+        uploadAvatar(id , imageFile).then((res) => {
+            if (res.data.success) {
+                message.success('Image uploaded successfully');
+            } else {
+                message.error('Image upload failed');
+            }
+        }).catch((err) => {
+            message.error('Image upload failed');
+        });
+    }
+
+    const onAvatarChange = (file:any) => {
+        setImageFile(file);
+        uploadImage();
+    }
+
     return (
-        <>
+        <div key={rerender} >
 
             <div  className={`mt-4 w-100 ${styles.templatesPersoDiv}`}>
                 <h2 className={`display-6 my-5`}>
@@ -367,13 +438,10 @@ function PersonalInformations() {
                             </strong>
 
                             <Row gutter={16}>
-                                <Col span={12} className={`d-flex align-items-center justify-content-center w-100`} >
-                                    <AvatarUploader></AvatarUploader>
+                                <Col span={24} className={`d-flex align-items-center justify-content-center w-100`} >
+                                    <AvatarUploader avatar={userAvatar} onImageChange={onAvatarChange}></AvatarUploader>
                                 </Col>
-                                <Col span={12}>
-                                    <img className={styles.profileSettingsAvatar} src="https://images.prismic.io/utopix-next-website/Mzk0NGJkOWEtY2ZlYS00MjVjLTkwNTAtOGY5OWQzN2IzNGVi_762cec57-2eaf-4eaf-9a0d-2e7860147e48_profilhomme7.jpg?ixlib=js-3.8.0&w=3840&auto=format&fit=max" alt=""/>
 
-                               </Col>
                             </Row>
 
 
@@ -503,7 +571,7 @@ function PersonalInformations() {
 
             </div>
 
-        </>
+        </div>
     );
 }
 

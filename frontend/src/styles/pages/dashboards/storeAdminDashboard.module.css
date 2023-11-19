@@ -1514,11 +1514,3 @@ background: #ffffff;
 .autoCompletCkEditorDiv {
 
 }
-
-.profileSettingsAvatar {
-    width: 10rem !important;
-    height: 10rem !important;
-    margin: 0 !important;
-    box-shadow: 0 0 11px 4px rgba(241, 241, 241, 0.84) !important;
-    border-radius: .6rem;
-}

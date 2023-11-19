@@ -291,3 +291,20 @@ check_client_activation_token_validity:
     path: /api/client/check_activation_token_validity
     controller: App\Controller\Api\PostManMailer\PostManMailerController::checkClientActivationTokenValidity
     methods: POST
+
+
+#update user profile
+update_user_profile:
+    path: /api/user/{id}/update_profile_info
+    controller: App\Controller\Api\User\UserController::updateUserProfileInfo
+    methods: POST
+    requirements:
+        id: \d+
+
+#update avatar image`
+update_user_avatar:
+    path: /api/user/{id}/update_avatar
+    controller: App\Controller\Api\User\UserController::updateUserAvatar
+    methods: POST
+    requirements:
+        id: \d+

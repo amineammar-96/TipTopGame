@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\User;
 
+use App\Entity\Avatar;
 use App\Entity\User;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -337,6 +338,7 @@ class UserController extends AbstractController
 
     public function getUserPersonalInfoById(int $id): JsonResponse
     {
+
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
         if (!$user) {
             return $this->json([
@@ -350,5 +352,102 @@ class UserController extends AbstractController
     }
 
 
+    public function updateUserProfileInfo(int $id, Request $request): JsonResponse
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+
+        if (!$user) {
+            return $this->json([
+                'error' => 'User not found'
+            ], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        $email= $data['email'];
+        $firstname= $data['firstname'];
+        $lastname= $data['lastname'];
+        $phone= $data['phone'];
+        $address= $data['address'];
+        $postal_code= $data['postalCode'];
+        $city= $data['city'];
+        $country= $data['country'];
+
+
+        $user->setEmail($email);
+        $user->setFirstName($firstname);
+        $user->setLastName($lastname);
+        $user->setPhone($phone);
+        $user->getUserPersonalInfo()->setAddress($address);
+        $user->getUserPersonalInfo()->setPostalCode($postal_code);
+        $user->getUserPersonalInfo()->setCity($city);
+        $user->getUserPersonalInfo()->setCountry($country);
+
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 'updated',
+            'user' => $user->getUserJson()
+        ]);
+    }
+
+
+    public function updateUserAvatar($id, Request $request)
+    {
+        $user = $this->getUser();
+        $userAvatar = $user->getAvatarImage();
+
+        if ($request->files->has('avatar_file')) {
+            $file = $request->files->get('avatar_file');
+
+            if ($file->isValid()) {
+                $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+
+                $file->move($this->getParameter('avatars_upload'), $fileName);
+
+                $path = '/avatars';
+
+                if ($userAvatar) {
+                    $this->deleteAvatarFile($userAvatar->getFilename(), $userAvatar->getPath());
+                } else {
+                    $userAvatar = new Avatar();
+                    $userAvatar->setUser($user);
+                }
+
+                $userAvatar->setFilename($fileName);
+                $userAvatar->setPath($path);
+
+                $user->setAvatarImage($userAvatar);
+
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+
+                return new JsonResponse([
+                    'status' => 'success',
+                    'avatar' => $userAvatar->getAvatarJson(),
+                ]);
+            } else {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'File upload failed',
+                ], 500);
+            }
+        } else {
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => 'No file uploaded',
+            ], 400);
+        }
+    }
+
+    private function deleteAvatarFile(string $filename, string $path): void
+    {
+        $fullPath = $this->getParameter('avatars_upload') . $path . '/' . $filename;
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+    }
 
 }

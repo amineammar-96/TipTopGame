@@ -152,7 +152,9 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/doctrine/annotations" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sensio/framework-extra-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/fzaninotto/faker" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/jms/metadata" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpmailer/phpmailer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/vich/uploader-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

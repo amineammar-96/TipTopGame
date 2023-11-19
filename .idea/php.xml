@@ -159,6 +159,8 @@
       <path value="$PROJECT_DIR$/backend/vendor/doctrine/annotations" />
       <path value="$PROJECT_DIR$/backend/vendor/fzaninotto/faker" />
       <path value="$PROJECT_DIR$/backend/vendor/phpmailer/phpmailer" />
+      <path value="$PROJECT_DIR$/backend/vendor/jms/metadata" />
+      <path value="$PROJECT_DIR$/backend/vendor/vich/uploader-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
