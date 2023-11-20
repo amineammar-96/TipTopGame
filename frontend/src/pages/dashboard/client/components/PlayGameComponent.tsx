@@ -1,16 +1,15 @@
+'use client';
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
-import {Button, Card, Col, Input, Row, Spin, Tag} from 'antd';
+import {Button, Col, Input, Row, Tag} from 'antd';
 import LogoutService from "@/app/service/LogoutService";
-import  SpinAndWin  from 'react-spin-game'
-import  'react-spin-game/dist/index.css'
-import LockImg from '@/assets/images/lock.png';
 import Image from "next/image";
-import WheelComponent from 'react-wheel-of-prizes';
 
-import {Modal, Space } from 'antd';
+
+
+import {Modal } from 'antd';
 import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket, getGainTicketHistory} from "@/app/api";
-import {GiftOutlined, InfoOutlined, SyncOutlined} from "@ant-design/icons";
+import {GiftOutlined, SyncOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -23,7 +22,8 @@ import BalloonImg from "@/assets/images/balloon.png";
 import gameWallpaperImg from "@/assets/images/gameWallpaper.png";
 import BestGainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/BestGainsTable";
 import PrizesList from "@/pages/dashboard/client/components/PrizesList";
-import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import DynamicWheel from "@/pages/dashboard/client/components/DynamicWheel";
+
 interface PrizeType {
     'id' : any;
     'label' : any;
@@ -176,24 +176,8 @@ function PlayGameComponent() {
     }
 
 
-    const segments = [
-        'Infuseur à thé',
-        '100g d’un thé détox ou d’infusion',
-        '100g d’un thé signature',
-        'Coffret à 39€',
-        'Coffret à 69€',
-    ]
-    const segColors = [
-        '#7BC558',
-        '#42B2FF',
-        '#E3E94B',
-        '#FF5555',
-        '#EBB3E6',
-    ]
-    const onFinished = (winner:any) => {
 
-
-
+    const onFinished = () => {
         Modal.success({
             className: 'modalSuccess',
             title: 'Félicitations !',
@@ -312,24 +296,13 @@ function PlayGameComponent() {
     const [spinning, setSpinning] = useState(false);
     const [validTicketCode, setValidTicketCode] = useState('');
 
-    const wheelRef = useRef<WheelComponent | null>(null);
 
     const [prize, setPrize] = useState<PrizeType[]>(defaultPrize);
 
 
     const [formatPrizeByIdGlobal, setFormatPrizeById] = useState("");
     const [playGame, setPlayGame] = useState(false);
-    useEffect(() => {
-        wheelRef.current = ref.current;
-    }, []);
-    const startSpin = () => {
-        console.log('startSpin')
-        console.log(wheelRef , wheelRef.current)
-        if (wheelRef.current) {
-            const wheelElement = wheelRef.current;
-            wheelElement.click();
-        }
-    };
+
 
 
     const formatPrizeById = (prizeId: string) => {
@@ -353,7 +326,6 @@ function PlayGameComponent() {
     }
 
 
-    //checkCodeValidity
     function checkCodeValidity() {
         //setLoading(true);
         checkTicketCodeValidity(ticketCode).then((response) => {
@@ -439,6 +411,37 @@ function PlayGameComponent() {
         })
     }
 
+    const segments = [
+        'Infuseur à thé',
+        '100g d’un thé détox ou d’infusion',
+        '100g d’un thé signature',
+        'Coffret à 39€',
+        'Coffret à 69€',
+    ]
+    const segColors = [
+        '#7BC558',
+        '#42B2FF',
+        '#E3E94B',
+        '#F6C28B',
+        '#EBB3E6',
+    ]
+
+    const data = [
+        { option: 'Infuseur à thé', style: { backgroundColor: '#7BC558', textColor: '#ffffff' , fontSize:13 } },
+        { option: '100g (détox ou d’infusion)', style: { backgroundColor: '#42B2FF', textColor: '#ffffff' , fontSize:12 } },
+        { option: '100g d’un thé signature', style: { backgroundColor: '#008080', textColor: '#ffffff' , fontSize:12 } },
+        { option: 'Coffret à 39€', style: { backgroundColor: '#EBB3E6', textColor: '#ffffff', fontSize:14 } },
+        { option: 'Coffret à 69€', style: { backgroundColor: '#FFD700', textColor: '#ffffff' , fontSize:14 } },
+    ]
+
+    const renderDynamicWheel = () => {
+       return (
+           <DynamicWheel onFinishedWheel={onFinished} winningSegment={
+               prize[0]?.id
+           }  key={prize[0]?.id} data={data} playGame={playGame} ></DynamicWheel>
+       )
+    };
+
 
     return (
         <div className={styles.homePageContent}>
@@ -517,7 +520,7 @@ function PlayGameComponent() {
 
 
                                         <Button className={`${styles.spinWheelBtn} ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheelBtn : ''}`}  onClick={() => {
-                                            startSpin();
+                                           // startSpin();
                                         }}
                                                 disabled={!playGame}
                                         >
@@ -525,32 +528,16 @@ function PlayGameComponent() {
                                         </Button>
 
 
+
                                         {playGame && (
                                             <>
-                                        <div
-                                            style={{ cursor: !playGame ? 'pointer' : 'default', pointerEvents: !playGame ? 'auto' : 'none' , minHeight: '100vh' }}
-                                            className={`w-100 d-flex justify-content-between mt-3 px-4 ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheel : ''}`}>
 
-                                                  <WheelComponent
-                                                        className={styles.wheelGameDiv}
-                                                        key={prize[0]?.id}
-                                                        segments={segments}
-                                                        segColors={segColors}
-                                                        winningSegment={
-                                                            formatPrizeByIdGlobal
-                                                        }
-                                                        onFinished={(winner:any) => onFinished(winner)}
-                                                        primaryColor='black'
-                                                        contrastColor='white'
-                                                        buttonText='Tentez'
-                                                        buttonColor='white'
-                                                        buttonTextColor='black'
-                                                        isOnlyOnce={!playGame}
-                                                        size={220}
-                                                        upDuration={800}
-                                                        downDuration={3000}
-                                                    />
-                                        </div>
+
+
+
+                                            {renderDynamicWheel()}
+
+
                                             </>
                                         )}
                                     </Col>

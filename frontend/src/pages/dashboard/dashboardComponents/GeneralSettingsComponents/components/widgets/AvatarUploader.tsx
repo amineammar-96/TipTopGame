@@ -1,7 +1,6 @@
-import {Upload, message, Avatar, Modal} from 'antd';
+import {Upload, Avatar, Modal} from 'antd';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
-import {uploadAvatar} from "@/app/api";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 
 interface AvatarUploaderProps {
