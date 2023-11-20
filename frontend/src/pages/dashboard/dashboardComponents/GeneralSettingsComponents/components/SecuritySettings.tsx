@@ -336,7 +336,7 @@ function SecuritySettings() {
         <>
 
             <div  className={`mt-4 w-100 ${styles.templatesPersoDiv}`}>
-                <h2 className={`display-6 my-5`}>
+                <h2 className={`display-6 mt-5`}>
                     Paramètres de sécurité du compte
                 </h2>
 
@@ -491,25 +491,29 @@ function SecuritySettings() {
 
                         <Divider />
 
-                        <Row gutter={16} className={`d-flex justify-content-end w-100 m-0 p-0`}>
-                            <Col span={24} className={`d-flex justify-content-end w-100 m-0 p-0`}>
-                                <Form.Item>
+                        <Row gutter={16} className={`d-flex justify-content-start w-100 m-0 p-0 mb-5`}>
+                            <Col span={12} className={`d-flex justify-content-start w-100 m-0 p-0`}>
+                                <Form.Item
+                                className={`m-0 p-0 w-100`}
+                                >
                                     <Button
                                         onClick={() => {
 
                                         }}
 
-                                        className={`${styles.disableAccountBtn}  mx-3 disableAccountBtn `}  type="primary" htmlType="submit">
+                                        className={`${styles.disableAccountBtn}   disableAccountBtn `}  type="primary" htmlType="submit">
                                         Désactiver mon compte <StopOutlined />
                                     </Button>
                                 </Form.Item>
-                                <Form.Item>
+                                <Form.Item
+                                    className={`m-0 p-0 w-100`}
+                                >
                                     <Button
                                         onClick={() => {
 
                                         }}
 
-                                        className={`${styles.deleteAccountBtn} deleteAccountBtn `}  type="primary" htmlType="submit">
+                                        className={`${styles.deleteAccountBtn} mx-3  deleteAccountBtn `}  type="primary" htmlType="submit">
                                         Supprimer mon compte <WarningOutlined />
                                     </Button>
                                 </Form.Item>

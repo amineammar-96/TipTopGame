@@ -1,12 +1,12 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import LogoutService from "@/app/service/LogoutService";
-import {Avatar, Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Tag} from "antd";
+import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Tag} from "antd";
 import {FastBackwardOutlined, SaveFilled, SendOutlined} from "@ant-design/icons";
 import {getUserPersonalInfo, sendActivationAccountEmailForUser, updateUserProfileInfo, uploadAvatar} from "@/app/api";
 import AvatarUploader
     from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/components/widgets/AvatarUploader";
-import Image from "next/image";
+
 const domain = process.env.NEXT_PUBLIC_DOMAIN_NAME;
 
 interface OptionType {
@@ -243,7 +243,7 @@ function PersonalInformations() {
         <div key={rerender} >
 
             <div  className={`mt-4 w-100 ${styles.templatesPersoDiv}`}>
-                <h2 className={`display-6 my-5`}>
+                <h2 className={`display-6 mt-5`}>
                     Informations personnelles
                 </h2>
 

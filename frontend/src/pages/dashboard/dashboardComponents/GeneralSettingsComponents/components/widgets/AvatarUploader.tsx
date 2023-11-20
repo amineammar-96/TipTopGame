@@ -2,6 +2,7 @@ import {Upload, message, Avatar, Modal} from 'antd';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import {uploadAvatar} from "@/app/api";
+import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 
 interface AvatarUploaderProps {
     onImageChange: (file: any) => void;
@@ -81,7 +82,7 @@ const AvatarUploader = ({onImageChange , avatar} : AvatarUploaderProps) => {
                 icon={!avatarUrl ? <UserOutlined /> : null}
                 src={avatarUrl ? avatarUrl : avatar}
                 alt="Avatar"
-                className={`mx-auto d-block w-50 h-50`}
+                className={`mx-auto d-block ${styles.avatarUploader}`}
             />
             <div style={{ marginTop: 8 }}>
                 <UploadOutlined />

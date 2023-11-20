@@ -1511,14 +1511,16 @@ background: #ffffff;
 
 }
 
-.autoCompletCkEditorDiv {
-
+.avatarUploader {
+    width: 12rem !important;
+    height: 12rem !important;
 }
 
 .disableAccountBtn,
 .deleteAccountBtn {
-    padding: 1.3rem 2rem !important;
-    font-size: 1rem !important;
+    padding: 1.2rem 2rem !important;
+    font-size: .9rem !important;
     font-weight: 600 !important;
+    width: 100% !important;
 
 }
