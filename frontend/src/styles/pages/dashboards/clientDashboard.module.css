@@ -649,6 +649,26 @@
 .wheelDiv div {
     max-height: 516px !important;
     max-width: 516px !important;
+    cursor: pointer !important;
+    pointer-events: visible !important;
 
 
+}
+
+.spinButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 4rem 0 !important;
+    font-size: 1.3rem;
+    padding: 2rem 4rem !important;
+    margin-right: 2rem !important;
+}
+
+.spinButton:hover {
+    opacity: 0.9 !important;
+    cursor: pointer !important;
+    font-size: 1.34rem;
+    padding: 2rem 4.1rem !important;
 }

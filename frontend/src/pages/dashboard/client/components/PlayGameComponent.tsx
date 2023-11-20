@@ -457,55 +457,40 @@ function PlayGameComponent() {
                     <div className={`${styles.gameMainDiv} mb-0 pb-0 px-4`}>
 
 
-                        <Row className={`${styles.fullWidthElement}  mt-5 mb-5 w-100`}
+                        <Row className={`${styles.fullWidthElement}  mt-0 mb-5 w-100`}
                              gutter={{xs: 8, sm: 16, md: 24, lg: 32}}>
 
                             {!loading && (
                                 <>
-                                    <Col key={"gamePAgeCol"} className={`w-100 d-flex justify-content-between mt-3 px-4 ${styles.gameComponentDiv}`} xs={24} sm={24} md={24} lg={24} span={6}>
+                                    <Col key={"gamePAgeCol"} className={`w-100 d-flex `} xs={24} sm={24} md={24} lg={24} span={6}>
 
                                         {playGame && (
 
-                                            <><h1 style={{
-                                                color: '#65b606',
-                                                fontSize: '16px',
-                                                fontWeight: 'bold',
-                                                textAlign: 'center',
-                                                marginBottom: '20px',
-                                                position: 'absolute',
-                                                zIndex: 999,
-                                                top: '0%',
-                                                left: '0%',
-                                            }}>
+                                            <div>
+                                                <strong className={`mb-5`}>
                                                 Votre code est valide, vous pouvez tourner la roue.
-                                            </h1>
-                                                <h1
+                                            </strong>
+
+                                                <Button
                                                     onClick={() => {
                                                         setPlayGame(false);
                                                     }}
-                                                    style={{
-                                                    color: '#ff2929',
-                                                    fontSize: '20px',
-                                                    fontWeight: 'bold',
-                                                    textAlign: 'center',
-                                                    marginBottom: '20px',
-                                                    position: 'absolute',
-                                                    zIndex: 999,
-                                                    top: '0%',
-                                                    right: '0%',
-                                                }}>
-                                                    Rédemarrez la page pour jouer à nouveau.
-                                                </h1>
-                                            </>
+                                                    className={`my-5`}
+                                                    type="default"
+                                                    icon={<SyncOutlined />}
+                                                    size={"large"}
+                                                >
+                                                    Rédemarrez
+                                                </Button>
+                                            </div>
                                         )}
 
                                         {!playGame && (
-
-                                            <>
+                                            <div className={`w-100 d-flex justify-content-center align-items-center flex-column`}>
                                                 <Image src={gameWallpaperImg}
-                                        onClick={() => {
-                                            showModal();
-                                        }}
+                                                    onClick={() => {
+                                                        showModal();
+                                                    }}
                                         className={`${styles.spinWheelLock}`} alt={'LockImg'} />
                                                 <div className={`${styles.spinWheelTitle}`} >
                                                     <p>
@@ -515,29 +500,13 @@ function PlayGameComponent() {
                                                         Il vous reste que à cliquer sur la roue pour echanger votre code de ticket.
                                                     </p>
                                                 </div>
-                                        </>
+                                        </div>
                                             )}
-
-
-                                        <Button className={`${styles.spinWheelBtn} ${styles.wheelGameDiv} ${ !playGame ? styles.disabledWheelBtn : ''}`}  onClick={() => {
-                                           // startSpin();
-                                        }}
-                                                disabled={!playGame}
-                                        >
-                                            Tourner <SyncOutlined className={`mx-3`}></SyncOutlined>
-                                        </Button>
-
 
 
                                         {playGame && (
                                             <>
-
-
-
-
                                             {renderDynamicWheel()}
-
-
                                             </>
                                         )}
                                     </Col>

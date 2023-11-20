@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import {Button} from "antd";
+import {RedoOutlined} from "@ant-design/icons";
 
 interface DynamicWheelProps {
     data: any;
@@ -81,7 +82,7 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
                 className={`${styles.spinButton} mt-5`}
                 type={"primary"}
                 onClick={handleSpinClick}>
-                Tourner la roue !
+                Tourner la roue ! <RedoOutlined className={`mx-2`} />
             </Button>
         </div>
     );
