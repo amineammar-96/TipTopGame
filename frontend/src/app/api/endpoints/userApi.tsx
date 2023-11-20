@@ -301,3 +301,37 @@ export async function uploadAvatar(id:string , data: any ) {
     return await fetchJson(`/user/${id}/update_avatar`, config)
 
 }
+
+
+export async function updateUserPassword(id:string , data: any ) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/user/${id}/update_password`, config)
+
+}
+
+
+export async function updateUserEmail(id:string , data: any ) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/user/${id}/update_email`, config)
+
+}

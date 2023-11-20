@@ -7,7 +7,7 @@ import {getUserPersonalInfo, sendActivationAccountEmailForUser, updateUserProfil
 import AvatarUploader
     from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/components/widgets/AvatarUploader";
 import Image from "next/image";
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const domain = process.env.NEXT_PUBLIC_DOMAIN_NAME;
 
 interface OptionType {
     id: string;
@@ -195,9 +195,9 @@ function PersonalInformations() {
     useEffect(() => {
         if (personalInfoForm) {
             let imgPath = personalInfoForm.avatar_image;
-
             if(imgPath != null && imgPath!='') {
-                let urlImage = BASE_URL + imgPath;
+                let urlImage = domain + imgPath;
+                console.log('urlImage:', urlImage);
                 setUserAvatar(urlImage as any);
             }else {
                 setUserAvatar(null);
@@ -211,20 +211,29 @@ function PersonalInformations() {
         console.log('imageFile:', imageFile);
         let id = personalInfoForm.id;
 
+        if (!imageFile) {
+            return;
+        }
+
         uploadAvatar(id , imageFile).then((res) => {
-            if (res.data.success) {
-                message.success('Image uploaded successfully');
-            } else {
-                message.error('Image upload failed');
-            }
+            Modal.success({
+                title: 'Photo de profil téléchargée',
+                content: 'L\'image a été téléchargée avec succès.',
+            });
         }).catch((err) => {
-            message.error('Image upload failed');
+            Modal.error({
+                title: 'Erreur',
+                content: 'Une erreur est survenue lors du téléchargement de l\'image. Veuillez réessayer plus tard.',
+            });
         });
     }
 
+    useEffect(() => {
+        uploadImage();
+    }, [imageFile]);
+
     const onAvatarChange = (file:any) => {
         setImageFile(file);
-        uploadImage();
     }
 
     return (
@@ -361,15 +370,6 @@ function PersonalInformations() {
 
 
                             <Row gutter={16}>
-                                <Col span={12} className={``}>
-                                    <Form.Item className={`w-100`} initialValue={personalInfoForm.email} required label="Adresse E-mail" name="email">
-                                        <Input
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, email: e.target.value});
-                                            }}
-                                            placeholder="Entrez l'email" />
-                                    </Form.Item>
-                                </Col>
 
                                 <Col span={12} className={``}>
                                     <Form.Item className={`w-100`} initialValue={personalInfoForm.phone} required label="Numéro de téléphone" name="phone">
@@ -377,7 +377,7 @@ function PersonalInformations() {
                                             onChange={(e) => {
                                                 setPersonalInfoForm({...personalInfoForm, phone: e.target.value});
                                             }}
-                                            placeholder="Entrez l'email" />
+                                            placeholder="Entrez votre N° Tel " />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -427,6 +427,25 @@ function PersonalInformations() {
                                 </Col>
                             </Row>
 
+
+                            <Row gutter={16} className={`d-flex justify-content-end`}>
+                                <Col span={12} className={`d-flex justify-content-end`}>
+                                    <Form.Item >
+                                        <Button className={`mx-3 ${styles.cancelFormEmailTemplateBtn}`} type="default"
+                                                onClick={() => {
+                                                    reloadForm();
+                                                }}
+                                        >
+                                            Annuler les modifications <FastBackwardOutlined />
+                                        </Button>
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Button className={`mx-3 ${styles.saveFormEmailTemplateBtn} saveFormEmailTemplateBtnGlobal`}  type="primary" htmlType="submit">
+                                            Enregistrer <SaveFilled />
+                                        </Button>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
 
 
 
@@ -543,24 +562,7 @@ function PersonalInformations() {
 
                             </Row>
 
-                            <Row gutter={16} className={`d-flex justify-content-end`}>
-                                <Col span={12} className={`d-flex justify-content-end`}>
-                                    <Form.Item >
-                                        <Button className={`mx-3 ${styles.cancelFormEmailTemplateBtn}`} type="default"
-                                                onClick={() => {
-                                                    reloadForm();
-                                                }}
-                                        >
-                                            Annuler les modifications <FastBackwardOutlined />
-                                        </Button>
-                                    </Form.Item>
-                                    <Form.Item>
-                                        <Button className={`mx-3 ${styles.saveFormEmailTemplateBtn} saveFormEmailTemplateBtnGlobal`}  type="primary" htmlType="submit">
-                                            Enregistrer <SaveFilled />
-                                        </Button>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+
 
 
 

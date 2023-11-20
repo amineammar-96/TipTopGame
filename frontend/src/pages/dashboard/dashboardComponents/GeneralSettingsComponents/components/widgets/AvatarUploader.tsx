@@ -1,4 +1,4 @@
-import { Upload, message, Avatar } from 'antd';
+import {Upload, message, Avatar, Modal} from 'antd';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import {uploadAvatar} from "@/app/api";
@@ -11,27 +11,56 @@ const AvatarUploader = ({onImageChange , avatar} : AvatarUploaderProps) => {
     const [avatarUrl, setAvatarUrl] = useState(null);
 
     useEffect(() => {
-        if (avatar) setAvatarUrl(avatar as any);
+        //if (avatar) setAvatarUrl(avatar as any);
     }, []);
 
-    const handleChange = (info:any) => {
-        console.log(info);
+    const handleChange = (info: any) => {
+       Modal.confirm({
+            title: 'Êtes-vous sûr de vouloir changer votre photo de profil ?',
+            content: 'Vous ne pourrez pas revenir en arrière',
+            okText: 'Oui',
+            cancelText: 'Non',
+            onOk: () => {
+                console.log(info);
 
-        if (info.file) {
+                if (info.file) {
+                    const allowedFormats = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!allowedFormats.includes(info.file.type)) {
+                        console.error('Invalid image format. Please upload a JPEG, PNG, or GIF image.');
+                        return;
+                    }
 
-            console.log('File type:', info.file.type);
-            console.log('File content:', info.file.originFileObj);
+                    const maxSizeInBytes = 5 * 1024 * 1024;
+                    if (info.file.size > maxSizeInBytes) {
+                        console.error('Image size exceeds the maximum allowed size (5 MB).');
+                        Modal.error({
+                            title: 'Erreur',
+                            content: <>
+                                <p>
+                                    La taille de l\'image dépasse la taille maximale autorisée
+                                </p>
+                                <p>
+                                    Taille maximale autorisée : 5 MB
+                                </p>
+                            </>,
+                        });
 
-            const reader:any = new FileReader();
-            reader.addEventListener('load', () => {
-                onImageChange(info.file.originFileObj);
-                console.log('Reader result:', reader.result);
-                setAvatarUrl(reader.result);
-            });
+                    }
 
-            const blob = new Blob([info.file.originFileObj], { type: info.file.type });
-            reader.readAsDataURL(blob);
-        }
+                    const reader: any = new FileReader();
+                    reader.addEventListener('load', () => {
+                        onImageChange(info.file.originFileObj);
+                        console.log('Reader result:', reader.result);
+                        setAvatarUrl(reader.result);
+                    });
+
+                    const blob = new Blob([info.file.originFileObj], { type: info.file.type });
+                    reader.readAsDataURL(blob);
+                }
+            },
+       });
+
+
     };
 
 
@@ -45,12 +74,14 @@ const AvatarUploader = ({onImageChange , avatar} : AvatarUploaderProps) => {
             customRequest={customRequest}
             showUploadList={false}
             onChange={handleChange}
+            className={`w-100`}
         >
             <Avatar
                 size={64}
                 icon={!avatarUrl ? <UserOutlined /> : null}
                 src={avatarUrl ? avatarUrl : avatar}
                 alt="Avatar"
+                className={`mx-auto d-block w-50 h-50`}
             />
             <div style={{ marginTop: 8 }}>
                 <UploadOutlined />

@@ -364,7 +364,6 @@ class UserController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $email= $data['email'];
         $firstname= $data['firstname'];
         $lastname= $data['lastname'];
         $phone= $data['phone'];
@@ -374,7 +373,6 @@ class UserController extends AbstractController
         $country= $data['country'];
 
 
-        $user->setEmail($email);
         $user->setFirstName($firstname);
         $user->setLastName($lastname);
         $user->setPhone($phone);
@@ -410,7 +408,7 @@ class UserController extends AbstractController
                 $path = '/avatars';
 
                 if ($userAvatar) {
-                    $this->deleteAvatarFile($userAvatar->getFilename(), $userAvatar->getPath());
+                    $this->deleteAvatarFile($userAvatar->getPath());
                 } else {
                     $userAvatar = new Avatar();
                     $userAvatar->setUser($user);
@@ -442,12 +440,113 @@ class UserController extends AbstractController
         }
     }
 
-    private function deleteAvatarFile(string $filename, string $path): void
+    private function deleteAvatarFile(string $path): void
     {
-        $fullPath = $this->getParameter('avatars_upload') . $path . '/' . $filename;
+        $fullPath = $this->getParameter('avatars_upload') . $path;
         if (file_exists($fullPath)) {
             unlink($fullPath);
         }
+    }
+
+
+    public function updateUserPassword ($id , Request $request): jsonResponse
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+
+        if (!$user) {
+            return $this->json([
+                'error' => 'User not found'
+            ], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        $currentPassword = $data['current_password'];
+        $newPassword = $data['new_password'];
+        $newPasswordConfirm = $data['new_password_confirm'];
+
+        if (!$this->passwordEncoder->isPasswordValid($user, $currentPassword)) {
+            return $this->json([
+                'message' => 'Mot de passe actuel ne correspond pas'
+            ], 400);
+        }
+
+        if (strlen($newPassword) < 8 ) {
+            return $this->json([
+                'message' => 'Le mot de passe doit contenir au moins 8 caractères'
+            ], 400);
+        }
+
+        if ($currentPassword == $newPassword) {
+            return $this->json([
+                'message' => 'Le nouveau mot de passe doit être différent du mot de passe actuel'
+            ], 400);
+        }
+
+
+        if (!$this->passwordEncoder->isPasswordValid($user, $currentPassword) || $newPassword != $newPasswordConfirm) {
+            return $this->json([
+                'message' => 'Mot de passe actuel incorrect'
+            ], 400);
+        }
+
+        $user->setPassword($this->passwordEncoder->hashPassword($user, $newPassword));
+        $user->setUpdatedAt(new \DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 'updated',
+            'user' => $user->getUserJson()
+        ]);
+    }
+
+    public function updateUserEmail ($id , Request $request): jsonResponse
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+
+        if (!$user) {
+            return $this->json([
+                'error' => 'User not found'
+            ], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        $currentPassword = $data['current_password'];
+        $newEmail = $data['new_email'];
+
+        if (!$this->passwordEncoder->isPasswordValid($user, $currentPassword)) {
+            return $this->json([
+                'message' => 'Mot de passe actuel ne correspond pas'
+            ], 400);
+        }
+
+        if ($currentPassword == $newEmail) {
+            return $this->json([
+                'message' => 'Le nouveau email doit être différent du mot de passe actuel'
+            ], 400);
+        }
+
+        $oldUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $newEmail]);
+        if ($oldUser) {
+            return $this->json([
+                'message' => 'L\'email déjà utilisé par un autre utilisateur'
+            ], 400);
+        }
+
+        $user->setEmail($newEmail);
+        $user->setUpdatedAt(new \DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 'updated',
+            'user' => $user->getUserJson()
+        ]);
+
     }
 
 }

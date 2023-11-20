@@ -308,3 +308,20 @@ update_user_avatar:
     methods: POST
     requirements:
         id: \d+
+
+
+#update user password
+update_user_password:
+    path: /api/user/{id}/update_password
+    controller: App\Controller\Api\User\UserController::updateUserPassword
+    methods: POST
+    requirements:
+        id: \d+
+
+#user update email
+update_user_email:
+    path: /api/user/{id}/update_email
+    controller: App\Controller\Api\User\UserController::updateUserEmail
+    methods: POST
+    requirements:
+        id: \d+
