@@ -136,20 +136,23 @@ function PersonalInformations() {
 
 
     function updateProfileInfo(values: any) {
-        updateUserProfileInfo(personalInfoForm.id, values).then((response) => {
-            console.log('response:', response);
-            Modal.success({
-                title: 'Informations personnelles mises à jour',
-                content: 'Vos informations personnelles ont été mises à jour avec succès.',
-            });
-
-        }).catch((error) => {
-            console.log(error);
-            Modal.error({
-                title: 'Erreur',
-                content: 'Une erreur est survenue lors de la mise à jour de vos informations personnelles. Veuillez réessayer plus tard.',
-            });
-        })
+        Modal.confirm({
+            title: 'Êtes-vous sûr de vouloir modifier vos informations personnelles ?',
+            content: 'Vous ne pourrez pas revenir en arrière',
+            okText: 'Oui',
+            cancelText: 'Non',
+            onOk: () => {
+                console.log(values);
+                let id = personalInfoForm.id;
+                updateUserProfileInfo(id, values).then((response) => {
+                    console.log('response:', response);
+                    message.success('Vos informations personnelles ont été modifiées avec succès.');
+                }).catch((error) => {
+                    console.log('error:', error);
+                    message.error('Une erreur est survenue lors de la modification de vos informations personnelles. Veuillez réessayer plus tard.');
+                });
+            },
+        });
     }
 
     const onFinish = (values: any) => {

@@ -97,35 +97,36 @@ function PersonalizeCorrespandancesTemplates({ selectTab , selectTemplate , sele
             return;
         }
 
-        updateEmailTemplate(templateForm.id , templateForm).then((res) => {
-
-           if (res.statusCode === 200) {
-               Modal.success({
-                   title: 'Modèle enregistré avec succès',
-                   content: `${res.message}`
-               });
-           }else if (res.statusCode === 201) {
-               Modal.info({
-                   title: 'Modèle enregistré avec succès',
-                   content: `${res.message}`
-               });
-           }
-
-            getTemplateById(templateForm.id);
-
-        }).catch((err) => {
-
-            console.log("err", err);
-            Modal.error({
-                title: 'Erreur',
-                content: 'Erreur lors de l\'enregistrement du modèle',
-            });
-
-            if (err.response) {
-                if (err.response.status === 401) {
-                    logoutAndRedirectAdminsUserToLoginPage();
-                }
-            }
+        Modal.confirm({
+            title: 'Êtes-vous sûr de vouloir modifier ce modèle ?',
+            content: 'Vous ne pourrez pas revenir en arrière',
+            okText: 'Oui',
+            cancelText: 'Non',
+            onOk: () => {
+                setLoading(true);
+                updateEmailTemplate(templateForm.id , templateForm)
+                    .then((res) => {
+                        console.log(res);
+                        setLoading(false);
+                        Modal.success({
+                            title: 'Succès',
+                            content: 'Modèle modifié avec succès',
+                        });
+                    })
+                    .catch((err) => {
+                        Modal.error({
+                            title: 'Erreur',
+                            content: 'Erreur lors de la modification du modèle',
+                        });
+                        setLoading(false);
+                        console.log("err", err);
+                        if (err.response) {
+                            if (err.response.status === 401) {
+                                logoutAndRedirectAdminsUserToLoginPage();
+                            }
+                        }
+                    });
+            },
         });
     }
 
@@ -326,6 +327,7 @@ function PersonalizeCorrespandancesTemplates({ selectTab , selectTemplate , sele
                                                     description: e.target.value,
                                                 }));
                                             }}
+                                            readOnly={true}
                                             placeholder="Entrez la description" />
                                     </Form.Item>
                                 </Col>

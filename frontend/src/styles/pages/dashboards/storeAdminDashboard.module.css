@@ -1514,3 +1514,11 @@ background: #ffffff;
 .autoCompletCkEditorDiv {
 
 }
+
+.disableAccountBtn,
+.deleteAccountBtn {
+    padding: 1.3rem 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+
+}

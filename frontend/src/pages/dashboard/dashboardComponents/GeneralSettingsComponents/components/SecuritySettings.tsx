@@ -2,7 +2,13 @@ import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import LogoutService from "@/app/service/LogoutService";
 import {Avatar, Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Tag} from "antd";
-import {ExclamationCircleOutlined, FastBackwardOutlined, SaveFilled, UnlockOutlined} from "@ant-design/icons";
+import {
+    ExclamationCircleOutlined,
+    FastBackwardOutlined,
+    SaveFilled,
+    StopOutlined,
+    UnlockOutlined, WarningOutlined
+} from "@ant-design/icons";
 import {getUserPersonalInfo, updateUserEmail, updateUserPassword} from "@/app/api";
 import AvatarUploader
     from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/components/widgets/AvatarUploader";
@@ -240,8 +246,8 @@ function SecuritySettings() {
             }
 
             if(passwordForm.new_email == passwordForm.email){
-                Modal.error({
-                    title: 'Erreur',
+                Modal.info({
+                    title: 'E-mail identique',
                     content: <>
                         <p>
                             Veuillez saisir un email différent de votre email actuel
@@ -473,17 +479,44 @@ function SecuritySettings() {
                                             onClick={() => {
                                                 resetPassword();
                                             }}
-                                            className={`mx-3 ${styles.saveFormEmailTemplateBtn} saveFormEmailTemplateBtnGlobal`}  type="primary">
+                                            className={`${styles.saveFormEmailTemplateBtn} saveFormEmailTemplateBtnGlobal`}  type="primary">
                                            Réinitialiser <UnlockOutlined />
                                         </Button>
                                     </Form.Item>
                                 </Col>
                             </Row>
 
-
-
-
                         </Form>
+
+
+                        <Divider />
+
+                        <Row gutter={16} className={`d-flex justify-content-end w-100 m-0 p-0`}>
+                            <Col span={24} className={`d-flex justify-content-end w-100 m-0 p-0`}>
+                                <Form.Item>
+                                    <Button
+                                        onClick={() => {
+
+                                        }}
+
+                                        className={`${styles.disableAccountBtn}  mx-3 disableAccountBtn `}  type="primary" htmlType="submit">
+                                        Désactiver mon compte <StopOutlined />
+                                    </Button>
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button
+                                        onClick={() => {
+
+                                        }}
+
+                                        className={`${styles.deleteAccountBtn} deleteAccountBtn `}  type="primary" htmlType="submit">
+                                        Supprimer mon compte <WarningOutlined />
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+
                     </>
                 </Row>
 

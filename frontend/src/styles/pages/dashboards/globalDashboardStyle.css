@@ -576,3 +576,19 @@ background: #7c7c7c !important;
 .profileTags .ant-btn {
     padding: 0.3rem 1rem !important;
 }
+
+
+.disableAccountBtn {
+    background-color: #42B2FF !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #42B2FF !important;
+}
+.deleteAccountBtn {
+    background-color: #FF5555 !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #FF5555 !important;
+}
