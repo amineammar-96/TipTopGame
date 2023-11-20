@@ -329,7 +329,7 @@
     bottom: 30rem !important;
     right: 34rem !important;
     width: 15rem !important;
-    font-size: 2rem;
+    //font-size: 2rem;
     height: 5rem;
     text-align: center;
     display: flex !important;
@@ -663,7 +663,6 @@
     margin: 4rem 0 !important;
     font-size: 1.3rem;
     padding: 2rem 4rem !important;
-    margin-right: 2rem !important;
 }
 
 .spinButton:hover {
@@ -671,4 +670,81 @@
     cursor: pointer !important;
     font-size: 1.34rem;
     padding: 2rem 4.1rem !important;
+}
+
+.gameInstructions {
+    box-shadow: 2px 3px 18px 13px rgba(246, 246, 246, 0.62);
+    width: 60% !important;
+    padding: 2rem;
+    border-radius: 1rem !important;
+}
+
+.gameInstructions h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    background-color: white;
+    color: #42B2FF;
+    width: 100%;
+    padding: 1rem 0rem !important;
+    text-align: left !important;
+}
+
+
+.gameInstructions h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    background-color: white;
+    color: #7BC558;
+    width: 100%;
+    padding: 1rem 2rem !important;
+    text-align: center !important;
+}
+
+.gameInstructions h6 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.gameInstructions ul li {
+    list-style-type: none !important;
+    font-size: 1.0rem;
+}
+
+.wheelGamePrizesImgDiv {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.wheelGamePrizesImg {
+    width: 10rem;
+    height: 7rem;
+    margin: 0.5rem 0;
+    margin-right: 2rem !important;
+}
+
+
+.tryMeBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    background-color: #EBB3E6 !important;
+    border-color: #EBB3E6 !important;
+    color: white !important;
+}
+
+.tryMeBtn:hover,
+.tryMeBtn:focus{
+    background-color: #EBB3E6 !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #EBB3E6 !important;
 }

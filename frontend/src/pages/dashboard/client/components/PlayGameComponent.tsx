@@ -5,11 +5,11 @@ import {Button, Col, Input, Row, Tag} from 'antd';
 import LogoutService from "@/app/service/LogoutService";
 import Image from "next/image";
 
-
+import WheelGamePrizesImg from "@/assets/images/wheel_game_prizes.png";
 
 import {Modal } from 'antd';
 import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket, getGainTicketHistory} from "@/app/api";
-import {GiftOutlined, SyncOutlined} from "@ant-design/icons";
+import {GiftOutlined, NotificationFilled, PoweroffOutlined, RocketOutlined, SyncOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -457,33 +457,138 @@ function PlayGameComponent() {
                     <div className={`${styles.gameMainDiv} mb-0 pb-0 px-4`}>
 
 
-                        <Row className={`${styles.fullWidthElement}  mt-0 mb-5 w-100`}
+                        <Row className={`${styles.fullWidthElement}  mt-0 mb-5 w-100 m-0 p-0`}
                              gutter={{xs: 8, sm: 16, md: 24, lg: 32}}>
 
                             {!loading && (
                                 <>
-                                    <Col key={"gamePAgeCol"} className={`w-100 d-flex `} xs={24} sm={24} md={24} lg={24} span={6}>
+                                    <Col key={"gamePageCol"} className={`w-100 d-flex m-0 p-0 `} xs={24} sm={24} md={24} lg={24} span={6}>
 
-                                        {playGame && (
 
-                                            <div>
-                                                <strong className={`mb-5`}>
-                                                Votre code est valide, vous pouvez tourner la roue.
-                                            </strong>
 
-                                                <Button
-                                                    onClick={() => {
-                                                        setPlayGame(false);
-                                                    }}
-                                                    className={`my-5`}
-                                                    type="default"
-                                                    icon={<SyncOutlined />}
-                                                    size={"large"}
-                                                >
-                                                    Rédemarrez
-                                                </Button>
+                                            <div className={styles.gameInstructions}>
+
+
+
+                                                {playGame && (
+                                                   <>
+                                                       <Button
+                                                           onClick={() => {
+                                                               Modal.confirm({
+                                                                     className: 'modalSuccess',
+                                                                     title: 'Voulez-vous quitter le jeu ?',
+                                                                     content: 'Vous allez quitter le jeu, êtes-vous sûr ?',
+                                                                     okText: "Oui",
+                                                                     cancelText: "Non",
+                                                                     onOk() {
+                                                                          setPlayGame(false);
+                                                                          setTicketCode("");
+                                                                          setValidTicketCode("");
+                                                                          setPrize(defaultPrize);
+                                                                          setFormatPrizeById("");
+                                                                          setIsModalOpen(false);
+                                                                     }
+                                                                });
+                                                           }}
+                                                           className={`mt-0 mb-4 ${styles.deleteStoreArrayBtn}`}
+                                                           type="default"
+                                                           size={"large"}
+                                                       >
+                                                           Quitter le jeu <PoweroffOutlined />
+                                                       </Button>
+                                                       <h5 className={`mb-4`}>
+                                                           Votre code est valide, vous pouvez tourner la roue. <NotificationFilled />
+                                                       </h5>
+                                                   </>
+                                                )}
+
+                                                {!playGame && (
+                                                    <>
+                                                        <Button
+                                                            onClick={() => {
+                                                                showModal();
+                                                            }}
+                                                            className={`mt-0 mb-4 ${styles.tryMeBtn}`}
+                                                            type="default"
+                                                            size={"large"}
+                                                        >
+                                                            Tenter ma chance <RocketOutlined />
+                                                        </Button>
+                                                        <h4 className={`mb-2`}>
+                                                            Veuillez entrer votre code de participation pour tourner la roue.
+                                                        </h4>
+                                                    </>
+                                                )}
+
+
+
+                                                <h6 className={`text-dark`}>
+                                                    Instructions : Comment jouer ?
+                                                </h6>
+
+                                                <ul>
+                                                    <li>
+                                                        1- Cliquez sur la roue pour la faire tourner.
+                                                    </li>
+                                                    <li>
+                                                        2- Une fois la roue arrêtée, vous gagnez un cadeau.
+                                                    </li>
+
+
+                                                    {playGame && (
+                                                        <li>
+                                                            3- Votre code de participation est {validTicketCode}.
+                                                        </li>
+                                                    )}
+
+                                                    {playGame && (
+                                                        <li>
+                                                            4- Après avoir gagné, veuillez présenter votre code de participation à votre magasin pour récupérer votre cadeau.
+                                                        </li>
+                                                    )}
+
+                                                    {!playGame && (
+                                                        <li>
+                                                            3- Après avoir gagné, veuillez présenter votre code de participation à votre magasin pour récupérer votre cadeau.
+                                                        </li>
+                                                    )}
+
+
+                                                </ul>
+
+
+                                                <h6 className={`text-dark`}>
+                                                    Cadeaux à gagner :
+                                                </h6>
+                                                <ul>
+                                                    <li>
+                                                        1- Un infuseur à thé
+                                                    </li>
+                                                    <li>
+                                                        2- Une boite de 100g d’un thé détox ou d’infusion
+                                                    </li>
+                                                    <li>
+                                                        3- Une boite de 100g d’un thé signature
+                                                    </li>
+                                                    <li>
+                                                        4- Un coffret découverte à 39€
+                                                    </li>
+                                                    <li>
+                                                        5- Un coffret découverte à 69€
+                                                    </li>
+                                                </ul>
+
+
+                                                <div className={`${styles.wheelGamePrizesImgDiv}`}>
+                                                    <Image className={`${styles.wheelGamePrizesImg} mt-2`}
+                                                    src={WheelGamePrizesImg}
+                                                    alt={"WheelGamePrizesImg"}
+                                                    >
+
+                                                    </Image>
+                                                </div>
+
                                             </div>
-                                        )}
 
                                         {!playGame && (
                                             <div className={`w-100 d-flex justify-content-center align-items-center flex-column`}>
