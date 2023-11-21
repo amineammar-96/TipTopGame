@@ -121,7 +121,7 @@ class PostManMailerService
 
 
 
-            $link= 'http://localhost:3000/activate_client_account/?email='.$receiver_email.'&token='.$token;
+            $link= 'http://localhost:3000/client/activate_account/?email='.$receiver_email.'&token='.$token;
 
             $wrapperBody = '<a href="' . $link . '" class="activateBtn">Vérifier mon compte</a>';
 

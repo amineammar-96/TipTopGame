@@ -4,6 +4,7 @@ namespace App\Controller\Api\User;
 
 use App\Entity\Avatar;
 use App\Entity\User;
+use App\Entity\UserPersonalInfo;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -376,10 +377,26 @@ class UserController extends AbstractController
         $user->setFirstName($firstname);
         $user->setLastName($lastname);
         $user->setPhone($phone);
-        $user->getUserPersonalInfo()->setAddress($address);
-        $user->getUserPersonalInfo()->setPostalCode($postal_code);
-        $user->getUserPersonalInfo()->setCity($city);
-        $user->getUserPersonalInfo()->setCountry($country);
+
+        $userPersonalInfo = $user->getUserPersonalInfo();
+        if(!$userPersonalInfo){
+            $userPersonalInfo = new UserPersonalInfo();
+            $userPersonalInfo->setUser($user);
+            $userPersonalInfo->setAddress($address);
+            $userPersonalInfo->setPostalCode($postal_code);
+            $userPersonalInfo->setCity($city);
+            $userPersonalInfo->setCountry($country);
+            $this->entityManager->persist($userPersonalInfo);
+            $this->entityManager->flush();
+        }else {
+            $user->getUserPersonalInfo()->setAddress($address);
+            $user->getUserPersonalInfo()->setPostalCode($postal_code);
+            $user->getUserPersonalInfo()->setCity($city);
+            $user->getUserPersonalInfo()->setCountry($country);
+        }
+
+
+
 
 
         $this->entityManager->persist($user);
@@ -395,7 +412,7 @@ class UserController extends AbstractController
     public function updateUserAvatar($id, Request $request)
     {
         $user = $this->getUser();
-        $userAvatar = $user->getAvatarImage();
+        $userAvatar = $user->getAvatar();
 
         if ($request->files->has('avatar_file')) {
             $file = $request->files->get('avatar_file');
@@ -417,7 +434,7 @@ class UserController extends AbstractController
                 $userAvatar->setFilename($fileName);
                 $userAvatar->setPath($path);
 
-                $user->setAvatarImage($userAvatar);
+                $user->setAvatar($userAvatar);
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();

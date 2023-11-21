@@ -9,21 +9,21 @@ import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 
 import { Space, Spin } from 'antd';
-import ClientHomePage from "@/pages/dashboard/dashboardComponents/homePageComponent/HomePageDashboard";
-import StoresManagement from "@/pages/dashboard/dashboardComponents/storeManagementComponent/StoresManagement";
-import ProfilesManagement from "@/pages/dashboard/dashboardComponents/profilesManagementComponent/ProfilesManagement";
-import TicketsPageDashboard from "@/pages/dashboard/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
-import PrizesListPage from "@/pages/dashboard/dashboardComponents/PrizesPageComponent/PrizesListPage";
-import ClientManagementPageDashboard
-    from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ClientManagementPageDashboard";
-import ParticipantManagementPageDashboard
-    from "@/pages/dashboard/dashboardComponents/ClientManagementComponents/ParticipantManagementPageDashboard";
+import ClientHomePage from "@/app/components/dashboardComponents/HomePageComponent/HomePageDashboard";
+import StoresManagement from "@/app/components/dashboardComponents/StoreManagementComponent/StoresManagement";
+import ProfilesManagement from "@/app/components/dashboardComponents/ProfilesManagementComponent/ProfilesManagement";
+import TicketsPageDashboard from "@/app/components/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
+import PrizesListPage from "@/app/components/dashboardComponents/PrizesPageComponent/PrizesListPage";
+import ClientManagementPage
+    from "@/app/components/dashboardComponents/ClientManagementComponents/ClientManagementPage";
+import ParticipantManagementPage
+    from "@/app/components/dashboardComponents/ClientManagementComponents/ParticipantManagementPage";
 import PlayGameComponent from "@/pages/dashboard/client/components/PlayGameComponent";
 
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
-import GameGainHistoryPage from "@/pages/dashboard/dashboardComponents/GameGainHistory/GameGainHistoryPage";
+import GameGainHistoryPage from "@/app/components/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 import GeneralSettingsTemplates
-    from "@/pages/dashboard/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
+    from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
 
 
 function ClientDashboard() {
@@ -74,17 +74,17 @@ function ClientDashboard() {
     useEffect(() => {
         setLoading(true);
         if (userRrole == "ROLE_STOREMANAGER") {
-            window.location.href = '/dashboard/storeManager';
+            window.location.href = '/dashboard/store_manager';
         }
         if (userRrole == "ROLE_EMPLOYEE") {
-            window.location.href = '/dashboard/storeEmployee';
+            window.location.href = '/dashboard/store_employee';
         }
         if (userRrole == "ROLE_CLIENT") {
             setLoading(false);
         }
 
         if (userRrole == "ROLE_ADMIN") {
-            window.location.href = '/dashboard/storeAdmin';
+            window.location.href = '/dashboard/store_admin';
         }
 
 
@@ -116,8 +116,8 @@ function ClientDashboard() {
                         {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
                         {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
                         {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
-                        {selectedMenuItem==="statisticItemClients" && <ClientManagementPageDashboard></ClientManagementPageDashboard>}
-                        {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPageDashboard></ParticipantManagementPageDashboard>}
+                        {selectedMenuItem==="statisticItemClients" && <ClientManagementPage></ClientManagementPage>}
+                        {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPage></ParticipantManagementPage>}
                         {selectedMenuItem==="playGameItem" && <PlayGameComponent></PlayGameComponent>}
                         {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
                         {selectedMenuItem==="settingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}

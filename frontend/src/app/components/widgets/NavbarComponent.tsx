@@ -133,7 +133,7 @@ function NavbarComponent() {
                             <>
                               <Nav.Link onClick={()=> {
                                 localStorage.removeItem('selectedMenuItem');
-                              }}  href="/dashboard/storeAdmin" className={`${styles.navLink} ${styles.navLinkStoreBtnDashboard}`}><DashboardOutlined /><span className='mx-2'>Tableau de board</span></Nav.Link>
+                              }}  href="/dashboard/store_admin" className={`${styles.navLink} ${styles.navLinkStoreBtnDashboard}`}><DashboardOutlined /><span className='mx-2'>Tableau de board</span></Nav.Link>
                               <Nav.Link onClick={()=>{
                                 logout();
                               }}  className={`${styles.navLink} ${styles.navLinkStoreBtnSignOut}`}><LogoutOutlined /><span className='mx-2'>Se déconnecter</span></Nav.Link>

@@ -20,7 +20,7 @@ import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import CongratulationsImg from "@/assets/images/congratulations.png";
 import BalloonImg from "@/assets/images/balloon.png";
 import gameWallpaperImg from "@/assets/images/gameWallpaper.png";
-import BestGainsTable from "@/pages/dashboard/dashboardComponents/GameGainHistory/BestGainsTable";
+import BestGainsTable from "@/app/components/dashboardComponents/GameGainHistory/components/BestGainsTable";
 import PrizesList from "@/pages/dashboard/client/components/PrizesList";
 import DynamicWheel from "@/pages/dashboard/client/components/DynamicWheel";
 

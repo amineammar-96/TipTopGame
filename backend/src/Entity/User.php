@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $token_expired_at = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Avatar $avatar_image = null;
+    private ?Avatar $avatar = null;
 
     public function __construct()
     {
@@ -393,8 +393,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 'date' => $this->getUpdatedAt()?->format('d/m/Y'),
                 'time' => $this->getUpdatedAt()?->format('H:i'),
             ],
-            'avatar_image' => $this->getAvatarImage()?->getAvatarUrl(),
-            'avatar' => $this->getAvatarImage()?->getAvatarJson(),
+            'avatar_image' => $this->avatar?->getAvatarJson(),
+            'avatar' => $this->avatar?->getAvatarUrl(),
 
 
         ];
@@ -418,6 +418,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'age' => $this->getAge(),
             'gender' => $this->getGender(),
             'userPersonalInfo' => $this->getUserPersonalInfo()->getUserPersonalInfoJson(),
+            'is_activated' => $this->isIsActive(),
+            'created_at' => [
+                'date' => $this->getCreatedAt()->format('d/m/Y'),
+                'time' => $this->getCreatedAt()->format('H:i'),
+            ],
+            'activated_at' => [
+                'date' => $this->getActivitedAt()?->format('d/m/Y'),
+                'time' => $this->getActivitedAt()?->format('H:i'),
+            ],
+            'avatar_image' => $this->avatar?->getAvatarJson(),
+            'avatar' => $this->avatar?->getAvatarUrl(),
         ];
     }
 
@@ -582,18 +593,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAvatarImage(): ?Avatar
+    public function getAvatar(): ?Avatar
     {
-        return $this->avatar_image;
+        return $this->avatar;
     }
 
-    public function setAvatarImage(?Avatar $avatar_image): static
+    public function setAvatar(?Avatar $avatar): static
     {
-        if ($avatar_image->getUser() !== $this) {
-            $avatar_image->setUser($this);
+        if ($avatar->getUser() !== $this) {
+            $avatar->setUser($this);
         }
 
-        $this->avatar_image = $avatar_image;
+        $this->avatar = $avatar;
 
         return $this;
     }

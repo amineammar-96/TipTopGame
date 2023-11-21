@@ -1514,6 +1514,14 @@ background: #ffffff;
 .avatarUploader {
     width: 12rem !important;
     height: 12rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.avatarUploaderIcon {
+    font-size: 6rem !important;
+    @media (max-width: 768px) {
+        font-size: 4rem !important;
+    }
 }
 
 .disableAccountBtn,
@@ -1523,4 +1531,13 @@ background: #ffffff;
     font-weight: 600 !important;
     width: 100% !important;
 
+}
+
+.avatarUploaderText {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 1rem !important;
+    @media (max-width: 768px) {
+        font-size: .7rem !important;
+    }
 }

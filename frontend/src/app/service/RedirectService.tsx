@@ -18,13 +18,13 @@ const RedirectService = () => {
 
         if ((token != null || token != "") && role == "ROLE_ADMIN") {
             console.log("redirecting to store admin dashboard");
-            router.push("/dashboard/storeAdmin");
+            router.push("/dashboard/store_admin");
         } else if ((token != null || token != "") && role == "ROLE_STOREMANAGER") {
             console.log("redirecting to storeManager admin dashboard");
-            router.push("/dashboard/storeManager");
+            router.push("/dashboard/store_manager");
         } else if ((token != null || token != "") && role == "ROLE_EMPLOYEE") {
             console.log("redirecting to storeEmploye dashboard");
-            router.push("/dashboard/storeEmployee");
+            router.push("/dashboard/store_employee");
         } else if ((token != null || token != "") && role == "ROLE_BAILIFF") {
             console.log("redirecting to store storeBailiff dashboard");
             router.push("/dashboard/storeBailiff");
