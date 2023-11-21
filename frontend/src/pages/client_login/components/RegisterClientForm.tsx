@@ -1,31 +1,31 @@
 import React, {useState} from 'react'
-import {Container, Row, Col} from 'react-bootstrap';
-
-import {Button, Space} from 'antd';
-
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-
-import '../../../app/globals.css'
-import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
-import {DatePicker, ConfigProvider} from 'antd';
+import {Col, Row} from 'react-bootstrap';
 
 import type {DatePickerProps} from 'antd';
+import {Button, ConfigProvider, DatePicker, Form, Input, Modal, Select, Space} from 'antd';
+
+
+import '../../../app/globals.css'
+import {
+    ArrowLeftOutlined,
+    EyeInvisibleOutlined,
+    EyeOutlined,
+    FacebookFilled,
+    GoogleSquareFilled,
+    LockOutlined,
+    MailOutlined,
+    PhoneOutlined,
+    UserAddOutlined,
+    UserOutlined
+} from '@ant-design/icons';
 import 'dayjs/locale/fr';
 import locale from 'antd/locale/fr_FR';
 
 
 import styles from '../../../styles/pages/clientRegisterPage.module.css';
-import{
-    FacebookFilled,
-    GoogleSquareFilled,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-    MailOutlined,
-    UserAddOutlined,
-    PhoneOutlined,
-
-} from '@ant-design/icons';
+import {register} from '@/app/api';
+import Image from "next/image";
+import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
 type registerUserForm = {
     email?: string;
@@ -50,10 +50,6 @@ const userFormData = {
     role: "ROLE_CLIENT",
 };
 
-import {Checkbox, Form, Input} from 'antd';
-import {Select} from 'antd';
-import {useEffect} from 'react';
-
 const {Option} = Select;
 
 
@@ -66,16 +62,12 @@ const dateFormat = 'DD/MM/YYYY';
 
 const {RangePicker} = DatePicker;
 
-import {register} from '@/app/api';
-import { Modal } from 'antd';
-import Image from "next/image";
-import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
-
 export default function RegisterClientForm({formStep, handleFormStepChange}: Props) {
 
 
     const [formRef] = Form.useForm();
     const [userForm, setUserForm] = useState(userFormData);
+    const [loadingButton, setLoadingButton] = useState(false);
 
 
 
@@ -125,7 +117,27 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
 
     const [passwordErrorExists, setPasswordErrorExists] = useState(false);
     function registerClient() {
-        if (userForm.firstname == "") {
+        if (userForm.firstname == "" || userForm.lastname=="" || userForm.email=="" || userForm.dateOfBirth==""
+        || userForm.phone=="" || userForm.gender=="" || userForm.password=="" || userForm.passwordConfirm==""
+        ) {
+            Modal.error({
+                className: 'antdLoginRegisterModal',
+                title: 'Un problème est survenu !',
+                content: <>
+                    <span>Veuillez remplir tous les champs.</span> <br/>
+                </>,
+                okText: "D'accord",
+            });
+        }
+
+
+        if (userForm.email == "") {
+            setEmailExists(true);
+            console.log("email is empty");
+            return;
+        }
+
+            if (userForm.firstname == "") {
             console.log("firstname is empty");
             return;
         }
@@ -133,10 +145,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
             console.log("lastname is empty");
             return;
         }
-        if (userForm.email == "") {
-            console.log("email is empty");
-            return;
-        }
+
         if (userForm.dateOfBirth == "") {
             console.log("dateOfBirth is empty");
             return;
@@ -151,11 +160,11 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
             return;
         }
         if (userForm.password == "" || userForm.passwordConfirm == "") {
-            console.log("password is empty");
             return;
         }
 
         if (userForm.password !== userForm.passwordConfirm ) {
+            setEmailExists(false);
             setPasswordErrorExists(true)
             console.log("password not match");
             Modal.error({
@@ -171,7 +180,10 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
             setPasswordErrorExists(false)
         }
 
+        setLoadingButton(true);
+
         register(userForm).then((response) => {
+            setLoadingButton(false);
             console.log(response.status);
             if (response.status === "success") {
                 setEmailExists(false);
@@ -190,6 +202,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                 });
             }
         }).catch((err) => {
+            setLoadingButton(false);
             console.log(err);
             if (err.response) {
                 if (err.response.status === 400) {
@@ -312,6 +325,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                                     required: userForm.dateOfBirth == "",
                                     message: 'La date de naissance est requise.'
                                 }]}
+                                validateStatus={userForm.dateOfBirth == "" ? 'error' : emailExists ? 'error' : ''}
                             >
                                 <ConfigProvider locale={locale}>
                                     <DatePicker
@@ -347,10 +361,12 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                             name="gender"
                             rules={[{required: true, message: validateMessages['required']}]}
                             className={`${styles.antdLoginInputs}`}
+                            validateStatus={userForm.gender=="" ? 'error' : ''}
                         >
                             <Select onChange={(value) => {
                                 userGenderFormHandleChange(value);
                             }}
+
                                     placeholder="Sélectionnez votre genre" className={`${styles.inputsLoginPage}`}>
                                 <Option value="Homme">Homme</Option>
                                 <Option value="Femme">Femme</Option>
@@ -412,6 +428,8 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                     </Space.Compact>
                     <Form.Item className={`pt-3`}>
                         <Button
+                            loading={loadingButton}
+                            disabled={loadingButton}
                             onClick={() => {
                                 registerClient();
                             }}
@@ -427,7 +445,8 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                         <a href="#" onClick={() => {
                             handleFormStepChange();
                         }} className={`${styles.resetPasswordLink}`}><UserAddOutlined
-                            className={`${styles.resetPasswordIcon}`}/> Connectez-vous et gagnez en créant un compte
+                            className={`${styles.resetPasswordIcon}`}/>
+                            Vous avez déjà un compte ? Connectez-vous ici
                             !</a>
                     </Col>
                 </Row>

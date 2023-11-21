@@ -153,7 +153,7 @@ min-height: 100vh !important;
     cursor: pointer;
     min-width: 18.8rem;
     margin-bottom: 0 !important;
-
+    border-radius: 0 !important;
   }
 
 
@@ -195,15 +195,20 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--blue) ;
+    background-color: #1c1a1a !important ;
     max-width: 38rem !important;
     width: 37.5rem !important;
+    color: white !important;
+
 
   }
 
-  .loginBtnSubmit:hover{
-    background-color: var(--blue) !important ;
+  .loginBtnSubmit:hover,
+  .loginBtnSubmit:disabled{
    opacity: 0.9;
+    background-color: #1c1a1a !important ;
+    color: white !important;
+
   }
 
   .resetPasswordLink {
@@ -218,7 +223,7 @@ min-height: 100vh !important;
   }
 
   .resetPasswordLink:hover {
-    color: var(--blue);
+    color: var(--green);
     opacity: 0.9;
     font-size: 0.91rem;
 

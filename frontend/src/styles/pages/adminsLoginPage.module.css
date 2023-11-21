@@ -189,11 +189,11 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--blue) !important ;
+    background-color: var(--green) !important ;
   }
 
   .loginBtnSubmit:hover{
-    background-color: var(--blue) !important ;
+    background-color: var(--green) !important ;
     opacity: 0.9;
   }
 
@@ -209,7 +209,7 @@ min-height: 100vh !important;
   }
 
   .resetPasswordLink:hover {
-    color: var(--blue);
+    color: var(--green);
     opacity: 0.9;
     font-size: 0.91rem;
 
@@ -221,7 +221,7 @@ min-height: 100vh !important;
 }
 
 .loginLogo{
-    padding: 0px 50px !important;
+    padding: 0 50px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -229,7 +229,8 @@ min-height: 100vh !important;
 }
 
 .loginLogo img{
-    width: 100% !important;
+    width: 18rem !important;
+    height: 5rem !important;
 }
 
 .containerLoginFooterLinks {
@@ -277,18 +278,29 @@ min-height: 100vh !important;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding-top: 2% !important;
+  align-items: center !important;
 }
 .leftArrowIcon,
 .rightArrowIcon{
-    font-size: 1.5rem !important;
+    font-size: 1.2rem !important;
     margin: 0 20px;
     color:  black;
 }
 
 .leftArrowIcon:hover {
-  font-size: 1.6rem !important;
-    color: var(--blue) !important;
+  font-size: 1.35rem !important;
+    color: var(--green) !important;
     opacity: 0.9 !important;
   transform: scale(1.1,01) !important;
+}
+
+
+.adminsLoginFormtopHeaderText {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--black);
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    width: 100%;
 }

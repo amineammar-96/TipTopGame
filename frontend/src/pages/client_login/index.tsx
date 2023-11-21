@@ -25,7 +25,7 @@ export default function userLogin() {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-        }, 1000);
+        }, 200);
     };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function userLogin() {
   }, [])
 
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         setLoading(true);
         setTimeout(() => {

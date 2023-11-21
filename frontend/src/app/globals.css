@@ -3,7 +3,7 @@
 
 :root{
   --black : #2E3138;
-  --blue : #87BE4B;
+  --green : #87BE4B;
   --navbar-bg : white;
   --navbar-link-text-color : #000000;
   --navbar-link-text-color-hover : #87BE4B;
@@ -90,15 +90,15 @@ body {
 }
 
 .ant-checkbox-checked .ant-checkbox-inner{
-  background-color:var(--blue) !important;
-  border-color: var(--blue) !important;
+  background-color:var(--green) !important;
+  border-color: var(--green) !important;
  
 }
 
 
 .ant-checkbox-checked .ant-checkbox-inner:hover{
-  background-color:var(--blue) !important;
-  border-color: var(--blue) !important;
+  background-color:var(--green) !important;
+  border-color: var(--green) !important;
 }
 .ant-checkbox-inner:after{
   inset-inline-start: 33.5% !important;
@@ -126,7 +126,7 @@ body {
 }
 
 .ant-picker-dropdown .ant-picker-today-btn {
-  color: var(--blue);
+  color: var(--green);
   text-decoration: none !important;
 }
 

@@ -505,7 +505,7 @@ background: #7c7c7c !important;
 
 .ant-form-item-explain-connected {
     text-align: left !important;
-    padding: 1rem 2rem 1rem 0 !important;
+    padding: .3rem 2rem 1rem 0 !important;
 }
 
 .ant-modal-confirm-btns{

@@ -9,6 +9,7 @@ min-height: 100vh !important;
     height: 100%;
     object-fit: cover;
   max-height: 100vh;
+  min-height: 100%;
 
 }
 
@@ -190,11 +191,15 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--blue) ;
+    background-color: #1c1a1a !important ;
+  }
+
+  .loginBtnSubmit:disabled{
+    background-color: #1c1a1a !important ;
+    opacity: 0.9;
   }
 
   .loginBtnSubmit:hover{
-    background-color: var(--blue) !important ;
    opacity: 0.9;
   }
 
@@ -210,11 +215,32 @@ min-height: 100vh !important;
   }
 
   .resetPasswordLink:hover {
-    color: var(--blue);
+    color: var(--green);
     opacity: 0.9;
     font-size: 0.91rem;
 
   }
+
+
+.registerBtn {
+  color: var(--black);
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.3rem !important;
+  height: 2rem !important;
+}
+
+.registerBtn:hover {
+  color: var(--green);
+  opacity: 0.9;
+  font-size: 1.15rem;
+
+}
 
   
 .resetPasswordIcon{
@@ -279,11 +305,11 @@ min-height: 100vh !important;
     font-size: 1.2rem;
         margin-right: 0.5rem;
         cursor: pointer;
-  color: var(--blue);
+  color: var(--green);
 
 }
 
     .leftArrowIcon:hover {
-        color: var(--blue);
+        color: var(--green);
         opacity: 0.9;
     }

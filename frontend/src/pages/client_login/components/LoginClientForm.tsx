@@ -1,43 +1,39 @@
 "use client"
-import React, { useState, useEffect } from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
-import { signIn } from 'next-auth/react';
-import FacebookLogin from 'react-facebook-login';
+import React, {useState} from 'react'
+import {Col, Row} from 'react-bootstrap';
+import {signIn} from 'next-auth/react';
 import Image from 'next/image';
 import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
-import {Button, Modal, Space} from 'antd';
+import {Button, Checkbox, Form, Input, Modal, Space} from 'antd';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 import '../../../app/globals.css'
-import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
+import {
+    AppstoreFilled,
+    ArrowLeftOutlined,
+    ExclamationCircleOutlined,
+    EyeInvisibleOutlined,
+    EyeOutlined,
+    FacebookFilled,
+    GoogleSquareFilled,
+    LockOutlined,
+    LoginOutlined,
+    MailOutlined,
+    UserAddOutlined,
+    UserOutlined
+} from '@ant-design/icons';
 
 import styles from '../../../styles/pages/clientLoginPage.module.css';
-import Icon, {
-    LoginOutlined,
-    FacebookFilled,
-    TwitterSquareFilled,
-    GoogleSquareFilled,
-    EyeOutlined,
-    EyeInvisibleOutlined,
-    MailOutlined,
-    AppstoreFilled,
-    UserAddOutlined,
-    ToolFilled,
-    PlayCircleOutlined,
-    StarFilled,
-    ExclamationCircleOutlined,
-    UsergroupAddOutlined,
+import {facebookCallBack, loginClient} from '@/app/api';
 
-} from '@ant-design/icons';
 type FieldType = {
     email?: string;
     password?: string;
     remember?: string;
 }
-import { Checkbox, Form, Input } from 'antd';
 
 type Props = {
     formStep: number;
@@ -53,16 +49,11 @@ const userFormData = {
 };
 
 
-
-import {facebookCallBack, loginClient} from '@/app/api';
-
-
-
-
 export default function LoginClientForm({ formStep, handleFormStepChange }: Props) {
 
     const [userForm, setUserForm] = useState(userFormData);
     const [loginError, setLoginError] = useState<string | null>(null);
+    const [loadingButton, setLoadingButton] = useState(false);
 
 
 
@@ -87,11 +78,15 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
     }
 
     const handleClientLogin = async () => {
+
         if (userForm.email && userForm.password) {
+            setLoadingButton(true);
+            setLoginError(null);
 
             loginClient(userForm).then((response) => {
                 console.log(response);
                 if (response.status === 'success') {
+                    setLoadingButton(false);
                     const loggedInUser = response.userJson;
                     localStorage.setItem('loggedInUserToken', response.token);
                     localStorage.setItem('firstLoginClientStatus', response.firstLogin);
@@ -102,6 +97,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                     window.location.href = '/dashboard/client';
                 }
             }).catch((err) => {
+                setLoadingButton(false);
                 setLoginError('Email ou mot de passe incorrecte !');
                 Modal.error({
                     className: 'antdLoginRegisterModal',
@@ -224,8 +220,8 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         />
                     </Form.Item>
 
-                    <Row>
-                        <Col className={`m-0 py-2`}>
+                    <Row className={`d-flex`}>
+                        <Col span={12} md={12} sm={24} className={`m-0 py-2 d-flex justify-content-start`}>
                             <Form.Item<FieldType>
                                 name="remember"
                                 valuePropName="checked"
@@ -236,17 +232,16 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         </Col>
 
 
-                    </Row>
-
-                    <Row>
-
-                        <Col>
+                        <Col span={12} md={12} sm={24} className={`m-0 py-2 d-flex justify-content-start`}>
                             <a href="#" className={`${styles.resetPasswordLink}`} >Mot de passe oublié ? <MailOutlined className={`${styles.resetPasswordIcon}`} /></a>
                         </Col>
                     </Row>
 
                     <Form.Item className={`py-3 w-100`}>
-                        <Button onClick={() => {
+                        <Button
+                            loading={loadingButton}
+                            disabled={loadingButton}
+                            onClick={() => {
                             handleClientLogin();
                         }}  className={`w-100 ${styles.loginBtnSubmit}`} type="primary" htmlType="submit">
                             Se connecter
@@ -259,7 +254,8 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                     <Col>
                         <a href="#" onClick={() => {
                             handleFormStepChange();
-                        }} className={`${styles.resetPasswordLink}`} ><UserAddOutlined className={`${styles.resetPasswordIcon}`} /> Rejoignez-nous et gagnez en créant un compte !</a>
+                        }} className={`${styles.registerBtn} mb-3`} ><UserAddOutlined className={`${styles.resetPasswordIcon}`} />
+                            Rejoignez-nous et gagnez en créant un compte !</a>
                     </Col>
                 </Row>
 
@@ -268,12 +264,12 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         <div className={`${styles.divider}`}>
                             <div className={`${styles['divider-text']}`}>Ou</div>
                         </div>
-                        <div className={`pt-3`}>
+                        <div className={`pt-2`}>
                             <p className={`text-center`}>
                                 Connectez-vous avec vos réseaux sociaux préférés.
                             </p>
                         </div>
-                        <div className={`py-3`}>
+                        <div className={`py-1`}>
                             <Space direction="vertical" style={{ width: '100%' }}>
                                {/* <FacebookLogin
                                     appId={"621713663395181"}
@@ -298,7 +294,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                 </Col>
             </Row>
 
-            <Row className="px-3 py-2 mt-5 pt-2">
+            <Row className="px-3 py-2 mt-3 pt-2">
                 <Col className={`w-100 d-flex`} >
                     <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
                         <div className={`${styles.containerLoginFooterLinks} d-flex `}>

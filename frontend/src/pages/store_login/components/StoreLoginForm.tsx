@@ -62,7 +62,7 @@ export default function StoreLoginForm() {
         redirectAdminToToDashboard();
     }, []);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [userForm, setUserForm] = useState(userFormData);
     const [loginError, setLoginError] = useState(false);
@@ -90,7 +90,7 @@ export default function StoreLoginForm() {
 
 
     function login(formData: FieldType) {
-        if(formData.email && formData.password) {
+        if(formData.email!="" && formData.password!="") {
             setLoading(true);
             loginAdmin(formData).then((res) => {
                 setLoginError(false);
@@ -110,6 +110,7 @@ export default function StoreLoginForm() {
             }).catch((err) => {
                 setLoading(false);
                 setLoginError(true);
+                setUserForm(userFormData);
                 message.destroy();
                 message.error('E-mail ou mot de passe incorrect !');
                 console.log(err);
@@ -127,28 +128,29 @@ export default function StoreLoginForm() {
         )}
     {!loading && (
             <>
+                <Row className={`${styles.loginFormTopHeaderAux} p-0 m-0 pt-0`}>
+                    <Col>
+                        <Row className={'justify-content-center d-flex align-items-center'}>
+                            <Col md={1}>
+                                <a href="/">
+                                    <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
+                                </a>
+                            </Col>
+                            <Col>
+                                <h1 className={`${styles.adminsLoginFormtopHeaderText}`}>Connexion à votre compte
+                                    TipTop (Espace Administateur)
+                                </h1>
+                            </Col>
+                        </Row>
+                    </Col>
+
+                    <Col className={`d-flex justify-content-end`}>
+                        <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
+                    </Col>
+
+                </Row>
                 <div className={`${styles.loginForm} mt-0 pt-0 `}>
-                    <Row className={`${styles.loginFormTopHeaderAux} p-0 m-0 pt-0`}>
-                        <Col>
-                            <Row className={'justify-content-start'}>
-                                <Col md={1}>
-                                    <a href="/">
-                                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
-                                    </a>
-                                </Col>
-                                <Col>
-                                    <h1>Connexion à votre compte
-                                        TipTop (Espace Administateur)
-                                    </h1>
-                                </Col>
-                            </Row>
-                        </Col>
 
-                        <Col className={`d-flex justify-content-end`}>
-                            <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
-                        </Col>
-
-                    </Row>
 
                     <Row md={6} className={'mt-5 justify-content-center'}>
                         <Col md={4} className={'mt-5 justify-content-center'}>
