@@ -54,7 +54,7 @@ class GenerateDefaultTickets extends Command
             return $sum + $prize->getWinningRate();
         }, 0);
 
-        $ticketCount = 500000;
+        $ticketCount = 5000;
         $tickets = [];
         $generatedTicketCodes = [];
 
@@ -105,7 +105,7 @@ class GenerateDefaultTickets extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln('500,000 tickets generated with the winning rating of each prize.');
+        $output->writeln( $ticketCount.' tickets generated with each related prize.');
         return Command::SUCCESS;
     }
 }

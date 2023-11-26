@@ -68,7 +68,7 @@ class ResetGame extends Command
         $output->writeln('Loading...');
 
         $output->writeln('Next  Generate Tickets...');
-        $process = new Process(['php', 'bin/console', 'app:generate-tickets']);
+        $process = new Process(['php', '-d', 'memory_limit=-1', 'bin/console', 'app:generate-tickets']);
         $process->setTimeout(null);
         $process->mustRun();
         $output->writeln('Tickets generated successfully. 5/9');
