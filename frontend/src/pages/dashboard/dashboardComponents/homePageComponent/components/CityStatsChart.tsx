@@ -1,4 +1,3 @@
-"use client";
 import React, {useEffect, useState} from 'react';
 import {
     CategoryScale,
@@ -21,7 +20,7 @@ ChartJS.register(
     Legend
 );
 
-export function CityStatsChart(dataChart: any) {
+  function CityStatsChart(dataChart: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState<number[]>([]);
@@ -123,4 +122,5 @@ export function CityStatsChart(dataChart: any) {
     </div>;
 }
 
+export default CityStatsChart
 

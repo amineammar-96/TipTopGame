@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap';
 import { signIn } from 'next-auth/react';
-import FacebookLogin from 'react-facebook-login';
 import Image from 'next/image';
 import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 

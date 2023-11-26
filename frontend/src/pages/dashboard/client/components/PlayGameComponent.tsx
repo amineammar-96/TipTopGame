@@ -6,6 +6,7 @@ import  SpinAndWin  from 'react-spin-game'
 import  'react-spin-game/dist/index.css'
 import LockImg from '@/assets/images/lock.png';
 import Image from "next/image";
+//@ts-ignore
 import WheelComponent from 'react-wheel-of-prizes';
 
 import {Modal, Space } from 'antd';

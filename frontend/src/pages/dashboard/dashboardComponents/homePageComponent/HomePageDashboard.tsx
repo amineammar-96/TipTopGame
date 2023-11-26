@@ -8,10 +8,10 @@ import UsersImg from "@/assets/images/users.png";
 import RouletteImg from "@/assets/images/roulette.png";
 import {Card, Checkbox, Col, Radio, Row} from 'antd';
 import Image from 'next/image';
-import {CityStatsChart} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/CityStatsChart";
-import {
+import CityStatsChart from "@/pages/dashboard/dashboardComponents/homePageComponent/components/CityStatsChart";
+import 
     PrizesChartDoughunt
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesChartDoughnut";
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesChartDoughnut";
 
 import CalendarImg from "@/assets/images/calendar.png";
 import PriceImg from "@/assets/images/price.png";
@@ -29,26 +29,26 @@ import {
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
 import frFR from 'antd/lib/locale/fr_FR';
-import {
+import 
     PrizesStatsWithAgeChart
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesStatsWithAgeChart";
-import {
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesStatsWithAgeChart";
+import 
     PrizesStatsWithSexChart
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesStatsWithSexChart";
-import {
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesStatsWithSexChart";
+import 
     GamePlayedStatsChart
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/GamePlayedStatsChart";
-import {
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/GamePlayedStatsChart";
+import 
     TopTeenParticipants
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/TopTeenParticipants";
-import {
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/TopTeenParticipants";
+import 
     PrizesWinStatsByStore
-} from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesWinStatsByStore";
+ from "@/pages/dashboard/dashboardComponents/homePageComponent/components/PrizesWinStatsByStore";
 import {getAdminDashboardCardsCounters, getClientDashboardCardsCounters, getDashboardStatsData} from "@/app/api";
-import { PrizesStatsByStatusesChart } from './components/PrizesStatsByStatusesChart';
-import { GameStatusesTendanceStatsChart } from './components/GameStatusesTendanceStatsChart';
-import { PrizeStatsByGenderByAgeChart } from './components/PrizeStatsByGenderByAgeChart';
-import { PrizesCostTendance } from './components/PrizesCostTendance';
+import  PrizesStatsByStatusesChart  from './components/PrizesStatsByStatusesChart';
+import  GameStatusesTendanceStatsChart  from './components/GameStatusesTendanceStatsChart';
+import  PrizeStatsByGenderByAgeChart  from './components/PrizeStatsByGenderByAgeChart';
+import PrizesCostTendance  from './components/PrizesCostTendance';
 import GiftsImg from "@/assets/images/surprisePlus.png";
 import TiptopEmployeeImg from "@/assets/images/tiptopEmployee.png";
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
@@ -422,13 +422,17 @@ function HomePage() {
                                                    format={dateFormat}
                                                    cellRender={(current) => {
                                                        const style: React.CSSProperties = {};
+                                                       //@ts-ignore
                                                        if (current.date() === 1) {
                                                            style.border = '1px solid #1677ff';
                                                            style.borderRadius = '50%';
                                                        }
                                                        return (
                                                            <div className="ant-picker-cell-inner" style={style}>
-                                                               {current.date()}
+                                                               
+                                                               {
+                                                               //@ts-ignore
+                                                               current.date()}
                                                            </div>
                                                        );
                                                    }}

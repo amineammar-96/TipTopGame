@@ -3,7 +3,6 @@ import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import LogoutService from "@/app/service/LogoutService";
 import dynamic from 'next/dynamic';
 
-const CKEditorComponent = dynamic(() => import('@/pages/dashboard/dashboardComponents/CorrespandancesTemplatesComponents/components/widgets/CKEditorComponent'), { ssr: false });
 
 import EmailTemplateList
     from "@/pages/dashboard/dashboardComponents/CorrespandancesTemplatesComponents/components/widgets/EmailTemplateList";
@@ -417,13 +416,8 @@ function PersonalizeCorrespandancesTemplates({ selectTab , selectTemplate , sele
 
 
 
-                            <Form.Item required className={`d-flex flex-column w-100`} label="Objet" name="subject">
-                                <CKEditorComponent key={templateForm.id} variables={templateForm.variables}  className={'my-5 d-flex flex-column w-100'} index={"subject"} content={subjectEditorContent} onChange={handleSubjectEditorChange} />
-                            </Form.Item>
+                          
 
-                            <Form.Item required label="Contenu" name="content">
-                                <CKEditorComponent key={templateForm.id} variables={templateForm.variables} className={'my-5 d-flex flex-column w-100 content_template_editor'}  index={"content"} content={editorContent} onChange={handleEditorChange} />
-                            </Form.Item>
 
 
                             <Row gutter={16} className={`d-flex justify-content-end`}>

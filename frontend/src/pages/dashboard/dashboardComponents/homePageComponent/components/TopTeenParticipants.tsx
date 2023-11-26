@@ -16,7 +16,7 @@ interface DataType {
     amount: string;
     level: number;
 }
-export function TopTeenParticipants(dataTable: any) {
+export default function TopTeenParticipants(dataTable: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState<number[]>([]);

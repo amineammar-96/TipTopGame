@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 
-export function PrizesStatsByStatusesChart(dataChart: any) {
+export default function PrizesStatsByStatusesChart(dataChart: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState<number[]>([]);
