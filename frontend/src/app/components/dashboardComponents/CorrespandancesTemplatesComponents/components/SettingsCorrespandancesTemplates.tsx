@@ -147,29 +147,6 @@ function SettingsCorrespandancesTemplates({selectTab,selectTemplate}: SettingsCo
 
 
 
-    function getServiceTagColor(name:string) {
-        if(name.includes("client")){
-            return "blue";
-        }
-        if(name.includes("employé")){
-            return "green";
-        }
-
-        if(name.includes("store")){
-            return "orange";
-        }
-        if(name.includes("reset")){
-            return "red";
-        }
-
-        if(name.includes("ticket")){
-            return "cyan";
-        }
-
-        return "purple";
-
-    }
-
 
 
 

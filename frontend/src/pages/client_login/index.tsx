@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import '../../app/globals.css'
 import Dayjs from 'dayjs';
 import 'dayjs/locale/fr';
-import styles from '../../styles/pages/clientLoginPage.module.css';
+import styles from '../../styles/pages/auth/clientLoginPage.module.css';
 import LoginClientForm from './components/LoginClientForm';
 import RegisterClientForm from './components/RegisterClientForm';
 import RedirectService from '../../app/service/RedirectService';
@@ -25,7 +25,7 @@ export default function userLogin() {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-        }, 200);
+        }, 350);
     };
 
   useEffect(() => {

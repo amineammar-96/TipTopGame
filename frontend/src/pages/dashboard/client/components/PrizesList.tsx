@@ -1,6 +1,6 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Col, Row, Spin} from 'antd';
+import {Col, Form, Row, Tag, theme} from 'antd';
 import Image from 'next/image';
 import InfuserImg from "@/assets/images/infuser.png";
 import TeaBoxImg from "@/assets/images/teaBox.png";
@@ -9,10 +9,7 @@ import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import SurpriseBoxImg from "@/assets/images/surprise.png";
 import {getPrizes} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
-import {Button, Form, Input, Select, Space, theme} from 'antd';
-import { GiftOutlined, InfoOutlined} from "@ant-design/icons";
-
-import {Tag } from 'antd';
+import {GiftOutlined} from "@ant-design/icons";
 
 
 interface DataType {

@@ -144,6 +144,11 @@ get_participants:
     controller: App\Controller\Api\User\UserController::getParticipants
     methods: GET
 
+get_participants_list:
+    path: /api/participants
+    controller: App\Controller\Api\User\UserController::getParticipantsList
+    methods: GET
+
 #tickets/check/play
 check_ticket_play:
     path: /api/tickets/check/play
@@ -325,3 +330,60 @@ update_user_email:
     methods: POST
     requirements:
         id: \d+
+
+
+
+
+## get all badges
+get_all_badges:
+    path: /api/badges
+    controller: App\Controller\Api\Badge\BadgeController::getAllBadges
+    methods: GET
+
+## get badge by id
+get_badge_by_id:
+    path: /api/badge/{id}
+    controller: App\Controller\Api\Badge\BadgeController::getBadgeById
+    methods: GET
+    requirements:
+        id: \d+
+
+#getClientBadges
+get_client_badges:
+    path: /api/client/badges/{id}
+    controller: App\Controller\Api\Badge\BadgeController::getClientBadges
+    methods: GET
+
+
+
+#getUsersList
+get_users_list:
+    path: /api/users
+    controller: App\Controller\Api\User\UserController::getUsers
+    methods: GET
+
+
+#actions_history get all
+get_actions_history:
+    path: /api/actions_history
+    controller: App\Controller\Api\ActionHistory\ActionsHistoryController::getActionsHistory
+    methods: GET
+
+
+#get tickets history
+get_tickets_history:
+    path: /api/tickets_history
+    controller: App\Controller\Api\Ticket\TicketController::getTicketsHistory
+    methods: GET
+
+#get connection history
+get_connection_history:
+    path: /api/connection_history
+    controller: App\Controller\Api\ConnectionHistory\ConnectionHistoryController::getConnectionsHistory
+    methods: GET
+
+#get Emailing history
+get_emailing_history:
+    path: /api/emailing_history
+    controller: App\Controller\Api\EmailingHistory\EmailingHistoryController::getEmailingHistory
+    methods: GET

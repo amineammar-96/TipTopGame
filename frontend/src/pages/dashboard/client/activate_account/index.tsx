@@ -1,6 +1,6 @@
 import React,{ useEffect} from 'react'
 import {Col, Row} from "react-bootstrap";
-import styles from "@/styles/pages/adminsLoginPage.module.css";
+import styles from "@/styles/pages/auth/adminsLoginPage.module.css";
 import {checkActivationTokenValidityClient} from "@/app/api";
 import {Modal} from "antd";
 

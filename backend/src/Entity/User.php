@@ -95,12 +95,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Avatar $avatar = null;
 
+    #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
+    private Collection $badges;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: LoyaltyPoints::class , cascade: ['persist', 'remove'])]
+    private Collection $loyaltyPoints;
+
+    #[ORM\OneToMany(mappedBy: 'user_done_action', targetEntity: ActionHistory::class, orphanRemoval: true)]
+    private Collection $actionHistories;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ConnectionHistory::class)]
+    private Collection $connectionHistories;
+
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: EmailingHistory::class)]
+    private Collection $emailingHistories;
+
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->ticketsEmployee = new ArrayCollection();
         $this->ticketHistories = new ArrayCollection();
+        $this->badges = new ArrayCollection();
+        $this->loyaltyPoints = new ArrayCollection();
+        $this->actionHistories = new ArrayCollection();
+        $this->connectionHistories = new ArrayCollection();
+        $this->emailingHistories = new ArrayCollection();
     }
 
 
@@ -605,6 +626,156 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Badge>
+     */
+    public function getBadges(): Collection
+    {
+        return $this->badges;
+    }
+
+    public function addBadge(Badge $badge): static
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(Badge $badge): static
+    {
+        $this->badges->removeElement($badge);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LoyaltyPoints>
+     */
+    public function getLoyaltyPoints(): Collection
+    {
+        return $this->loyaltyPoints;
+    }
+
+    public function addLoyaltyPoint(LoyaltyPoints $loyaltyPoint): static
+    {
+        if (!$this->loyaltyPoints->contains($loyaltyPoint)) {
+            $this->loyaltyPoints->add($loyaltyPoint);
+            $loyaltyPoint->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLoyaltyPoint(LoyaltyPoints $loyaltyPoint): static
+    {
+        if ($this->loyaltyPoints->removeElement($loyaltyPoint)) {
+            // set the owning side to null (unless already changed)
+            if ($loyaltyPoint->getUser() === $this) {
+                $loyaltyPoint->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActionHistory>
+     */
+    public function getActionHistories(): Collection
+    {
+        return $this->actionHistories;
+    }
+
+    public function addActionHistory(ActionHistory $actionHistory): static
+    {
+        if (!$this->actionHistories->contains($actionHistory)) {
+            $this->actionHistories->add($actionHistory);
+            $actionHistory->setUserDoneAction($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActionHistory(ActionHistory $actionHistory): static
+    {
+        if ($this->actionHistories->removeElement($actionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($actionHistory->getUserDoneAction() === $this) {
+                $actionHistory->setUserDoneAction(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function getFullName(): string
+    {
+        return $this->getFirstname() . ' ' . $this->getLastname();
+    }
+
+    /**
+     * @return Collection<int, ConnectionHistory>
+     */
+    public function getConnectionHistories(): Collection
+    {
+        return $this->connectionHistories;
+    }
+
+    public function addConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if (!$this->connectionHistories->contains($connectionHistory)) {
+            $this->connectionHistories->add($connectionHistory);
+            $connectionHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if ($this->connectionHistories->removeElement($connectionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($connectionHistory->getUser() === $this) {
+                $connectionHistory->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EmailingHistory>
+     */
+    public function getEmailingHistories(): Collection
+    {
+        return $this->emailingHistories;
+    }
+
+    public function addEmailingHistory(EmailingHistory $emailingHistory): static
+    {
+        if (!$this->emailingHistories->contains($emailingHistory)) {
+            $this->emailingHistories->add($emailingHistory);
+            $emailingHistory->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmailingHistory(EmailingHistory $emailingHistory): static
+    {
+        if ($this->emailingHistories->removeElement($emailingHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($emailingHistory->getReceiver() === $this) {
+                $emailingHistory->setReceiver(null);
+            }
+        }
 
         return $this;
     }

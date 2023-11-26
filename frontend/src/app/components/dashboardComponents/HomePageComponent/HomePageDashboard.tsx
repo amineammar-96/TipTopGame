@@ -6,12 +6,14 @@ import RemainsTickes from "@/assets/images/remainsTickes.png";
 import ClientsImg from "@/assets/images/clients.png";
 import UsersImg from "@/assets/images/users.png";
 import RouletteImg from "@/assets/images/roulette.png";
-import {Col, ConfigProvider, DatePicker, Radio, Row} from 'antd';
+import LoyaltyCardImg from "@/assets/images/loyaltyCard.png";
+import {Col, ConfigProvider, DatePicker, Radio, Row, Spin} from 'antd';
 import Image from 'next/image';
 import {CityStatsChart} from "@/app/components/dashboardComponents/HomePageComponent/components/CityStatsChart";
 import {
     PrizesChartDoughunt
 } from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesChartDoughnut";
+const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), { ssr: false });
 
 import CalendarImg from "@/assets/images/calendar.png";
 import PriceImg from "@/assets/images/price.png";
@@ -45,6 +47,8 @@ import {PrizesCostTendance} from './components/PrizesCostTendance';
 import GiftsImg from "@/assets/images/surprisePlus.png";
 import TiptopEmployeeImg from "@/assets/images/tiptopEmployee.png";
 import DashboardSpinnigLoader from "@/app/components/widgets/DashboardSpinnigLoader";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import dynamic from "next/dynamic";
 
 const dateFormat = 'DD/MM/YYYY';
 
@@ -100,11 +104,14 @@ function HomePage() {
     }, []);
 
     useEffect(() => {
+        setSecondLoading(true);
         const userRoleAux = localStorage.getItem('loggedInUserRole');
         if (userRoleAux == "ROLE_ADMIN" || userRoleAux == "ROLE_STOREMANAGER" || userRoleAux == "ROLE_EMPLOYEE") {
             getAdminDashboardCardsCounters(searchForm).then((res) => {
+                setSecondLoading(false);
                 setAdminDashboardCardsCounters(res.counters);
             }).catch((err) => {
+                setSecondLoading(false);
                 console.log(err);
             });
         }
@@ -115,15 +122,26 @@ function HomePage() {
     const [statsData, setStatsData] = useState<any>({});
     const [secondLoading, setSecondLoading] = useState<boolean>(false);
     useEffect(() => {
-        getDashboardStatsData(searchForm).then((res) => {
+       dashboardStatsCall().then(r => console.log(r));
+        setSecondLoading(true);
+    }, [searchForm]);
+
+    async function dashboardStatsCall() {
+        await getDashboardStatsData(searchForm).then((res) => {
             setStatsData(res);
-            setLoading(false);
+            setSecondLoading(false);
             console.log(res);
         }).catch((err) => {
+            setSecondLoading(false);
             console.log(err);
-            setLoading(false);
         });
-    }, [searchForm]);
+    }
+
+    useEffect(() => {
+        if (statsData && Object.keys(statsData).length !== 0 && adminDashboardCardsCounters && Object.keys(adminDashboardCardsCounters).length !== 0) {
+            setLoading(false);
+        }
+    }, [statsData , adminDashboardCardsCounters]);
 
 
     const [gainByPrizeData, setGainByPrizeData] = useState<any>([]);
@@ -333,6 +351,14 @@ function HomePage() {
         });
     }
 
+    useEffect(() => {
+        if (clientCounter && Object.keys(clientCounter).length !== 0 && statsData && Object.keys(statsData).length !== 0) {
+            setLoading(false);
+        }
+    }, [clientCounter , statsData]);
+
+
+
 
     const handleRadioChange = (e:any) => {
 
@@ -394,69 +420,448 @@ function HomePage() {
                            <h1 className={`mx-3`}>Tableau de bord </h1>
                            <div className={`${styles.homePageAdminCardsDiv}`}>
 
-                               <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                               <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center d-flex align-items-start`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
 
-                                   <Col className={`w-100 pt-0 mt-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={24} lg={24} span={6}>
-                                       <div className={`${styles.headetFilterDiv}`}>
-                                           {userRole === "ROLE_ADMIN" && (
-                                               <>
-                                                   <StoresList globalSelectedStoreId={selectedStoreId} onSelectStore={handleStoreChange}></StoresList>
-                                               </>
+                                   <Col className={`w-100 p-0 m-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={12} lg={12} span={12}>
+                                   <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center `} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                        <Col className={`w-100 p-0 m-0 ${styles.statsTopHeadetFilterDiv} mt-2`} sm={24} md={24} lg={24} span={6}>
+                                            <div className={`${styles.headetFilterDiv}`}>
+                                                {userRole === "ROLE_ADMIN" && (
+                                                    <>
+                                                        <StoresList globalSelectedStoreId={selectedStoreId} onSelectStore={handleStoreChange}></StoresList>
+                                                    </>
+                                                )}
+                                                <ConfigProvider locale={locale}>
+                                                    <RangePicker
+                                                        className={`${styles.datePickerDashboardHomePage}`}
+                                                        onChange={(date:any , dateString:any )=>{
+                                                            handleDateChange(date  , dateString)
+                                                        }}
+                                                        value={[dayjs(searchForm.startDate, dateFormat), dayjs(searchForm.endDate, dateFormat)]}
+                                                        placeholder={['Date de début', 'Date de fin']}
+                                                        format={dateFormat}
+                                                        cellRender={(current:any) => {
+                                                            const style: React.CSSProperties = {};
+                                                            if (current.date() === 1) {
+                                                                style.border = '1px solid #1677ff';
+                                                                style.borderRadius = '50%';
+                                                            }
+                                                            return (
+                                                                <div className="ant-picker-cell-inner" style={style}>
+                                                                    {current.date()}
+                                                                </div>
+                                                            );
+                                                        }}
+                                                    />
+                                                </ConfigProvider>
+                                            </div>
+                                        </Col>
+                                        <Col className={`w-100 d-flex justify-content-start ${styles.periodsSelector}`} sm={24} md={24} lg={24} span={24}>
+                                            <Radio.Group className={`${styles.periodsSelectorRadioGroup}`} onChange={handleRadioChange} value={searchForm.selectedPeriod}>
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="day">
+                                                    1 Jour
+                                                </Radio>
+
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3days">
+                                                    3 Jours
+                                                </Radio>
+
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="week">
+                                                    7 Jours
+                                                </Radio>
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="2weeks">
+                                                    14 Jours
+                                                </Radio>
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="month">
+                                                    30 Jours
+                                                </Radio>
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3month">
+                                                    90 Jours
+                                                </Radio>
+                                                <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="">
+                                                    1 an
+                                                </Radio>
+
+                                            </Radio.Group>
+                                        </Col>
+
+
+                                       <Col className={`w-100 d-flex justify-content-start mt-5`} sm={24} md={24} lg={24} span={24}>
+                                           {secondLoading && (
+                                               <SpinnigLoader></SpinnigLoader>
                                            )}
-                                           <ConfigProvider locale={locale}>
-                                               <RangePicker
-                                                   className={`${styles.datePickerDashboardHomePage}`}
-                                                   onChange={(date:any , dateString:any )=>{
-                                                       handleDateChange(date  , dateString)
-                                                   }}
-                                                   value={[dayjs(searchForm.startDate, dateFormat), dayjs(searchForm.endDate, dateFormat)]}
-                                                   placeholder={['Date de début', 'Date de fin']}
-                                                   format={dateFormat}
-                                                   cellRender={(current:any) => {
-                                                       const style: React.CSSProperties = {};
-                                                       if (current.date() === 1) {
-                                                           style.border = '1px solid #1677ff';
-                                                           style.borderRadius = '50%';
-                                                       }
-                                                       return (
-                                                           <div className="ant-picker-cell-inner" style={style}>
-                                                               {current.date()}
+                                       </Col>
+                                    </Row>
+                                   </Col>
+
+
+
+                                   {userRole === "ROLE_ADMIN" && (
+                                       <Col className={`w-100 p-0 m-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={12} lg={12} span={12}>
+                                           <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center d-flex `} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                           <Col className={`w-100 m-0 p-0 ${styles.periodsSelector}`} sm={24} md={24} lg={24} span={24}>
+                                           <div className={`${styles.homePageContentTopHeader}`}>
+                                               <div className={`${styles.homePageAdminCardsDiv}`}>
+
+                                                   <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
+
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={RemainsTickes}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       <AnimatedNumbers
+                                                                           includeComma
+                                                                           className={styles.container}
+                                                                           transitions={(index) => ({
+                                                                               type: "spring",
+                                                                               duration: index + 0.9,
+                                                                           })}
+                                                                           animateToNumber={adminDashboardCardsCounters["tickets"]}
+                                                                       />
+                                                                   </div>
+
+                                                                   <div className={`${styles.cardTitle}`}>Total Des Lots</div>
+                                                               </div>
                                                            </div>
-                                                       );
-                                                   }}
-                                               />
-                                           </ConfigProvider>
-                                       </div>
-                                   </Col>
-                                   <Col className={`w-100 ${styles.periodsSelector}`} sm={24} md={24} lg={24} span={24}>
-                                       <Radio.Group className={`${styles.periodsSelectorRadioGroup}`} onChange={handleRadioChange} value={searchForm.selectedPeriod}>
+                                                       </Col>
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
 
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="day">
-                                               1 Jour
-                                           </Radio>
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={CodeScanner}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       <AnimatedNumbers
+                                                                           includeComma
+                                                                           className={styles.container}
+                                                                           transitions={(index) => ({
+                                                                               type: "spring",
+                                                                               duration: index + 0.9,
+                                                                           })}
+                                                                           animateToNumber={adminDashboardCardsCounters["printedTickets"]}
+                                                                       />
+                                                                   </div>
 
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3days">
-                                               3 Jours
-                                           </Radio>
+                                                                   <div className={`${styles.cardTitle}`}>Bons Imprimés</div>
+                                                               </div>
+                                                           </div>
+                                                       </Col>
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
 
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="week">
-                                               7 Jours
-                                           </Radio>
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="2weeks">
-                                               14 Jours
-                                           </Radio>
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="month">
-                                               30 Jours
-                                           </Radio>
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput`} value="3month">
-                                               90 Jours
-                                           </Radio>
-                                           <Radio className={`${styles.periodsSelectorRadio} periodsSelectorInput `} value="">
-                                               1 an
-                                           </Radio>
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={TicketImage}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       {
+                                                                           userRole === "ROLE_ADMIN" && (
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={adminDashboardCardsCounters["ticketStock"]}
+                                                                               />
+                                                                           )
+                                                                       }
 
-                                       </Radio.Group>
-                                   </Col>
+                                                                       {
+                                                                           userRole != "ROLE_ADMIN" && (
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={adminDashboardCardsCounters["confirmedTickets"]}
+                                                                               />
+                                                                           )
+                                                                       }
+                                                                   </div>
+
+                                                                   <div className={`${styles.cardTitle}`}>
+                                                                       {
+                                                                           userRole === "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Lots Restants
+                                                                               </>
+                                                                           )
+                                                                       }
+
+                                                                       {
+                                                                           userRole != "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Lots Confirmés
+                                                                               </>
+                                                                           )
+                                                                       }
+                                                                   </div>
+                                                               </div>
+                                                           </div>
+                                                       </Col>
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
+
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={UsersImg}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       <AnimatedNumbers
+                                                                           includeComma
+                                                                           className={styles.container}
+                                                                           transitions={(index) => ({
+                                                                               type: "spring",
+                                                                               duration: index + 0.9,
+                                                                           })}
+                                                                           animateToNumber={adminDashboardCardsCounters["clients"]}
+                                                                       />
+                                                                   </div>
+
+                                                                   <div className={`${styles.cardTitle}`}>
+                                                                       {
+                                                                           userRole === "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Clients Inscrits
+                                                                               </>
+                                                                           )
+                                                                       }
+
+                                                                       {
+                                                                           userRole != "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Clients associés
+                                                                               </>
+                                                                           )
+                                                                       }
+                                                                   </div>
+                                                               </div>
+                                                           </div>
+                                                       </Col>
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={ClientsImg}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       <AnimatedNumbers
+                                                                           includeComma
+                                                                           className={styles.container}
+                                                                           transitions={(index) => ({
+                                                                               type: "spring",
+                                                                               duration: index + 0.9,
+                                                                           })}
+                                                                           animateToNumber={adminDashboardCardsCounters["participants"]}
+                                                                       />
+
+                                                                   </div>
+                                                                   <div className={`${styles.cardTitle}`}>
+                                                                       {
+                                                                           userRole === "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Participants Actifs
+                                                                               </>
+                                                                           )
+                                                                       }
+
+                                                                       {
+                                                                           userRole != "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Participants associés
+                                                                               </>
+                                                                           )
+                                                                       }
+                                                                   </div>
+
+                                                               </div>
+                                                           </div>
+                                                       </Col>
+                                                       <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
+                                                           <div className={`${styles.topCardElement}`}>
+                                                               <div className={`${styles.topCardElementText}`}>
+                                                                   <div className={`${styles.topCardElementIcon}`}>
+                                                                       <Image src={RouletteImg}  alt={"tickets"}></Image>
+                                                                   </div>
+                                                                   <div className={`${styles.counter}`}>
+                                                                       <AnimatedNumbers
+                                                                           includeComma
+                                                                           className={styles.container}
+                                                                           transitions={(index) => ({
+                                                                               type: "spring",
+                                                                               duration: index + 0.9,
+                                                                           })}
+                                                                           animateToNumber={adminDashboardCardsCounters["playedTicket"]}
+                                                                       />
+                                                                   </div>
+                                                                   <div className={`${styles.cardTitle}`}>
+                                                                       {
+                                                                           userRole === "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Tickets Joués
+                                                                               </>
+                                                                           )
+                                                                       }
+
+                                                                       {
+                                                                           userRole != "ROLE_ADMIN" && (
+                                                                               <>
+                                                                                   Tours de roue joués
+                                                                               </>
+                                                                           )
+                                                                       }
+                                                                   </div>
+                                                               </div>
+                                                           </div>
+                                                       </Col>
+
+                                                   </Row>
+
+                                               </div>
+                                           </div>
+                                           </Col>
+                                           </Row>
+                                       </Col>
+                                   )}
+
+
+                                   {userRole === "ROLE_CLIENT" && (
+                                       <Col className={`w-100 pt-0 mt-0 ${styles.statsTopHeadetFilterDiv}`} sm={24} md={24} lg={24} span={6}>
+                                           <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center d-flex `} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+
+                                               <Col className={`w-100 ${styles.periodsSelector}`} sm={24} md={24} lg={24} span={24}>
+                                                   <div className={`${styles.homePageContentTopHeader}`}>
+
+                                                       <div className={`${styles.homePageAdminCardsDiv}`}>
+
+                                                           <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
+
+
+                                                               <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                                                                   <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementIcon}`}>
+                                                                               <Image src={LoyaltyCardImg}  alt={"loyaltyCard"}></Image>
+                                                                           </div>
+                                                                           <div className={`${styles.counter}`}>
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={clientCounter?.["loyaltyPoints"]}
+                                                                               />
+
+                                                                           </div>
+                                                                           <div className={`${styles.cardTitle}`}>
+                                                                                 Points de fidélité
+                                                                           </div>
+                                                                       </div>
+                                                                   </div>
+                                                               </Col>
+                                                               <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                                                                   <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementIcon}`}>
+                                                                               <Image src={RouletteImg}  alt={"tickets"}></Image>
+                                                                           </div>
+                                                                           <div className={`${styles.counter}`}>
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={clientCounter?.["playedTickets"]}
+                                                                               />
+
+                                                                           </div>
+                                                                           <div className={`${styles.cardTitle}`}>
+                                                                               Tours Joués
+                                                                           </div>
+                                                                       </div>
+
+                                                                   </div>
+                                                               </Col>
+                                                               <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                                                                   <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementIcon}`}>
+                                                                               <Image src={GiftsImg}  alt={"GiftsImg"}></Image>
+                                                                           </div>
+                                                                           <div className={`${styles.counter}`}>
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={clientCounter?.["confirmedTickets"]}
+                                                                               />
+                                                                           </div>
+                                                                           <div className={`${styles.cardTitle}`}>
+                                                                               Cadeaux Réclamés
+                                                                           </div>
+                                                                       </div>
+
+                                                                   </div>
+
+                                                               </Col>
+
+                                                               <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
+
+                                                                   <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
+                                                                       <div className={`${styles.topCardElementText}`}>
+                                                                           <div className={`${styles.topCardElementIcon}`}>
+                                                                               <Image src={TiptopEmployeeImg}  alt={"TiptopEmployeeImg"}></Image>
+                                                                           </div>
+                                                                           <div className={`${styles.counter}`}>
+                                                                               <AnimatedNumbers
+                                                                                   includeComma
+                                                                                   className={styles.container}
+                                                                                   transitions={(index) => ({
+                                                                                       type: "spring",
+                                                                                       duration: index + 0.9,
+                                                                                   })}
+                                                                                   animateToNumber={clientCounter?.["pendingTickets"]}
+                                                                               />
+                                                                           </div>
+                                                                           <div className={`${styles.cardTitle}`}>
+                                                                               En attente de validation
+                                                                           </div>
+                                                                       </div>
+
+                                                                   </div>
+
+                                                               </Col>
+
+
+                                                           </Row>
+
+                                                       </div>
+                                                   </div>
+                                               </Col>
+                                           </Row>
+                                       </Col>
+                                   )}
+
+
+
                                </Row>
 
 
@@ -464,252 +869,8 @@ function HomePage() {
                        </div>
 
 
-                       {userRole === "ROLE_CLIENT" && (
-                           <>
-                               <div className={`${styles.homePageContentTopHeader}`}>
-
-                                   <div className={`${styles.homePageAdminCardsDiv}`}>
-
-                                       <Row className={`${styles.fullWidthElement} w-100 d-flex justify-content-center`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
 
 
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
-
-                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {clientCounter?.["playedTickets"]}
-                                                       </div>
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           Tours Joués
-                                                       </div>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={RouletteImg}  alt={"tickets"}></Image>
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
-
-                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {clientCounter?.["confirmedTickets"]}
-                                                       </div>
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           Cadeaux Réclamés
-                                                       </div>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={GiftsImg}  alt={"GiftsImg"}></Image>
-                                                   </div>
-                                               </div>
-
-                                           </Col>
-
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={6} span={6}>
-
-                                               <div className={`${styles.clientTopCardDashboard} ${styles.topCardElementAux}`}>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {clientCounter?.["pendingTickets"]}
-                                                       </div>
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           En attente de validation
-                                                       </div>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={TiptopEmployeeImg}  alt={"GiftsImg"}></Image>
-                                                   </div>
-                                               </div>
-
-                                           </Col>
-
-
-                                       </Row>
-
-                                   </div>
-                               </div>
-                           </>
-                       )}
-
-
-
-                       {userRole === "ROLE_ADMIN" && (
-                           <>
-                               <div className={`${styles.homePageContentTopHeader}`}>
-                                   <div className={`${styles.homePageAdminCardsDiv}`}>
-
-                                       <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={RemainsTickes}  alt={"tickets"}></Image>
-
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {adminDashboardCardsCounters["tickets"]}
-                                                       </div>
-
-                                                       <div className={`${styles.cardTitle}`}>Total Des Lots</div>
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={CodeScanner}  alt={"tickets"}></Image>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {adminDashboardCardsCounters["printedTickets"]}
-                                                       </div>
-
-                                                       <div className={`${styles.cardTitle}`}>Bons Imprimés</div>
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={TicketImage}  alt={"tickets"}></Image>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {
-                                                               userRole === "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       {adminDashboardCardsCounters["ticketStock"]}
-                                                                   </>
-                                                               )
-                                                           }
-
-                                                           {
-                                                               userRole != "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       {adminDashboardCardsCounters["confirmedTickets"]}
-                                                                   </>
-                                                               )
-                                                           }
-                                                       </div>
-
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           {
-                                                               userRole === "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Lots Restants
-                                                                   </>
-                                                               )
-                                                           }
-
-                                                           {
-                                                               userRole != "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Lots Confirmés
-                                                                   </>
-                                                               )
-                                                           }
-                                                       </div>
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={UsersImg}  alt={"tickets"}></Image>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {adminDashboardCardsCounters["clients"]}
-                                                       </div>
-
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           {
-                                                               userRole === "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Clients Inscrits
-                                                                   </>
-                                                               )
-                                                           }
-
-                                                           {
-                                                               userRole != "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Clients associés
-                                                                   </>
-                                                               )
-                                                           }
-                                                       </div>
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={ClientsImg}  alt={"tickets"}></Image>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {adminDashboardCardsCounters["participants"]}
-                                                       </div>
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           {
-                                                               userRole === "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Participants Actifs
-                                                                   </>
-                                                               )
-                                                           }
-
-                                                           {
-                                                               userRole != "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Participants associés
-                                                                   </>
-                                                               )
-                                                           }
-                                                       </div>
-
-                                                   </div>
-                                               </div>
-                                           </Col>
-                                           <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                               <div className={`${styles.topCardElement}`}>
-                                                   <div className={`${styles.topCardElementIcon}`}>
-                                                       <Image src={RouletteImg}  alt={"tickets"}></Image>
-                                                   </div>
-                                                   <div className={`${styles.topCardElementText}`}>
-                                                       <div className={`${styles.counter}`}>
-                                                           {adminDashboardCardsCounters["playedTicket"]}
-                                                       </div>
-                                                       <div className={`${styles.cardTitle}`}>
-                                                           {
-                                                               userRole === "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Tickets Joués
-                                                                   </>
-                                                               )
-                                                           }
-
-                                                           {
-                                                               userRole != "ROLE_ADMIN" && (
-                                                                   <>
-                                                                       Tours de roue joués
-                                                                   </>
-                                                               )
-                                                           }
-                                                       </div>
-                                                   </div>
-                                               </div>
-                                           </Col>
-
-                                       </Row>
-
-                                   </div>
-                               </div>
-                           </>
-                       )}
 
                        <div className={`${styles.homePageContentStats}`}>
 
@@ -723,12 +884,6 @@ function HomePage() {
                                        <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
                                            <div className={`${styles.boxShadowDiv}`}>
                                                <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
-
-                                                   {secondLoading && (
-                                                       <>
-                                                           <DashboardSpinnigLoader></DashboardSpinnigLoader>
-                                                       </>
-                                                   )}
 
 
                                                    <Col className={`w-100 ${styles.statsCharts}`} sm={24} md={24} lg={12} span={6}>

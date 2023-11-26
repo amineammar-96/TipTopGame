@@ -1,21 +1,18 @@
-import React , {useEffect , useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import RedirectService from '../../../app/service/RedirectService';
 
 import Sidebar from "@/pages/dashboard/client/components/sidebar";
-import TopNavBar from "@/pages/dashboard/client/components/topNavBar";
+import TopNavBar from "@/app/components/dashboardComponents/widgets/topNavBar";
 
-import {Row,Col} from "antd";
+import {Col, Row} from "antd";
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
-
-import { Space, Spin } from 'antd';
 import ClientHomePage from "@/app/components/dashboardComponents/HomePageComponent/HomePageDashboard";
 import StoresManagement from "@/app/components/dashboardComponents/StoreManagementComponent/StoresManagement";
 import ProfilesManagement from "@/app/components/dashboardComponents/ProfilesManagementComponent/ProfilesManagement";
 import TicketsPageDashboard from "@/app/components/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
 import PrizesListPage from "@/app/components/dashboardComponents/PrizesPageComponent/PrizesListPage";
-import ClientManagementPage
-    from "@/app/components/dashboardComponents/ClientManagementComponents/ClientManagementPage";
+import ClientManagementPage from "@/app/components/dashboardComponents/ClientManagementComponents/ClientManagementPage";
 import ParticipantManagementPage
     from "@/app/components/dashboardComponents/ClientManagementComponents/ParticipantManagementPage";
 import PlayGameComponent from "@/pages/dashboard/client/components/PlayGameComponent";
@@ -24,6 +21,7 @@ import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import GameGainHistoryPage from "@/app/components/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 import GeneralSettingsTemplates
     from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
+import BadgesListPage from "@/app/components/dashboardComponents/BadgesPageComponent/BadgesListPage";
 
 
 function ClientDashboard() {
@@ -53,7 +51,7 @@ function ClientDashboard() {
     useEffect(() => {
         const firstLoginClientStatus = localStorage.getItem('firstLoginClientStatus');
         if (firstLoginClientStatus == "true") {
-            window.location.href = '/dashboard/client/favoriteStoreSelection';
+            window.location.href = '/dashboard/client/favorite_store_selection';
         }else {
             setLoading(false);
         }
@@ -103,7 +101,7 @@ function ClientDashboard() {
 
             {!loading &&
             <Row>
-                <Col md={collapsed ? '': 4 }>
+                <Col md={collapsed ? '': 4 } className={`${styles.sideBarDiv}`}>
                     <Sidebar collapsed={collapsed} toggleCollapsed={toggleCollapsed} onMenuItemClick={handleMenuItemClick} selectedMenuItem={selectedMenuItem}></Sidebar>
                 </Col>
                 <Col md={collapsed ? '': 20 } className={styles.mainPageDiv}>
@@ -121,8 +119,7 @@ function ClientDashboard() {
                         {selectedMenuItem==="playGameItem" && <PlayGameComponent></PlayGameComponent>}
                         {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
                         {selectedMenuItem==="settingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
-
-
+                        {selectedMenuItem==="badgesItem" && <BadgesListPage></BadgesListPage>}
 
                     </Row>
                 </Col>

@@ -58,6 +58,9 @@ services:
     App\Command\GenerateEmailTemplatesVariables:
         tags: [ 'console.command' ]
 
+    App\Command\GenerateBadges:
+        tags: [ 'console.command' ]
+
     App\Service\Mailer\PostManMailerService:
         arguments:
             $mailtrapHost: '%env(MAILTRAP_HOST)%'

@@ -26,7 +26,7 @@ import {
     UserOutlined
 } from '@ant-design/icons';
 
-import styles from '../../../styles/pages/clientLoginPage.module.css';
+import styles from '../../../styles/pages/auth/clientLoginPage.module.css';
 import {facebookCallBack, loginClient} from '@/app/api';
 
 type FieldType = {

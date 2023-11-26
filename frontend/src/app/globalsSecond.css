@@ -32,6 +32,7 @@ body, * {
   background-color: #7BC558;
 }
 
+
 .mainSpinner .ant-spin-dot.ant-spin-dot-spin {
   height: 4rem !important;
     width: 4rem !important;

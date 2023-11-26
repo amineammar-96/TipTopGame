@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api\Store;
 
+use App\Entity\ActionHistory;
 use App\Entity\User;
+use App\Service\User\UserService;
 use Exception;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Role;
@@ -21,11 +23,13 @@ class StoreController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
+    private UserService $userService;
 
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager , UserService $userService)
     {
         $this->entityManager = $entityManager;
+        $this->userService = $userService;
 
     }
 
@@ -162,6 +166,28 @@ class StoreController extends AbstractController
         $store->setEmail($data['email']);
         $store->setSiren($data['siren']);
 
+        $roleLabel = "";
+        if ($this->getUser()->getRoles()[0] === Role::ROLE_ADMIN) {
+            $roleLabel = "L'Administateur";
+        }
+        $storeName = $data['name'] ?? "";
+        $details = $roleLabel. " a ajouté un nouveau magasin " .$storeName. " ( ". $store->getSiren(). " )";
+        $this->userService->createActionHistory(ActionHistory::STORES_MANAGEMENT , $this->getUser() , null , $store , $details);
+
+
+
+
+
+        $actionHistory = new ActionHistory();
+        $actionHistory->setDetails($details);
+        $actionHistory->setActionType(ActionHistory::STORES_MANAGEMENT);
+        $actionHistory->setUserDoneAction($this->getUser());
+        $actionHistory->setUserActionRelatedTo(null);
+        $actionHistory->setStore($store);
+        $actionHistory->setCreatedAt(new \DateTime());
+
+        $this->entityManager->persist($actionHistory);
+
         $users = $this->entityManager->getRepository(User::class)->findAll();
         foreach ($users as $admin) {
             if($admin->getRole()->getName() == Role::ROLE_ADMIN) {
@@ -220,6 +246,21 @@ class StoreController extends AbstractController
         $store->setPhone($data['phone_number']);
         $store->setEmail($data['email']);
         $store->setSiren($data['siren']);
+
+
+
+        $loggedUser = $this->getUser();
+        $roleLabel = "";
+        if ($loggedUser->getRoles()[0] === Role::ROLE_ADMIN) {
+            $roleLabel = "L'Administateur";
+        } else if ($loggedUser->getRoles()[0] == Role::ROLE_STOREMANAGER) {
+            $roleLabel = "Le Manager";
+        }
+        $storeName = $store->getName();
+        $details = $roleLabel. " a modifié le magasin ." .$storeName. " ( ". $store->getSiren(). " )";
+        $this->userService->createActionHistory(ActionHistory::STORES_MANAGEMENT , $this->getUser() , null , $store  , $details);
+
+
 
         $this->entityManager->persist($store);
         $this->entityManager->flush();

@@ -7,6 +7,7 @@ import { Avatar, Space } from 'antd';
 import RedirectService from "@/app/service/RedirectService";
 import Image from "next/image";
 import logoTeaImage from "@/assets/images/logoTea.png";
+import {getUserProdileById} from "@/app/api";
 
 
 interface User {
@@ -34,22 +35,35 @@ function TopNavBar() {
 
     const [user, setUser] = useState<User | null>(null);
     const [userRole , setUserRole] = useState<string | null>(null);
-    useEffect(() => {
-        console.log("TopNavBar mounted");
-        const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
-        setUserRole(localStorage.getItem('loggedInUserRole'));
 
-        setUser(user);
-    }, []);
+
+    useEffect(() => {
+        let userId:any = localStorage.getItem('loggedInUserId');
+        getUserProdileById(userId).then((response) => {
+            setUser(response.user);
+            setUserRole(response.user.role);
+        }).catch((err) => {
+            console.log(err);
+        })
+}, []);
+
+
+    useEffect(() => {
+        console.log("User " , user);
+        console.log("User Role " , userRole);
+    }, [user , userRole]);
+
+
+
 
     const getRoleLabel = (role: string | null) => {
         switch (role) {
             case 'ROLE_ADMIN':
-                return 'Espace Admin';
+                return 'Espace Administrateur';
             case 'ROLE_EMPLOYEE':
-                return 'Espace Employé';
+                return 'Espace Employé du Magasin (Caisse)';
             case 'ROLE_STOREMANAGER':
-                return 'Espace Gérant';
+                return 'Espace Gérant du Magasin';
             case 'ROLE_CLIENT':
                 return 'Espace Client';
             default:

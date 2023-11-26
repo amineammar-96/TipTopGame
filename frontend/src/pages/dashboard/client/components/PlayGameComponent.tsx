@@ -1,15 +1,13 @@
 'use client';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
-import {Button, Col, Input, Row, Tag} from 'antd';
+import {Button, Col, Input, Modal, Row, Tag} from 'antd';
 import LogoutService from "@/app/service/LogoutService";
 import Image from "next/image";
 
 import WheelGamePrizesImg from "@/assets/images/wheel_game_prizes.png";
-
-import {Modal } from 'antd';
-import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicket, getGainTicketHistory} from "@/app/api";
-import {GiftOutlined, NotificationFilled, PoweroffOutlined, RocketOutlined, SyncOutlined} from "@ant-design/icons";
+import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicketHistory} from "@/app/api";
+import {GiftOutlined, NotificationFilled, PoweroffOutlined, RocketOutlined} from "@ant-design/icons";
 import welcomeImg from "@/assets/images/gifs/congratulations.gif";
 import welcomeImgAux from "@/assets/images/gifs/congratulationsAux.gif";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -23,6 +21,12 @@ import gameWallpaperImg from "@/assets/images/gameWallpaper.png";
 import BestGainsTable from "@/app/components/dashboardComponents/GameGainHistory/components/BestGainsTable";
 import PrizesList from "@/pages/dashboard/client/components/PrizesList";
 import DynamicWheel from "@/pages/dashboard/client/components/DynamicWheel";
+import LevelOneImg from "@/assets/images/levels/level1.png";
+import LevelTwoImg from "@/assets/images/levels/level2.png";
+import LevelThreeImg from "@/assets/images/levels/level3.png";
+import LevelFourImg from "@/assets/images/levels/level4.png";
+import LevelFiveImg from "@/assets/images/levels/level5.png";
+import {Rating} from "react-simple-star-rating";
 
 interface PrizeType {
     'id' : any;
@@ -129,6 +133,12 @@ const defaultSearchParams: SearchParams = {
     order: '',
     prize: '',
 };
+
+interface BadgeType {
+    'id' : string;
+    'name' : string;
+    'description' : string;
+}
 function PlayGameComponent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -175,27 +185,155 @@ function PlayGameComponent() {
         }
     }
 
+    let getTooltipStyle = (index: number) => {
+        switch (index-1) {
+            case 0:
+                return {
+                    color: "#ffffff",
+                    cursor: 'pointer',
+                    backgroundColor: "#212227",
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 1:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#E3E94B",
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 2:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#FFA400",
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 3:
+                return {
+                    color: "#ffffff",
+                    cursor: 'pointer',
+                    backgroundColor: "#7BC558",
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 4:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#EBB3E6",
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            default:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#EBB3E6",
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+        }
+    }
 
 
-    const onFinished = () => {
-        Modal.success({
-            className: 'modalSuccess',
-            title: 'Félicitations !',
-            content: <>
-                <div className={`${styles.modalWithGifImage}`}>
-                    <Image src={welcomeImgAux} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
-                    <Image src={welcomeImg} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
-                    <p>
-                        Félicitations, vous avez gagné  {
-                        prize[0]?.label
-                    }
-                    </p>
-                    <Col key={"key"} className={`w-100 d-flex mt-5 ${styles.giftBox}`} xs={24} sm={24} md={12} lg={8} span={6}>
-                        <div className={`${styles.ticketCardElement}`}>
 
-                            <div className={`${styles.ticketCardBody}`}>
-                                <div className={`${styles.prizeCardText} mb-1`}>
-                                    <p className={`${styles.prizesTag}
+    const [gainedBadgesList, setGainedBadgesList] = useState<BadgeType[]>([]);
+
+    const renderBadgeImage = (badgeId: string) => {
+        switch (badgeId.toString()) {
+            case "1":
+                return (
+                    <Image src={LevelOneImg} alt={"Infuseur"}></Image>
+                );
+            case "2":
+                return (
+                    <Image src={LevelTwoImg} alt={"Infuseur"}></Image>
+                );
+            case "3":
+                return (
+                    <Image src={LevelThreeImg} alt={"Infuseur"}></Image>
+                );
+            case "4":
+                return (
+                    <Image src={LevelFourImg} alt={"Infuseur"}></Image>
+                );
+            case "5":
+                return (
+                    <Image src={LevelFiveImg} alt={"Infuseur"}></Image>
+                );
+            default:
+                return (<></>);
+        }
+    }
+
+    const [userLoyaltyPoints, setUserLoyaltyPoints] = useState<any>(null);
+    const [finishGame, setFinishGame] = useState(false);
+
+    const onFinished = async () => {
+        await confirmTicketPlayed(ticketCode).then((response) => {
+            setFinishGame(true);
+            setUserLoyaltyPoints(response.userLoyaltyPoints);
+            let array: BadgeType[] = [];
+            let badges = response.gainedBadges;
+
+            badges.map((badge: BadgeType) => {
+                array.push(badge);
+            });
+            setGainedBadgesList(array);
+        }).catch((error) => {
+            setFinishGame(true);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    logoutAndRedirectAdminsUserToLoginPage();
+                } else if (error.response.status === 404) {
+                    Modal.error({
+                        className: 'modalError',
+                        title: 'Code invalide !',
+                        content: 'Votre code est invalide, veuillez réessayer.',
+                        okText: "D'accord",
+                    });
+                }
+            }
+        });
+
+
+
+
+    }
+
+
+    const [gamePlayed, setGamePlayed] = useState(false);
+    useEffect(() => {
+
+        if (finishGame && !gamePlayed) {
+            setGamePlayed(true);
+            Modal.success({
+                className: 'modalSuccess',
+                title: 'Félicitations !',
+                content: <>
+                    <div className={`${styles.modalWithGifImage}`}>
+                        <Image src={welcomeImgAux} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
+                        <Image src={welcomeImg} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
+                        <p>
+                            Félicitations, vous avez gagné  {
+                            prize[0]?.label
+                        }
+                        </p>
+                        <Col key={"key"} className={`w-100 d-flex mt-5 ${styles.giftBox}`} xs={24} sm={24} md={12} lg={8} span={6}>
+                            <div className={`${styles.ticketCardElement}`}>
+
+                                <div className={`${styles.ticketCardBody}`}>
+                                    <div className={`${styles.prizeCardText} mb-1`}>
+                                        <p className={`${styles.prizesTag}
                                      ${prize[0]?.id=="1" && styles.firstPrize}
                                         ${prize[0]?.id=="2" && styles.secondPrize}
                                         ${prize[0]?.id=="3" && styles.thirdPrize}
@@ -203,89 +341,192 @@ function PlayGameComponent() {
                                         ${prize[0]?.id=="5" && styles.fifthPrize}
                                    
                                      `}>
-                                        {prize[0]?.id=="1" && (
-                                            <Tag icon={<GiftOutlined />} color="success">
-                                                Gain ! N° {(prize[0]?.id.toString())}
-                                            </Tag>
+                                            {prize[0]?.id=="1" && (
+                                                <Tag icon={<GiftOutlined />} color="success">
+                                                    Gain ! N° {(prize[0]?.id.toString())}
+                                                </Tag>
 
+                                            )}
+                                            {prize[0]?.id=="2" && (
+                                                <Tag icon={<GiftOutlined />} color="success">
+                                                    Gain ! N° {(prize[0]?.id.toString())}
+                                                </Tag>
+
+                                            )}
+
+                                            {prize[0]?.id=="3" && (
+                                                <Tag icon={<GiftOutlined />} color="success">
+                                                    Gain ! N° {(prize[0]?.id.toString())}
+                                                </Tag>
+
+                                            )}
+                                            {prize[0]?.id=="4" && (
+                                                <Tag icon={<GiftOutlined />} color="success">
+                                                    Gain ! N° {(prize[0]?.id.toString())}
+                                                </Tag>
+
+                                            )}
+                                            {prize[0]?.id=="5" && (
+                                                <Tag icon={<GiftOutlined />} color="success">
+                                                    Gain ! N° {(prize[0]?.id.toString())}
+                                                </Tag>
+
+                                            )}
+                                        </p>
+
+                                        <p className={`my-3`}></p>
+                                        <div className={`${styles.ticketCardIconsPrize}`}>
+                                            {renderPrizeImage(prize[0]?.id)}
+                                        </div>
+                                        <p className={`${styles.prizeLabel}`}>{prize[0]?.label}</p>
+
+                                        <Image src={CongratulationsImg} className={`${styles.emoji} ${styles.congEmoji}`} alt={"CongratulationsImg"}></Image>
+                                        <Image src={BalloonImg} className={`${styles.emoji} ${styles.balloonEmoji}`} alt={"BalloonImg"}></Image>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </Col>
+
+                        <p>
+                            Votre code de participation est {validTicketCode}.
+                        </p>
+                        <p>
+                            Veuillez le présenter à votre magasin pour récupérer votre cadeau.
+                        </p>
+
+                        <p>
+                            Vos points de fidélité : {userLoyaltyPoints} points.
+                        </p>
+
+                        {gainedBadgesList.length > 0 && (
+                            <>
+                                <p>
+                                    Félicitations, vous avez remporté  <span className={`mx-1`}></span>
+                                    {gainedBadgesList.length > 1 && (
+                                        <>
+                                            <strong className={`text-danger`}>
+                                                {gainedBadgesList.length} badges de niveau
+                                            </strong>
+                                        </>
+                                    )}
+
+                                    {gainedBadgesList.length === 1 && (
+                                        <>
+                                            <strong className={`text-danger`}>
+                                                {gainedBadgesList.length} badge de niveau
+                                            </strong>
+                                        </>
+                                    )}
+                                </p>
+                            </>
+                        )}
+
+
+                    </div>
+                </>,
+                okText: "Continuer",
+                onOk() {
+
+                    if (gainedBadgesList.length > 0) {
+                        Modal.success({
+                            width: 600,
+                            className: 'modalSuccess',
+                            title: 'Félicitations !',
+                            content: <>
+                                <div className={`${styles.modalWithGifImage}`}>
+                                    <p>
+                                        Félicitations, vous avez remporté  <span className={`mx-1`}></span>
+                                        {gainedBadgesList.length > 1 && (
+                                            <>
+                                                <strong className={`text-danger`}>
+                                                    {gainedBadgesList.length} badges de niveau
+                                                </strong>
+                                            </>
                                         )}
-                                        {prize[0]?.id=="2" && (
-                                            <Tag icon={<GiftOutlined />} color="success">
-                                                Gain ! N° {(prize[0]?.id.toString())}
-                                            </Tag>
 
+                                        {gainedBadgesList.length === 1 && (
+                                            <>
+                                                <strong className={`text-danger`}>
+                                                    {gainedBadgesList.length} badge de niveau
+                                                </strong>
+                                            </>
                                         )}
 
-                                        {prize[0]?.id=="3" && (
-                                            <Tag icon={<GiftOutlined />} color="success">
-                                                Gain ! N° {(prize[0]?.id.toString())}
-                                            </Tag>
-
-                                        )}
-                                        {prize[0]?.id=="4" && (
-                                            <Tag icon={<GiftOutlined />} color="success">
-                                                Gain ! N° {(prize[0]?.id.toString())}
-                                            </Tag>
-
-                                        )}
-                                        {prize[0]?.id=="5" && (
-                                            <Tag icon={<GiftOutlined />} color="success">
-                                                Gain ! N° {(prize[0]?.id.toString())}
-                                            </Tag>
-
-                                        )}
                                     </p>
 
-                                    <p className={`my-3`}></p>
-                                    <div className={`${styles.ticketCardIconsPrize}`}>
-                                        {renderPrizeImage(prize[0]?.id)}
+                                    <div className={`${styles.badgesListDiv}`}>
+                                        {gainedBadgesList.map((badge: BadgeType) => {
+                                            return (
+                                                <>
+                                                    <div className={`${styles.badgeCardElement}`}>
+                                                        <div className={`${styles.badgeCardBody}`}>
+                                                            <div className={`${styles.badgeCardText} mb-1`}>
+                                                                <p className={`mt-5`}></p>
+                                                                <Rating
+                                                                    readonly={true}
+                                                                    allowHover={false}
+                                                                    showTooltip={true}
+                                                                    tooltipArray={['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4', 'Niveau 5']}
+
+                                                                    initialValue={parseInt(badge.id)}
+                                                                    size={30}
+                                                                    tooltipStyle={getTooltipStyle(parseInt(badge.id))}
+
+
+                                                                />
+                                                                <div className={`${styles.badgeLevelCardIcons}`}>
+                                                                    {renderBadgeImage(badge.id)}
+                                                                </div>
+                                                                <p className={`${styles.badgeLabelText}`}>{badge.name}</p>
+                                                                <p className={`${styles.badgeDescriptionLabelText}`}>{badge.description}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )
+                                        })}
                                     </div>
-                                    <p className={`${styles.prizeLabel}`}>{prize[0]?.label}</p>
 
-                                    <Image src={CongratulationsImg} className={`${styles.emoji} ${styles.congEmoji}`} alt={"CongratulationsImg"}></Image>
-                                    <Image src={BalloonImg} className={`${styles.emoji} ${styles.balloonEmoji}`} alt={"BalloonImg"}></Image>
                                 </div>
-                            </div>
+                            </>,
+                            okText: "Continuer",
+                            onOk() {
+                                setPlayGame(false);
+                                setGamePlayed(false);
+                                setFinishGame(false);
+                                setTicketCode("");
+                                Modal.success({
+                                    className: 'modalSuccess',
+                                    title: 'Ticket Gagnant !',
+                                    content: 'Votre ticket est validé, vous pouvez récupérer votre cadeau : veuillez le présenter à votre magasin.',
+                                    okText: "D'accord",
+                                });
+                            },
 
-                        </div>
-                    </Col>
+                        });
+                    } else {
+                        setPlayGame(false);
+                        setGamePlayed(false);
+                        setFinishGame(false);
+                        setTicketCode("");
+                        Modal.success({
+                            className: 'modalSuccess',
+                            title: 'Ticket Gagnant !',
+                            content: 'Votre ticket est validé, vous pouvez récupérer votre cadeau : veuillez le présenter à votre magasin.',
+                            okText: "D'accord",
+                        });
 
-                    <p>
-                        Votre code de participation est {validTicketCode}.
-                    </p>
-                    <p>
-                       Veuillez le présenter à votre magasin pour récupérer votre cadeau.
-                    </p>
-                </div>
-            </>,
-            okText: "Continuer",
-            onOk() {
-                confirmTicketPlayed(ticketCode).then((response) => {
-                    Modal.success({
-                        className: 'modalSuccess',
-                        title: 'Ticket Gagnant !',
-                        content: 'Votre ticket est validé, vous pouvez récupérer votre cadeau : veuillez le présenter à votre magasin.',
-                        okText: "D'accord",
-                    });
-                    setPlayGame(false);
-                }).catch((error) => {
-                    setPlayGame(false);
-                    if (error.response) {
-                        if (error.response.status === 401) {
-                            logoutAndRedirectAdminsUserToLoginPage();
-                        } else if (error.response.status === 404) {
-                            Modal.error({
-                                className: 'modalError',
-                                title: 'Code invalide !',
-                                content: 'Votre code est invalide, veuillez réessayer.',
-                                okText: "D'accord",
-                            });
-                        }
                     }
-                });
-            }
-        });
-    }
+
+
+
+
+
+                }
+            });
+        }
+    }, [finishGame]);
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();
     const [loading, setLoading] = useState(false);
@@ -487,6 +728,7 @@ function PlayGameComponent() {
                                                                           setPrize(defaultPrize);
                                                                           setFormatPrizeById("");
                                                                           setIsModalOpen(false);
+                                                                          setGamePlayed(false);
                                                                      }
                                                                 });
                                                            }}

@@ -416,7 +416,7 @@
     position: absolute !important;
     width: 24rem !important;
     height: 14rem !important;
-    top: 12rem !important;
+    top: 20rem !important;
     left: 0 !important;
     z-index: 0 !important;
 }
@@ -575,7 +575,7 @@
 
 .giftBox {
     position: absolute !important;
-    top: 15rem !important;
+    top: 20rem !important;
     left: 7rem !important;
     width: 100% !important;
 }
@@ -748,3 +748,88 @@
     box-shadow: none !important;
     border-color: #EBB3E6 !important;
 }
+
+.badgesListDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.badgeCardElement {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 2px 3px 18px 13px rgba(243, 243, 243, 0.62);
+    padding: 7px;
+    margin: 1rem 0;
+    text-align: center;
+    width: 100% !important;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.badgeCardBody {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+
+
+.badgeLevelCardIcons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.badgeLevelCardIcons img {
+    width: 3rem;
+    height: 3rem;
+    margin: 0;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+
+
+
+.badgeLabelText {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    width: 100% !important;
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+}
+
+.badgeDescriptionLabelText {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    width: 100% !important;
+    font-weight: bold;
+    font-size: 0.75rem;
+    letter-spacing: 0.09rem;
+    color: #5b5e64;
+    margin-top: 1rem !important;
+}
+
+.sideBarDiv {
+    border-right: #eeeeee 1px solid !important;
+}
+

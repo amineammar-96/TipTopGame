@@ -1,28 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {Col, Row} from "react-bootstrap";
-import {
-    ArrowLeftOutlined,
-    ArrowRightOutlined, CheckOutlined,
-    DownloadOutlined, DownOutlined,
-    LoginOutlined,
-    LogoutOutlined, StarFilled
-} from "@ant-design/icons";
-import styles from "@/styles/pages/favoriteStoreSelectionPage.module.css";
+import {ArrowRightOutlined, LogoutOutlined, StarFilled} from "@ant-design/icons";
+import styles from "@/styles/pages/clientStoreSelection/favoriteStoreSelectionPage.module.css";
 import "../../../../app/globalsSecond.css";
-import "@/styles/pages/favoriteStoreSelectionPageGlobal.css";
+import "@/styles/pages/clientStoreSelection/favoriteStoreSelectionPageGlobal.css";
 import logoutService from "@/app/service/LogoutService";
-import {Button, Form, Input, Modal, Radio, Select, Space} from 'antd';
+import {Button, Form, Input, Modal, Pagination, Radio, Space} from 'antd';
 import {associateClientToStore, getStoresForClient} from "@/app/api";
-import {Pagination} from 'antd';
 
 import welcomeImg from '@/assets/images/gifs/congratulations.gif';
 import Image from 'next/image';
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import storeImg from '@/assets/images/selectStore.png';
-
-
-
-
 
 
 function FavoriteStoreSelectionPage() {

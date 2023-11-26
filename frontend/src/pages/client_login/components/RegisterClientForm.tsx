@@ -22,7 +22,7 @@ import 'dayjs/locale/fr';
 import locale from 'antd/locale/fr_FR';
 
 
-import styles from '../../../styles/pages/clientRegisterPage.module.css';
+import styles from '../../../styles/pages/auth/clientRegisterPage.module.css';
 import {register} from '@/app/api';
 import Image from "next/image";
 import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";

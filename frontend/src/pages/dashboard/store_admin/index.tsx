@@ -1,7 +1,7 @@
 import React, {Component, useEffect, useState} from 'react';
 import Sidebar from "@/pages/dashboard/store_admin/components/sidebar";
 import {Row,Col} from "antd";
-import TopNavBar from "@/pages/dashboard/store_admin/components/topNavBar";
+import TopNavBar from "@/app/components/dashboardComponents/widgets/topNavBar";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 import StoresManagement from "@/app/components/dashboardComponents/StoreManagementComponent/StoresManagement";
@@ -22,6 +22,11 @@ import CorrespandancesTemplates
     from "@/app/components/dashboardComponents/CorrespandancesTemplatesComponents/CorrespandancesTemplates";
 import GeneralSettingsTemplates
     from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
+import BadgesListPage from "@/app/components/dashboardComponents/BadgesPageComponent/BadgesListPage";
+import ActionHistoryPage from "@/app/components/dashboardComponents/ActionHistory/ActionHistoryPage";
+import TicketsHistory from "@/app/components/dashboardComponents/TicketsHistory/TicketsHistory";
+import ConnectionHistory from "@/app/components/dashboardComponents/ConnectionHistory/ConnectionHistory";
+import EmailingHistory from "@/app/components/dashboardComponents/EmailingHistory/EmailingHistory";
 
 function storeAdminDashboard() {
 
@@ -107,8 +112,11 @@ function storeAdminDashboard() {
                                     {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
                                     {selectedMenuItem==="CorrespandancesTemplates" && <CorrespandancesTemplates></CorrespandancesTemplates>}
                                     {selectedMenuItem==="generalSettingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
-
-
+                                    {selectedMenuItem==="badgesItem" && <BadgesListPage></BadgesListPage>}
+                                    {selectedMenuItem==="actionHistory" && <ActionHistoryPage></ActionHistoryPage>}
+                                    {selectedMenuItem==="ticketsHistoryItem" && <TicketsHistory></TicketsHistory>}
+                                    {selectedMenuItem==="connectionsHistory" && <ConnectionHistory></ConnectionHistory>}
+                                    {selectedMenuItem==="emailsHistory" && <EmailingHistory></EmailingHistory>}
 
 
 

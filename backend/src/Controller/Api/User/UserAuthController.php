@@ -2,9 +2,11 @@
 // src/Controller/ApiController.php
 
 namespace App\Controller\Api\User;
+use App\Entity\ConnectionHistory;
 use App\Entity\EmailService;
 use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
+use App\Service\User\UserService;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Role;
@@ -29,11 +31,13 @@ class UserAuthController extends AbstractController {
 
     private UserPasswordHasherInterface $passwordEncoder;
     private  PostManMailerService $postManMailerService;
+    private UserService $userService;
 
-    public function __construct( EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder , PostManMailerService $postManMailerService ) {
+    public function __construct( EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder , PostManMailerService $postManMailerService , UserService $userService ) {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->postManMailerService = $postManMailerService;
+        $this->userService = $userService;
 
     }
 
@@ -46,10 +50,6 @@ class UserAuthController extends AbstractController {
     public function checkLoginAdmin( Request $request, JWTTokenManagerInterface $jwtManager, SerializerInterface $serializer ): JsonResponse
     {
         try {
-            $secretKey = $_ENV[ 'JWT_SECRET_KEY' ];
-            $publicKey = $_ENV[ 'JWT_PUBLIC_KEY' ];
-            $passphrase = $_ENV[ 'JWT_PASSPHRASE' ];
-
             $data = json_decode( $request->getContent(), true );
 
             $userFormData = [
@@ -88,6 +88,9 @@ class UserAuthController extends AbstractController {
 
         $age = $ageInterval->y;
 
+
+        $this->userService->createConnectionHistory($user);
+
         $userJson = [
             'id' => $user->getId(),
             'email' => $user->getEmail(),
@@ -118,10 +121,6 @@ class UserAuthController extends AbstractController {
     public function checkLoginClient( Request $request, JWTTokenManagerInterface $jwtManager, SerializerInterface $serializer ): JsonResponse
     {
         try {
-            $secretKey = $_ENV[ 'JWT_SECRET_KEY' ];
-            $publicKey = $_ENV[ 'JWT_PUBLIC_KEY' ];
-            $passphrase = $_ENV[ 'JWT_PASSPHRASE' ];
-
             $data = json_decode( $request->getContent(), true );
 
             $userFormData = [
@@ -161,6 +160,9 @@ class UserAuthController extends AbstractController {
         $ageInterval = $dateOfBirth->diff( $currentDate );
 
         $age = $ageInterval->y;
+
+        $this->userService->createConnectionHistory($user);
+
 
         $userJson = [
             'id' => $user->getId(),

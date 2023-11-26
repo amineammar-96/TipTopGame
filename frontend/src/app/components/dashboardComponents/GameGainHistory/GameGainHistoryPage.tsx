@@ -124,15 +124,8 @@ function GameGainHistoryPage() {
 
     const [selectedStoreId, setSelectedStoreId] = useState<string>('');
 
-    const handleStoreChange = (value: string) => {
-        setSelectedStoreId(value);
-        setSearchParam({
-            ...searchParam,
-            store: value,
-        });
-    };
 
-    const {token} = theme.useToken();
+
     const [form] = Form.useForm();
 
 

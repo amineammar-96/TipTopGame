@@ -73,7 +73,7 @@ function StoresList({ globalSelectedStoreId, onSelectStore  }: {  globalSelected
         storesList.forEach((store , index) => {
             const option: { label: string; value: string; key: any } = {
                 key: store.id,
-                label: (index+1)+'- ' + store.name + (store.siren ? " ( "+ store.siren +" ) - " : " - " ) + store.city + " " + store.postal_code + (store.status=='2' ? ' ( Fermé )' : '') ,
+                label: (index+1)+'- ' + store.name + " - " + store.city + " " + store.postal_code + (store.siren ? " ( "+ store.siren +" ) " : "" ) + (store.status=='2' ? ' ( Fermé )' : '') ,
                 value: store.id,
             };
             options.push(option as OptionType);

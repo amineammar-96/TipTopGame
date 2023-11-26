@@ -38,6 +38,7 @@ class DashboardController extends AbstractController
             'playedTickets' => 0,
             'confirmedTickets' => 0,
             'pendingTickets' => 0,
+            'loyaltyPoints' => 0,
         ];
 
         foreach ($tickets as $ticket) {
@@ -51,6 +52,13 @@ class DashboardController extends AbstractController
                 $counters['pendingTickets']++;
             }
         }
+
+        $loyaltyPoints = $user->getLoyaltyPoints();
+
+        foreach ($loyaltyPoints as $loyaltyPoint) {
+            $counters['loyaltyPoints'] += $loyaltyPoint->getPoints();
+        }
+
 
         return $this->json([
             'counters' => $counters,

@@ -223,7 +223,6 @@ class GenerateFakeData extends Command
             $userPersonalInfo->setPostalCode('75011');
             $userPersonalInfo->setCity('Paris');
             $userPersonalInfo->setCountry('France');
-            $userPersonalInfo->setPhone('+33 1 43 55 55 55');
 
             $this->entityManager->persist($store);
             $this->entityManager->persist($user);
@@ -277,7 +276,6 @@ class GenerateFakeData extends Command
             $userPersonalInfo->setPostalCode('75011');
             $userPersonalInfo->setCity('Paris');
             $userPersonalInfo->setCountry('France');
-            $userPersonalInfo->setPhone('+33 1 43 55 55 55');
         }
         $this->entityManager->flush();
 

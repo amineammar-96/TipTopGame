@@ -1,29 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     AppstoreOutlined,
-    BarChartOutlined,
     BarcodeOutlined,
     BulbOutlined,
-    CheckCircleOutlined,
-    ClusterOutlined,
-    ControlOutlined,
-    DashboardOutlined,
-    GiftOutlined, GlobalOutlined,
+    ControlOutlined, CrownOutlined,
+    DashboardOutlined, FieldTimeOutlined, FileSearchOutlined,
+    GiftOutlined,
+    GlobalOutlined,
     GoldOutlined,
-    HistoryOutlined,
-    LockOutlined,
+    HistoryOutlined, LoginOutlined,
     MailOutlined,
     MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    PieChartOutlined,
-    RadarChartOutlined,
+    MenuUnfoldOutlined, MessageOutlined,
     SettingOutlined,
-    ShopOutlined, SketchOutlined,
+    ShopOutlined,
+    SketchOutlined, SolutionOutlined, SoundOutlined, TeamOutlined,
     UserOutlined
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import {Button, Col, Menu, Row} from 'antd';
+import type {MenuProps} from 'antd';
+import {Button, Menu, Row} from 'antd';
 import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
+
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -52,21 +49,33 @@ const items: MenuItem[] = [
         getItem('Gestion des Profils', 'profilesManagementItem' , <UserOutlined />),
     ]),
 
-    getItem('Gestion des clients', 'clientsItem',<UserOutlined /> , [
+    getItem('Gestion des clients', 'clientsItem', <TeamOutlined /> , [
         getItem('Clients Inscrits', 'statisticItemClients' , <GlobalOutlined />),
         getItem('Participants Actifs ', 'statisticItemPrizes' , <SketchOutlined />),
     ]),
 
     getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
+        getItem('Historique des gains', 'historyPrizesItem' ,<SoundOutlined />),
+        getItem('Historique des tickets', 'ticketsHistoryItem' , <FileSearchOutlined />),
         getItem('Tickets', 'ticketsItem' , <BarcodeOutlined />),
         getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
-        getItem('Historiques des gains', 'historyPrizesItem' , <HistoryOutlined />),
+        getItem('Badges de Récompenses', 'badgesItem' , <CrownOutlined />),
+    ]),
+
+    getItem('Historique générale', 'generalHistory', <HistoryOutlined />, [
+        getItem('Historique des connexions', 'connectionsHistory' , <LoginOutlined />),
+        getItem('Historique des actions' , 'actionHistory' , <FieldTimeOutlined />),
+        getItem('Historique des e-mails' , 'emailsHistory' ,<SolutionOutlined />),
+
+
     ]),
 
     getItem('Règlement du Jeu', 'gameConfigItem', <ControlOutlined />, [
         getItem('Géneral', 'datesConfigItem' , <ControlOutlined />),
         getItem('Tirage au sort final', 'finalDrawItem' , <GoldOutlined />),
     ]),
+
+
 
     getItem('Paramètres', 'settingsItem', <SettingOutlined />, [
         getItem('Paramètres Généraux', 'generalSettingsItem' , <SettingOutlined />),
@@ -75,8 +84,8 @@ const items: MenuItem[] = [
 
 ];
 
-// submenu keys of the first level
-const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'gameConfigItem', 'settingsItem'];
+
+const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'generalHistory' , 'gameConfigItem',  'settingsItem'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
     selectedMenuItem: string;
@@ -84,10 +93,8 @@ interface SidebarProps {
     collapsed: boolean;
 }
 
-import Image from 'next/image';
-
 function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collapsed }: SidebarProps) {
-    // Specify the type for openKeys
+
     const [openKeys, setOpenKeys] = useState<string[]>([]);
 
 

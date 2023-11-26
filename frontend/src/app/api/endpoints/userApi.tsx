@@ -68,7 +68,6 @@ export async function addNewUserForStore(id:string , data: any ){
         return await fetchJson(`/store/${id}/user/add`, config)
 }
 
-//getUserProdileById
 export async function getUserProdileById(id:string) {
     const token = localStorage.getItem('loggedInUserToken');
     const config: AxiosRequestConfig = {
@@ -153,6 +152,36 @@ export async function getParticipants(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 }
+
+
+
+export async function getAllStoresClientsList(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    searchParams = {
+        ...searchParams,
+        'status': "",
+    }
+    const baseUrl = '/participants';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
+}
+
+
 
 
 //facebookCallBack
@@ -333,5 +362,28 @@ export async function updateUserEmail(id:string , data: any ) {
     };
 
     return await fetchJson(`/user/${id}/update_email`, config)
+
+}
+
+export async function getFiltredUsers(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const baseUrl = '/users';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+        },
+    };
+
+    return await fetchJson(finalUrl, config);
 
 }

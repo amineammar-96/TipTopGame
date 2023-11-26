@@ -54,7 +54,7 @@ export default function CKEditorComponent({ onChange , content , index, variable
                 import('@ckeditor/ckeditor5-build-classic').then((classicEditor) => {
                     const CKEditor = ckeditor.CKEditor;
                     const ClassicEditor = classicEditor.default;
-                    //setEditor(CKEditor);
+
                 });
             });
 

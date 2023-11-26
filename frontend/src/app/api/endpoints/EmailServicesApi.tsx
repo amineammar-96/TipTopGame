@@ -48,3 +48,30 @@ export async function getEmailTemplatesVariablesByService(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 }
+
+
+
+export async function getEmailingHistory(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    console.log("searchParamssearchParamssearchParams", searchParams);
+
+    const baseUrl = '/emailing_history';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(finalUrl, config);
+}

@@ -1,7 +1,7 @@
 import React, {Component, useEffect, useState} from 'react';
 import Sidebar from "@/pages/dashboard/store_employee/components/sidebar";
 import {Row,Col} from "antd";
-import TopNavBar from "@/pages/dashboard/store_employee/components/topNavBar";
+import TopNavBar from "@/app/components/dashboardComponents/widgets/topNavBar";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
 import StoresManagement from "@/app/components/dashboardComponents/StoreManagementComponent/StoresManagement";

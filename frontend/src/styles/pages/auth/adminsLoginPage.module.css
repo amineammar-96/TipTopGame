@@ -189,12 +189,15 @@ min-height: 100vh !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
-    background-color: var(--green) !important ;
+    background-color: var(--black) !important ;
   }
 
-  .loginBtnSubmit:hover{
-    background-color: var(--green) !important ;
+  .loginBtnSubmit:hover,
+  .loginBtnSubmit:focus,
+    .loginBtnSubmit:disabled{
+    background-color: var(--black) !important ;
     opacity: 0.9;
+      color: white;
   }
 
   .resetPasswordLink {

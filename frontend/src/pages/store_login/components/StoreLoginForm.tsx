@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react'
 import {Container, Row, Col} from 'react-bootstrap';
 import RedirectService from '../../../app/service/RedirectService';
 
-import {Button, message, Space} from 'antd';
+import {Button, message, Modal, Space} from 'antd';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -11,7 +11,7 @@ import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import '../../../app/globals.css'
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
 
-import styles from '../../../styles/pages/adminsLoginPage.module.css';
+import styles from '../../../styles/pages/auth/adminsLoginPage.module.css';
 import Icon, {
     LoginOutlined,
     EyeOutlined,
@@ -48,6 +48,8 @@ import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 
 export default function StoreLoginForm() {
     const { redirectAdminToToDashboard } = RedirectService();
+    const [loadingButton, setLoadingButton] = useState(false);
+
 
     const [loggedInUser, setLoggedInUser] = useState<any>(null);
     useEffect(() => {
@@ -57,7 +59,7 @@ export default function StoreLoginForm() {
         if (user) {
             setTimeout(() => {
                 setLoading(false);
-            }, 2000);
+            }, 1000);
         }
         redirectAdminToToDashboard();
     }, []);
@@ -91,9 +93,11 @@ export default function StoreLoginForm() {
 
     function login(formData: FieldType) {
         if(formData.email!="" && formData.password!="") {
-            setLoading(true);
+            setLoadingButton(true);
+            //setLoading(true);
             loginAdmin(formData).then((res) => {
                 setLoginError(false);
+                setLoadingButton(false);
                 console.log("res : ", res);
                 const loggedInUserToken = res.token;
                 const loggedInUser = res.userJson;
@@ -108,11 +112,22 @@ export default function StoreLoginForm() {
 
 
             }).catch((err) => {
-                setLoading(false);
+                setLoadingButton(false);
                 setLoginError(true);
                 setUserForm(userFormData);
-                message.destroy();
-                message.error('E-mail ou mot de passe incorrect !');
+                Modal.error({
+                    className: 'antdLoginRegisterModal',
+                    title: 'E-mail ou mot de passe incorrect !',
+                    okText: 'Réessayer',
+                    content: (
+                        <>
+                            <p>
+                                Veuillez vérifier votre e-mail et votre mot de passe et réessayer.
+                            </p>
+                        </>
+                    ),
+                });
+
                 console.log(err);
             });
         }
@@ -222,18 +237,17 @@ export default function StoreLoginForm() {
                                         />
                                     </Form.Item>
 
-                                    <Row className={`d-flex w-100 justify-content-between align-items-center`}>
-                                        <Col className={`m-0 py-2`}>
+                                    <Row className={`d-flex w-100 justify-content-start  align-items-start flex-column`}>
+                                        <Col className={`m-0 py-2 d-flex w-100 justify-content-start  align-items-start flex-column`}>
                                             <Form.Item<FieldType>
                                                 name="remember"
-                                                valuePropName="checked"
                                                 className={`m-0 p-0`}
                                             >
                                                 <Checkbox className={`${styles.sessionCkeckbox}`}> Garder ma session
                                                     active</Checkbox>
                                             </Form.Item>
                                         </Col>
-                                        <Col className={`d-flex w-100 justify-content-end align-items-center`}>
+                                        <Col className={`m-0 py-2 d-flex w-100 justify-content-start  align-items-start flex-column`}>
                                             <a href="#" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
                                                 ? <MailOutlined className={`${styles.resetPasswordIcon}`}/></a>
                                         </Col>
@@ -243,7 +257,9 @@ export default function StoreLoginForm() {
 
 
                                     <Form.Item className={`py-3 w-100`}>
-                                        <Button onClick={() => {
+                                        <Button  loading={loadingButton}
+                                                 disabled={loadingButton}
+                                                 onClick={() => {
                                             login(userForm);
                                         }} className={`w-100 ${styles.loginBtnSubmit}`} type="primary" htmlType="submit">
                                             Se connecter

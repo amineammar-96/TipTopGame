@@ -2,9 +2,11 @@
 
 namespace App\Controller\Api\Store;
 
+use App\Entity\ActionHistory;
 use App\Entity\EmailService;
 use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
+use App\Service\User\UserService;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -32,13 +34,16 @@ class StoreUserController extends AbstractController
      */
     private UserPasswordHasherInterface $passwordEncoder;
     private PostManMailerService $postManMailerService;
+    private UserService $userService;
 
 
-    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder , PostManMailerService $postManMailerService)
+    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder ,
+                                PostManMailerService $postManMailerService , UserService $userService)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->postManMailerService = $postManMailerService;
+        $this->userService = $userService;
 
     }
 
@@ -182,6 +187,8 @@ class StoreUserController extends AbstractController
         $user->setLastName($data['lastname']);
         $user->setPhone($data['phone']);
         $user->setGender($data['gender']);
+        $user->setIsActive(false);
+        $user->setCreatedAt(new \DateTime());
 
         $dateFormat = 'd/m/Y';
         $dateOfBirthString = $data[ 'dateOfBirth' ];
@@ -208,6 +215,23 @@ class StoreUserController extends AbstractController
         $user->setRole($role);
         $user->addStore($store);
         $store->addUser($user);
+
+        $roleLabel = "";
+        if ($this->getUser()->getRoles()[0] === Role::ROLE_ADMIN) {
+            $roleLabel = "L'Administateur";
+        } else if ($this->getUser()->getRoles()[0] == Role::ROLE_STOREMANAGER) {
+            $roleLabel = "Le Manager";
+        }
+        $userRole=$user->getRoles()[0];
+        $accountLabel="";
+        if($userRole==Role::ROLE_STOREMANAGER) {
+            $accountLabel = "Manager";
+        }else if($userRole==Role::ROLE_EMPLOYEE) {
+            $accountLabel = "Employé";
+        }
+        $storeName = $store->getName() ?? "";
+        $details = $roleLabel. " a ajouté un nouveau compte ".$accountLabel." pour le magasin" .$storeName;
+        $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , $user , $store , $details);
 
 
         $this->entityManager->persist($store);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import {Button} from "antd";
 import {RedoOutlined} from "@ant-design/icons";
@@ -31,7 +31,6 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
             const newPrizeNumber = Math.floor(Math.random() * options.length);
             console.log("New prize number:", newPrizeNumber);
 
-            //setPrizeNumber(newPrizeNumber);
             setMustSpin(true);
         }
     };
@@ -55,7 +54,7 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
                         innerRadius={10}
                         radiusLineWidth={2}
                         textDistance={60}
-                        spinDuration={1.2}
+                        spinDuration={0.2}
                         fontWeight={"500"}
                         onStopSpinning={() => {
                             onFinishedWheel();

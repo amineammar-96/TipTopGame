@@ -216,5 +216,17 @@ class EmailService
         return $data;
     }
 
+    public function getEmailServiceJson(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'label' => $this->getLabel(),
+            'description' => $this->getDescription(),
+            'templates' => $this->getTemplatesJson(),
+            'variables' => $this->getVariablesJson(),
+        ];
+    }
+
 
 }
