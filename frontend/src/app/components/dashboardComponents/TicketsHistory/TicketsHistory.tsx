@@ -172,7 +172,6 @@ function TicketHistory() {
     const handleDateChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
         if (dateString && date) {
-            console.log(date.format('DD/MM/YYYY'));
             setSearchParam({
                 ...searchParam,
                 start_date: dateString[0],
@@ -230,7 +229,7 @@ function TicketHistory() {
 
     useEffect(() => {
         getAllStoresClients();
-        form.resetFields(['client']);
+        //form.resetFields(['client']);
 
     },[searchParam.store , searchParam.employee]);
 
@@ -278,7 +277,7 @@ function TicketHistory() {
 
     useEffect(() => {
         getAllStoresEmployees();
-        form.resetFields(['employee']);
+        //form.resetFields(['employee']);
     },[searchParam.store , searchParam.client]);
 
     function renderStoresEmployees() {
@@ -305,9 +304,6 @@ function TicketHistory() {
                 </Option>
                 {userRole === 'ROLE_ADMIN' && (
                     <>
-                        <Option  value="1">
-                            Génération de Ticket
-                        </Option>
                         <Option value="2">
                             Impression de Ticket
                         </Option>

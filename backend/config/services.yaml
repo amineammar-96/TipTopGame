@@ -61,6 +61,9 @@ services:
     App\Command\GenerateBadges:
         tags: [ 'console.command' ]
 
+    App\Command\ResetGame:
+        tags: [ 'console.command' ]
+
     App\Service\Mailer\PostManMailerService:
         arguments:
             $mailtrapHost: '%env(MAILTRAP_HOST)%'

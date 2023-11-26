@@ -4,6 +4,7 @@ namespace App\Controller\Api\User;
 
 use App\Entity\ActionHistory;
 use App\Entity\Avatar;
+use App\Entity\Ticket;
 use App\Entity\User;
 use App\Entity\UserPersonalInfo;
 use App\Service\User\UserService;
@@ -217,61 +218,36 @@ class UserController extends AbstractController
 
 
 
-    public function getParticipantsList(Request $request): JsonResponse
+
+    public function getStoreClients(int $id): JsonResponse
     {
-
-        $store = $request->get('store', null);
-        $employee = $request->get('employee', null);
-
-
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('u')
-            ->from(User::class, 'u')
-            ->innerJoin('u.tickets', 't')
-            ->innerJoin('u.role', 'ur')
-            ->where('ur.name = :role')
-            ->setParameter('role', 'ROLE_CLIENT');
-
-
-
-        if($employee != "" && $employee != null){
-            $qb
-                ->andWhere('t.employee = :employeeId')
-                ->setParameter('employeeId', $employee);
+        $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);
+        if (!$store) {
+            return $this->json([
+                'error' => 'Store not found'
+            ], 404);
         }
 
-        if ($store !== null && $store !== "") {
-            $qb->innerJoin('u.stores', 's')
-                ->andWhere('s.id = :store')
-                ->setParameter('store', $store);
-        }
-
-
-
-
-
-
-        $userRole = $this->getUser()->getRoles()[0];
-        if ($userRole == Role::ROLE_STOREMANAGER || $userRole == Role::ROLE_EMPLOYEE) {
-            $qb->innerJoin('u.stores', 's')
-                ->andWhere('s.id = :store')
-                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
-        }
-
-
-
-        $users = $qb->getQuery()->getResult();
+        $users = $store->getUsers();
 
         $usersJson = [];
         foreach ($users as $user) {
-            $usersJson[] =
-                $user->getUserJson();
+            $userRole = $user->getRoles()[0];
+            if ($userRole == Role::ROLE_CLIENT) {
+                $usersJson[] =
+                    $user->getUserJson();
+            }
         }
 
         return $this->json([
             'users' => $usersJson,
+            'status' => 'success',
         ]);
     }
+
+
+
+
 
     public function getParticipants(Request $request): JsonResponse
     {
@@ -360,33 +336,64 @@ class UserController extends AbstractController
     }
 
 
-    public function getStoreClients(int $id): JsonResponse
+    public function getParticipantsList(Request $request): JsonResponse
     {
-        $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);
-        if (!$store) {
-            return $this->json([
-                'error' => 'Store not found'
-            ], 404);
+
+        $store = $request->get('store', null);
+        $employee = $request->get('employee', null);
+
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.role', 'ur')
+            ->where('ur.name = :role')
+            ->setParameter('role', 'ROLE_CLIENT');
+
+        if ($store !== null && $store !== "") {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
         }
 
-        $users = $store->getUsers();
+
+        if ($employee !== null && $employee !== "") {
+            $qb->innerJoin('u.stores', 's')
+                ->innerJoin('s.users', 'su')
+                ->andWhere('su.id = :employee')
+                ->setParameter('employee', $employee);
+        }
+
+
+
+
+
+
+
+
+        $userRole = $this->getUser()->getRoles()[0];
+        if ($userRole == Role::ROLE_STOREMANAGER || $userRole == Role::ROLE_EMPLOYEE) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
+        }
+
+
+
+        $users = $qb->getQuery()->getResult();
 
         $usersJson = [];
         foreach ($users as $user) {
-            $userRole = $user->getRoles()[0];
-            if ($userRole == Role::ROLE_CLIENT) {
-                $usersJson[] =
-                    $user->getUserJson();
-            }
+            $usersJson[] =
+                $user->getUserJson();
         }
 
         return $this->json([
             'users' => $usersJson,
-            'status' => 'success',
         ]);
     }
 
-    //getEmployeesList
+
     public function getEmployeesList(Request $request): JsonResponse
     {
 
@@ -407,7 +414,7 @@ class UserController extends AbstractController
         }
 
         if ($client != "" && $client != null) {
-            $qb->innerJoin('u.tickets', 't')
+            $qb->leftJoin('u.tickets', 't')
                 ->andWhere('t.user = :client')
                 ->setParameter('client', $client);
         }

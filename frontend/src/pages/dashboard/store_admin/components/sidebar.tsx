@@ -62,17 +62,19 @@ const items: MenuItem[] = [
         getItem('Badges de Récompenses', 'badgesItem' , <CrownOutlined />),
     ]),
 
+
+    getItem('Règlement du Jeu', 'gameConfigItem', <ControlOutlined />, [
+        getItem('Géneral', 'datesConfigItem' , <ControlOutlined />),
+        getItem('Tirage au sort final', 'finalDrawItem' , <GoldOutlined />),
+    ]),
+
+
     getItem('Historique générale', 'generalHistory', <HistoryOutlined />, [
         getItem('Historique des connexions', 'connectionsHistory' , <LoginOutlined />),
         getItem('Historique des actions' , 'actionHistory' , <FieldTimeOutlined />),
         getItem('Historique des e-mails' , 'emailsHistory' ,<SolutionOutlined />),
 
 
-    ]),
-
-    getItem('Règlement du Jeu', 'gameConfigItem', <ControlOutlined />, [
-        getItem('Géneral', 'datesConfigItem' , <ControlOutlined />),
-        getItem('Tirage au sort final', 'finalDrawItem' , <GoldOutlined />),
     ]),
 
 
@@ -85,7 +87,7 @@ const items: MenuItem[] = [
 ];
 
 
-const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'generalHistory' , 'gameConfigItem',  'settingsItem'];
+const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'gameConfigItem', 'generalHistory' , 'settingsItem'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
     selectedMenuItem: string;

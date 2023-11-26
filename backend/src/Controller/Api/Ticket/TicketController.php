@@ -8,6 +8,7 @@ use App\Entity\LoyaltyPoints;
 use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
+use DateTime;
 use Exception;
 use App\Entity\Role;
 use App\Entity\Store;
@@ -622,6 +623,7 @@ class TicketController extends AbstractController
     //getTicketsHistory
     public function getTicketsHistory(Request $request): JsonResponse
     {
+        $userRole = $this->getUser()->getRoles()[0];
 
         $ticket_code = $request->get('ticket_code', null);
         $store = $request->get('store', null);
@@ -629,76 +631,110 @@ class TicketController extends AbstractController
         $client = $request->get('client', null);
         $status = $request->get('status', null);
 
+        $start_date = $request->get('start_date', null);
+
+        $end_date = $request->get('end_date', null);
+
+
+        if ($start_date) {
+            $start_date = DateTime::createFromFormat('d/m/Y', $start_date);
+            $start_date->setTime(0, 0, 0);
+            $start_date = $start_date->format('Y-m-d H:i:s');
+
+        }
+
+        if ($end_date) {
+            $end_date = DateTime::createFromFormat('d/m/Y', $end_date);
+            $end_date->setTime(23, 59, 59);
+            $end_date = $end_date->format('Y-m-d H:i:s');
+        }
+
+
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
 
 
         $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('t')
-            ->from(TicketHistory::class, 't');
+        $qb->select('th')
+            ->from(TicketHistory::class, 'th');
 
-        if(($ticket_code != "" && $ticket_code != null) || ($status != "" && $status != null) || ($store != "" && $store != null)){
-            $qb->innerJoin('t.ticket', 'ti');
+        if(
+            ($userRole == Role::ROLE_STOREMANAGER) ||
+            ($ticket_code != "" && $ticket_code != null) || ($status != "" && $status != null) || ($store != "" && $store != null)){
+            $qb->innerJoin('th.ticket', 'tk');
         }
 
         if ($ticket_code != "" && $ticket_code != null) {
             $qb
-                ->andWhere('ti.ticket_code LIKE :ticket_code')
+                ->andWhere('tk.ticket_code LIKE :ticket_code')
                 ->setParameter('ticket_code', '%' . $ticket_code . '%');
         }
 
         if ($status != "" && $status != null) {
-            $qb->andWhere('t.status = :status')
+            $qb->andWhere('th.status = :status')
                 ->setParameter('status', $status);
         }else {
-            $qb->AndWhere('t.status != :status')
+            $qb->AndWhere('th.status != :status')
             ->setParameter('status', Ticket::STATUS_GENERATED);
         }
 
         if ($store != "" && $store != null) {
             $qb
-                ->andWhere('ti.store = :store')
+                ->andWhere('tk.store = :store')
                 ->setParameter('store', $store);
         }
 
         if ($employee != "" && $employee != null) {
-            $qb->innerJoin('t.employee', 'e')
+            $qb->innerJoin('th.employee', 'e')
                 ->andWhere('e.id = :employee')
                 ->setParameter('employee', $employee );
         }
 
         if ($client != "" && $client != null && !intval($client)) {
-            $qb->innerJoin('t.user', 'u')
+            $qb->innerJoin('th.user', 'u')
                 ->andWhere('u.id = :client')
                 ->setParameter('client', $client );
         }
 
         if ($client != "" && $client != null && intval($client)) {
-            $qb->innerJoin('t.user', 'u')
+            $qb->innerJoin('th.user', 'u')
                 ->andWhere('u.id = :id')
                 ->setParameter('id', $client);
         }
 
-        $userRole = $this->getUser()->getRoles()[0];
+        if ($start_date && $end_date) {
+            $qb->andWhere('th.updated_at BETWEEN :start_date AND :end_date')
+                ->setParameter('start_date', $start_date)
+                ->setParameter('end_date', $end_date);
+        } elseif ($start_date) {
+            $qb->andWhere('th.updated_at >= :start_date')
+                ->setParameter('start_date', $start_date);
+        } elseif ($end_date) {
+            $qb->andWhere('th.updated_at <= :end_date')
+                ->setParameter('end_date', $end_date);
+        }
+
+
+
+
 
         if ($userRole == Role::ROLE_EMPLOYEE) {
-            $qb->andWhere('t.employee = :employee')
+            $qb->andWhere('th.employee = :employee')
                 ->setParameter('employee', $this->getUser());
         }
 
         if ($userRole == Role::ROLE_STOREMANAGER) {
-            $qb->innerJoin('t.ticket', 'ti')
-                ->andWhere('ti.store = :store')
+            $qb->andWhere('tk.store = :store')
                 ->setParameter('store', $this->getUser()->getStores()[0]);
         }
 
         if ($userRole == Role::ROLE_CLIENT) {
-            $qb->innerJoin('t.ticket', 'ti')
-                ->andWhere('ti.user = :user')
+            $qb->innerJoin('th.ticket', 'tk')
+                ->andWhere('tk.user = :user')
                 ->setParameter('user', $this->getUser());
         }
 
-        $qb->orderBy('t.updated_at', 'DESC');
+        $qb->orderBy('th.updated_at', 'DESC');
 
         $totalCount = count($qb->getQuery()->getResult());
 

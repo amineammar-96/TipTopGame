@@ -9,6 +9,36 @@ azerty123456
 
 ### Symfony
 #### Migration and fixtures
+
+### Reset game and generate all data in one command 
+
+- This command will reset the game and generate all data (roles, store, admin, anonyme user, prizes, tickets, fake data, email services, email templates variables, email templates) and fake data (stores, managers, employees, clients , tickets gain history )
+
+
+
+#### - This may take a long time just wait for the end of the process please 😀
+
+```bash
+php bin/console app:reset-game
+```
+
+## Output
+```bash
+Default roles created successfully.
+Default company created successfully.
+Prizes created successfully.
+Badges generated successfully.
+Tickets generated successfully.
+Email Services generated successfully.
+Email Templates Variables generated successfully.
+Email Templates generated successfully.
+Data generated successfully.
+Game reset successfully.
+```
+
+
+# or
+
 Generate data :
 1) Generate Roles (ROLE_ADMIN, ROLE_STOREMANAGER, ROLE_EMPLOYEE, ROLE_CLIENT , ROLE_BAILIFF , ROLE_ANONYMOUS)
 2) Generate Store (TipTop) &&  Admin (Eric Bourdon (azerty123456) - super admin)  - Generate Anonyme user

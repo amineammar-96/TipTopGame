@@ -8,6 +8,7 @@ use App\Entity\Store;
 use App\Entity\UserPersonalInfo;
 use App\Entity\UserStore;
 use App\Entity\User;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,12 +21,14 @@ class AddTipTopCompany extends Command
 
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordEncoder;
+    private Connection $connection;
 
-    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder , Connection $connection)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->connection = $connection;
     }
 
     protected function configure()
@@ -38,6 +41,9 @@ class AddTipTopCompany extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+
+
         $store=$this->addCompany();
         $this->generateAnonymousProfile($this->entityManager , $output);
         $userManager=$this->addStoreManagerProfile();

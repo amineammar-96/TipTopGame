@@ -110,7 +110,7 @@ class ConnectionHistory
     private function getLoginTimeJson() : array
     {
         return [
-            'date' => $this->getLoginTime()->format('Y-m-d'),
+            'date' => $this->getLoginTime()->format('d-m-Y'),
             'time' => $this->getLoginTime()->format('H:i'),
         ];
     }
@@ -119,7 +119,7 @@ class ConnectionHistory
     {
         if($this->getLogoutTime()){
             return [
-                'date' => $this->getLogoutTime()->format('Y-m-d'),
+                'date' => $this->getLogoutTime()->format('d-m-Y'),
                 'time' => $this->getLogoutTime()->format('H:i'),
             ];
         }
