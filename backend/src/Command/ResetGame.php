@@ -45,41 +45,50 @@ class ResetGame extends Command
 
         $process = new Process(['php', 'bin/console', 'app:create-default-role']);
         $process->mustRun();
-        $output->writeln('Default roles created successfully.');
+        $output->writeln('Default roles created successfully. 1/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:create-default-tiptop-company']);
         $process->mustRun();
-        $output->writeln('Default company created successfully.');
+        $output->writeln('Default company created successfully. 2/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:add-prizes']);
         $process->mustRun();
-        $output->writeln('Prizes created successfully.');
+        $output->writeln('Prizes created successfully. 3/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-badges']);
         $process->mustRun();
-        $output->writeln('Badges generated successfully.');
+        $output->writeln('Badges generated successfully. 4/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-tickets']);
         $process->setTimeout(null);
         $process->mustRun();
-        $output->writeln('Tickets generated successfully.');
+        $output->writeln('Tickets generated successfully. 5/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-email-services']);
         $process->mustRun();
-        $output->writeln('Email Services generated successfully.');
+        $output->writeln('Email Services generated successfully. 6/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-email-templates-variables']);
         $process->mustRun();
-        $output->writeln('Email Templates Variables generated successfully.');
+        $output->writeln('Email Templates Variables generated successfully. 7/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-email-templates']);
         $process->mustRun();
-        $output->writeln('Email Templates generated successfully.');
+        $output->writeln('Email Templates generated successfully. 8/9');
+        $output->writeln('Loading...');
 
         $process = new Process(['php', 'bin/console', 'app:generate-data']);
         $process->setTimeout(null);
         $process->mustRun();
-        $output->writeln('Data generated successfully.');
+        $output->writeln('Data generated successfully. 9/9');
+        $output->writeln('100% Complete');
 
         $output->writeln('Game reset successfully.');
 
