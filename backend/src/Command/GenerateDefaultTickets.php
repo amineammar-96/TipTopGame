@@ -54,7 +54,7 @@ class GenerateDefaultTickets extends Command
             return $sum + $prize->getWinningRate();
         }, 0);
 
-        $ticketCount = 1000;
+        $ticketCount = 500000;
         $tickets = [];
         $generatedTicketCodes = [];
 

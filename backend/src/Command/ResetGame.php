@@ -38,52 +38,61 @@ class ResetGame extends Command
 
         $tables=['ticket_history','user_badge','store_user' ,'user_store','user_personal_info','user','store',
             'loyalty_points' ,'connection_history' , 'emailing_history' , 'action_history' ,'avatar' ];
-        $this->purgeTables($tables);
+        $this->purgeTables($tables , $output);
 
 
 
 
+        $output->writeln('Next  Generate Role...');
         $process = new Process(['php', 'bin/console', 'app:create-default-role']);
         $process->mustRun();
         $output->writeln('Default roles created successfully. 1/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Company and admin profile...');
         $process = new Process(['php', 'bin/console', 'app:create-default-tiptop-company']);
         $process->mustRun();
         $output->writeln('Default company created successfully. 2/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Prizes...');
         $process = new Process(['php', 'bin/console', 'app:add-prizes']);
         $process->mustRun();
         $output->writeln('Prizes created successfully. 3/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Badges...');
         $process = new Process(['php', 'bin/console', 'app:generate-badges']);
         $process->mustRun();
         $output->writeln('Badges generated successfully. 4/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Tickets...');
         $process = new Process(['php', 'bin/console', 'app:generate-tickets']);
         $process->setTimeout(null);
         $process->mustRun();
         $output->writeln('Tickets generated successfully. 5/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Email Services...');
         $process = new Process(['php', 'bin/console', 'app:generate-email-services']);
         $process->mustRun();
         $output->writeln('Email Services generated successfully. 6/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Email Templates Variables...');
         $process = new Process(['php', 'bin/console', 'app:generate-email-templates-variables']);
         $process->mustRun();
         $output->writeln('Email Templates Variables generated successfully. 7/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Email Templates...');
         $process = new Process(['php', 'bin/console', 'app:generate-email-templates']);
         $process->mustRun();
         $output->writeln('Email Templates generated successfully. 8/9');
         $output->writeln('Loading...');
 
+        $output->writeln('Next  Generate Fake Data...');
         $process = new Process(['php', 'bin/console', 'app:generate-data']);
         $process->setTimeout(null);
         $process->mustRun();
@@ -95,11 +104,13 @@ class ResetGame extends Command
         return Command::SUCCESS;
     }
 
-    private function purgeTables(array $tables): void
+    private function purgeTables(array $tables , $output): void
     {
+
         $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');
         $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
         foreach ($tables as $table) {
+            $output->writeln('Purging table '.$table);
             $this->connection->executeQuery('DELETE FROM '.$table);
             $this->connection->executeQuery('ALTER TABLE '.$table.' AUTO_INCREMENT = 1');
         }
