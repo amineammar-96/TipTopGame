@@ -183,7 +183,6 @@ class TicketController extends AbstractController
         $ticket = $this->entityManager->getRepository(Ticket::class)->findOneBy(
             ['ticket_code' => $ticketCode ,
                 'status' => Ticket::STATUS_PRINTED,
-                'store' => $this->getUser()->getStores()[0]
             ]
         );
 
@@ -197,8 +196,6 @@ class TicketController extends AbstractController
         $ticketAux = $this->entityManager->getRepository(Ticket::class)->createQueryBuilder('t')
             ->where('t.ticket_code = :ticket_code')
             ->andWhere('t.status IN (:status)')
-            ->andWhere('t.store = :store')
-            ->setParameter('store', $this->getUser()->getStores()[0])
             ->setParameter('ticket_code', $ticketCode)
             ->setParameter('status', $finalStatus)
             ->getQuery()

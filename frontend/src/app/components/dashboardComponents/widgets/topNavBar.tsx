@@ -61,9 +61,9 @@ function TopNavBar() {
             case 'ROLE_ADMIN':
                 return 'Espace Administrateur';
             case 'ROLE_EMPLOYEE':
-                return 'Espace Employé du Magasin (Caisse)';
+                return 'Espace Employé (Caisse)';
             case 'ROLE_STOREMANAGER':
-                return 'Espace Gérant du Magasin';
+                return 'Espace Gérant';
             case 'ROLE_CLIENT':
                 return 'Espace Client';
             default:
