@@ -9,41 +9,38 @@ import RouletteImg from "@/assets/images/roulette.png";
 import LoyaltyCardImg from "@/assets/images/loyaltyCard.png";
 import {Col, ConfigProvider, DatePicker, Radio, Row, Spin} from 'antd';
 import Image from 'next/image';
-import {CityStatsChart} from "@/app/components/dashboardComponents/HomePageComponent/components/CityStatsChart";
-import {
+import CityStatsChart from "@/app/components/dashboardComponents/HomePageComponent/components/CityStatsChart";
+import 
     PrizesChartDoughunt
-} from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesChartDoughnut";
+ from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesChartDoughnut";
 const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), { ssr: false });
 
 import CalendarImg from "@/assets/images/calendar.png";
 import PriceImg from "@/assets/images/price.png";
 import PlayImg from "@/assets/images/play.png";
-
 import StoresList from "@/app/components/dashboardComponents/HomePageComponent/components/StoresListHomePage";
-
-
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
-import {
+import 
     PrizesStatsWithAgeChart
-} from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesStatsWithAgeChart";
-import {
+ from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesStatsWithAgeChart";
+import 
     PrizesStatsWithSexChart
-} from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesStatsWithSexChart";
-import {
+ from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesStatsWithSexChart";
+import 
     GamePlayedStatsChart
-} from "@/app/components/dashboardComponents/HomePageComponent/components/GamePlayedStatsChart";
-import {
+ from "@/app/components/dashboardComponents/HomePageComponent/components/GamePlayedStatsChart";
+import 
     TopTeenParticipants
-} from "@/app/components/dashboardComponents/HomePageComponent/components/TopTeenParticipants";
-import {
+ from "@/app/components/dashboardComponents/HomePageComponent/components/TopTeenParticipants";
+import 
     PrizesWinStatsByStore
-} from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesWinStatsByStore";
+ from "@/app/components/dashboardComponents/HomePageComponent/components/PrizesWinStatsByStore";
 import {getAdminDashboardCardsCounters, getClientDashboardCardsCounters, getDashboardStatsData} from "@/app/api";
-import {PrizesStatsByStatusesChart} from './components/PrizesStatsByStatusesChart';
-import {GameStatusesTendanceStatsChart} from './components/GameStatusesTendanceStatsChart';
-import {PrizeStatsByGenderByAgeChart} from './components/PrizeStatsByGenderByAgeChart';
-import {PrizesCostTendance} from './components/PrizesCostTendance';
+import PrizesStatsByStatusesChart from './components/PrizesStatsByStatusesChart';
+import GameStatusesTendanceStatsChart from './components/GameStatusesTendanceStatsChart';
+import PrizeStatsByGenderByAgeChart from './components/PrizeStatsByGenderByAgeChart';
+import PrizesCostTendance from './components/PrizesCostTendance';
 import GiftsImg from "@/assets/images/surprisePlus.png";
 import TiptopEmployeeImg from "@/assets/images/tiptopEmployee.png";
 import DashboardSpinnigLoader from "@/app/components/widgets/DashboardSpinnigLoader";
