@@ -80,7 +80,6 @@ class PrizeController extends AbstractController
             'prizes' => $formattedJson,
             'status' => 'success',
 
-
         ], 200);
 
 

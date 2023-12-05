@@ -63,6 +63,9 @@ class Store
     #[ORM\OneToMany(mappedBy: 'store', targetEntity: Ticket::class)]
     private Collection $tickets;
 
+    #[ORM\OneToMany(mappedBy: 'store', targetEntity: ActionHistory::class)]
+    private Collection $actionHistories;
+
    
 
     
@@ -71,6 +74,7 @@ class Store
     {
         $this->users = new ArrayCollection();
         $this->tickets = new ArrayCollection();
+        $this->actionHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -305,6 +309,36 @@ class Store
             // set the owning side to null (unless already changed)
             if ($ticket->getStore() === $this) {
                 $ticket->setStore(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActionHistory>
+     */
+    public function getActionHistories(): Collection
+    {
+        return $this->actionHistories;
+    }
+
+    public function addActionHistory(ActionHistory $actionHistory): static
+    {
+        if (!$this->actionHistories->contains($actionHistory)) {
+            $this->actionHistories->add($actionHistory);
+            $actionHistory->setStore($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActionHistory(ActionHistory $actionHistory): static
+    {
+        if ($this->actionHistories->removeElement($actionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($actionHistory->getStore() === $this) {
+                $actionHistory->setStore(null);
             }
         }
 

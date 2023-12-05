@@ -23,7 +23,7 @@
 }
 
 .footerSendBtn {
-  background-color: var(--blue) !important;
+  background-color: var(--green) !important;
   color: white !important;
   border-color: white !important;
   min-height: 60px;

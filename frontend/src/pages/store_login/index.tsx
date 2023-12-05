@@ -1,7 +1,7 @@
 import React,{ useEffect} from 'react'
 import {Col, Row} from "react-bootstrap";
-import styles from "@/styles/pages/adminsLoginPage.module.css";
-import LoginAdminstForm from "@/pages/store_login/components/LoginAdminsForm";
+import styles from "@/styles/pages/auth/adminsLoginPage.module.css";
+import LoginAdminstForm from "@/pages/store_login/components/StoreLoginForm";
 
 export default function index() {
 

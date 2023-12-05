@@ -29,11 +29,16 @@
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    font-size: 1.1rem !important;
+    font-size: 1.03rem !important;
     background-color: var(--navbar-link-bg-color) ;
-    font-weight: bold !important;
+    font-weight: 500 !important;
     margin: 0 0.9rem !important;
+}
 
+@media screen and (max-width: 768px) {
+    .navLink{
+        font-size: 0.5rem !important;
+    }
 }
 
 
@@ -75,6 +80,9 @@
     border: 1px solid #2D2F2C !important;
     border-radius: 50px !important;
     padding: 7px 15px !important;
+    font-size: .9rem !important;
+
+    margin: 0 .4rem !important;
 
 }
 
@@ -93,6 +101,8 @@
     border: 1px solid #FF5555 !important;
     border-radius: 50px !important;
     padding: 7px 15px !important;
+    font-size: .9rem !important;
+    margin: 0 !important;
 
 }
 
@@ -118,7 +128,7 @@
 
 }
 .navLinkPlayBtn {
-    background-color: var(--blue) !important;
+    background-color: var(--green) !important;
     border: 1px solid var(--navbar-actions-bg) !important;
     margin: 0 25px;
     padding: 7px 25px !important;
@@ -128,7 +138,7 @@
 }
 
 .navLinkPlayBtn:hover {
-    background-color: var(--blue) !important;
+    background-color: var(--green) !important;
     color: white !important;
     opacity: 0.9 !important;
 }

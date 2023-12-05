@@ -1,19 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {
     BarcodeOutlined,
-    BulbOutlined,
-    ClusterOutlined,
-    DashboardOutlined, GiftOutlined,
+    BulbOutlined, CrownOutlined,
+    DashboardOutlined,
+    GiftOutlined,
     HistoryOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    PieChartOutlined, PlayCircleOutlined,
+    PieChartOutlined,
+    PlayCircleOutlined,
     SettingOutlined,
 } from '@ant-design/icons';
 
-import type { MenuProps } from 'antd';
+import type {MenuProps} from 'antd';
 import {Button, Col, Menu, Row} from 'antd';
 import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
+import {getClientBadges} from "@/app/api";
+import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
+import Image from "next/image";
+import TrophyIconImg from "@/assets/images/trophy.png";
+import LockIconImg from "@/assets/images/lock.png";
+import {Rating} from "react-simple-star-rating";
+import LevelOneImg from "@/assets/images/levels/level1.png";
+import LevelTwoImg from "@/assets/images/levels/level2.png";
+import LevelThreeImg from "@/assets/images/levels/level3.png";
+import LevelFourImg from "@/assets/images/levels/level4.png";
+import LevelFiveImg from "@/assets/images/levels/level5.png";
+
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -38,14 +51,19 @@ const items: MenuItem[] = [
     getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
         getItem('Tickets associés', 'ticketsItem' , <BarcodeOutlined />),
         getItem('Historiques des gains', 'historyPrizesItem' , <HistoryOutlined />),
+        getItem('Badges de Récompenses', 'badgesItem' , <CrownOutlined />),
         getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
     ]),
-    getItem('Statistiques des gains', 'statisticsItem',<PieChartOutlined /> ),
+
+
+
+
+getItem('Statistiques des gains', 'statisticsItem',<PieChartOutlined /> ),
     getItem('Paramètres du compte', 'settingsItem', <SettingOutlined />),
 
 ];
 
-// submenu keys of the first level
+
 const rootSubmenuKeys = ['dashboardItem', 'playGameItem', 'gameItem', 'statisticsItem', 'settingsItem'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
@@ -53,8 +71,22 @@ interface SidebarProps {
     toggleCollapsed: () => void;
     collapsed: boolean;
 }
+
+interface DataType {
+    'id' : string;
+    'name' : string;
+    'description' : string;
+}
+
+const DataTypeDefault : DataType = {
+    'id' : '',
+    'name' : '',
+    'description' : '',
+};
+
+
 function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collapsed }: SidebarProps) {
-    // Specify the type for openKeys
+
     const [openKeys, setOpenKeys] = useState<string[]>([]);
 
 
@@ -71,7 +103,123 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
     };
 
 
+    const [userRole, setUserRole] = useState("");
+    const [clientBadge, setClientBadge] = useState<DataType>(DataTypeDefault);
 
+    useEffect(() => {
+        setUserRole(localStorage.getItem('loggedInUserRole') ?? "");
+    }, []);
+
+    useEffect(() => {
+        let userId = localStorage.getItem('loggedInUserId') ?? "";
+        if (userRole == "ROLE_CLIENT" && userId != "") {
+            getClientBadges(userId).then((response) => {
+                if (response != null){
+                    if (response.badges != null){
+                        if (response.badges.length > 0){
+                            setClientBadge(response.badges[0]);
+                        }
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+
+    }, [userRole]);
+
+
+    useEffect(() => {
+        console.log(clientBadge , "clientBadge");
+    }, [clientBadge]);
+
+
+
+    const renderBadgeImage = (badgeId: string) => {
+        switch (badgeId.toString()) {
+            case "1":
+                return (
+                    <Image src={LevelOneImg} alt={"LevelOneImg"}></Image>
+                );
+            case "2":
+                return (
+                    <Image src={LevelTwoImg} alt={"LevelTwoImg"}></Image>
+                );
+            case "3":
+                return (
+                    <Image src={LevelThreeImg} alt={"LevelThreeImg"}></Image>
+                );
+            case "4":
+                return (
+                    <Image src={LevelFourImg} alt={"LevelFourImg"}></Image>
+                );
+            case "5":
+                return (
+                    <Image src={LevelFiveImg} alt={"LevelFiveImg"}></Image>
+                );
+            default:
+                return (<></>);
+        }
+    }
+    let getTooltipStyle = (index: number) => {
+        switch (index-1) {
+            case 0:
+                return {
+                    color: "#ffffff",
+                    cursor: 'pointer',
+                    backgroundColor: "#212227",
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 1:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#E3E94B",
+                    cursor: 'pointer',
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 2:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#FFA400",
+                    cursor: 'pointer',
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 3:
+                return {
+                    color: "#ffffff",
+                    cursor: 'pointer',
+                    backgroundColor: "#7BC558",
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            case 4:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#EBB3E6",
+                    cursor: 'pointer',
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+            default:
+                return {
+                    color: "#ffffff",
+                    backgroundColor: "#EBB3E6",
+                    cursor: 'pointer',
+                    fontSize: 10,
+                    marginLeft: 5,
+                    marginRight: 5,
+                };
+        }
+    }
 
 
     return (
@@ -93,6 +241,75 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
             defaultSelectedKeys={[`${selectedMenuItem}`]}
             onClick={({ key }) => onMenuItemClick(key)}
         />
+
+            {(userRole == "ROLE_CLIENT" && !collapsed) && (
+                <div className={`${styles.badgeLevelCardSideBar} ${styles.badgeLevelCardCheckedSideBar}`}>
+
+                   <div>
+                       <strong>
+                           <p className={`${styles.badgeLabelSideBar}`}>
+                            <span>
+                                                 Badge
+                                            </span>
+                           </p>
+                       </strong>
+                   </div>
+
+                                <Image
+                                    className={`${styles.checkedIcon}`}
+                                    src={TrophyIconImg}
+                                    alt={"TrophyIconImg"}
+                                >
+                                </Image>
+
+
+
+
+
+
+                    <div className={`${styles.ticketCardBody}`}>
+                        <div className={`${styles.badgeLevelCardText} mb-1`}>
+
+
+
+                            <p className={`mt-3`}></p>
+                            <Rating
+                                readonly={true}
+                                allowHover={false}
+                                showTooltip={true}
+                                tooltipArray={['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4', 'Niveau 5']}
+
+                                initialValue={parseInt(clientBadge.id)}
+                                size={20}
+                                tooltipStyle={getTooltipStyle(parseInt(clientBadge.id))}
+
+
+                            />
+                            <div className={`${styles.badgeLevelCardIcons}`}>
+                                {renderBadgeImage(clientBadge.id)}
+                            </div>
+
+
+                            <div className={`${styles.badgeCardContent}`}>
+                                <p className={`${styles.badgeLabelSideBar}`}>
+                                    <span>
+                                                 {clientBadge.name}
+                                            </span>
+                                </p>
+                            </div>
+                            <div className={`${styles.badgeCardContent}`}>
+                            </div>
+
+
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            )}
+
         </div>
     );
 }

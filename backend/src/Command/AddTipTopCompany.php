@@ -112,7 +112,6 @@ class AddTipTopCompany extends Command
         $userPersonalInfo->setPostalCode('75011');
         $userPersonalInfo->setCity('Paris');
         $userPersonalInfo->setCountry('France');
-        $userPersonalInfo->setPhone('+33 1 43 55 55 55');
 
         $this->entityManager->persist($userPersonalInfo);
 
@@ -152,7 +151,6 @@ class AddTipTopCompany extends Command
         $userPersonalInfo->setPostalCode('75011');
         $userPersonalInfo->setCity('Paris');
         $userPersonalInfo->setCountry('France');
-        $userPersonalInfo->setPhone('+33 1 43 55 55 55');
 
         $entityManager->persist($userPersonalInfo);
 

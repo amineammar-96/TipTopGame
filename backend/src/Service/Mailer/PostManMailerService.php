@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer;
 
+use App\Entity\EmailingHistory;
 use App\Entity\EmailService;
 use App\Entity\EmailTemplateVariable;
 use DateTime;
@@ -121,7 +122,7 @@ class PostManMailerService
 
 
 
-            $link= 'http://localhost:3000/activate_client_account/?email='.$receiver_email.'&token='.$token;
+            $link= 'http://localhost:3000/client/activate_account/?email='.$receiver_email.'&token='.$token;
 
             $wrapperBody = '<a href="' . $link . '" class="activateBtn">Vérifier mon compte</a>';
 
@@ -133,7 +134,7 @@ class PostManMailerService
             'client_lastname' => $receiver->getLastname(),
             'client_firstname' => $receiver->getFirstname(),
             'client_email' => $receiver->getEmail(),
-            'client_phone' => $receiver->getUserPersonalInfo()?->getPhone(),
+            'client_phone' => $receiver->getPhone(),
             'client_address' => $receiver->getUserPersonalInfo()?->getAddress(),
             'client_city' => $receiver->getUserPersonalInfo()?->getCity(),
             'client_country' => $receiver->getUserPersonalInfo()?->getCountry(),
@@ -141,7 +142,7 @@ class PostManMailerService
             'employee_lastname' => $receiver->getLastname(),
             'employee_firstname' => $receiver->getFirstname(),
             'employee_email' => $receiver->getEmail(),
-            'employee_phone' => $receiver->getUserPersonalInfo()?->getPhone(),
+            'employee_phone' => $receiver->getPhone(),
             'store_name' => $receiver->getStores()[0]?->getName(),
             'store_email' => $receiver->getStores()[0]?->getEmail(),
             'store_address' => $receiver->getStores()[0]?->getAddress(),
@@ -171,7 +172,7 @@ class PostManMailerService
 
         $wrappedBody = $this->renderTemplate('email/wrapper.html.twig', ['content' => $body]);
 
-        return $this->sendEmail($recipient, $subject, $wrappedBody, $emailService);
+        return $this->sendEmail($recipient, $subject, $wrappedBody, $emailService , $receiver);
 
         }
 
@@ -197,7 +198,7 @@ class PostManMailerService
     }
 
 
-        public function sendEmail($recipient, $subject, $body, $emailService): bool
+        public function sendEmail($recipient, $subject, $body, $emailService , $receiver): bool
         {
 
             try {
@@ -211,22 +212,33 @@ class PostManMailerService
                 $mail->isHTML(true);
                 $mail->Subject = $subject;
                 $mail->Body = $body;
-
                 $mail->send();
+                $this->createEmailingHistory($emailService , $receiver);
                 return true;
             } catch (Exception $e) {
-                dd($e->getMessage());
                 return false;
             }
         }
 
         private
-        function convertHtmlToText($subject)
+        function convertHtmlToText($subject): string
         {
             $subject = strip_tags($subject);
-            $subject = html_entity_decode($subject);
-            return $subject;
+            return html_entity_decode($subject);
         }
 
+    private function createEmailingHistory($emailService, $receiver): void
+    {
+        $emailService = $this->entityManager->getRepository(EmailService::class)->findOneBy(['name' => $emailService]);
 
+        $emailingHistory = new EmailingHistory();
+        $emailingHistory->setService($emailService);
+        $emailingHistory->setReceiver($receiver);
+        $emailingHistory->setSentAt(new DateTime());
+
+        $this->entityManager->persist($emailingHistory);
+        $this->entityManager->flush();
     }
+
+
+}

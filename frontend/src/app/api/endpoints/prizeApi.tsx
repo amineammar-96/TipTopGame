@@ -15,3 +15,18 @@ export async function getPrizes() {
 
     return await fetchJson(`/prizes/`, config);
 }
+
+
+export async function getClientBadges(id: string) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(`/client/badges/${id}`, config);
+}

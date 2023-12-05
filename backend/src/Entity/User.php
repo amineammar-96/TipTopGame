@@ -93,7 +93,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $token_expired_at = null;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Avatar $avatar_image = null;
+    private ?Avatar $avatar = null;
+
+    #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
+    private Collection $badges;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: LoyaltyPoints::class , cascade: ['persist', 'remove'])]
+    private Collection $loyaltyPoints;
+
+    #[ORM\OneToMany(mappedBy: 'user_done_action', targetEntity: ActionHistory::class, orphanRemoval: true)]
+    private Collection $actionHistories;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ConnectionHistory::class)]
+    private Collection $connectionHistories;
+
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: EmailingHistory::class)]
+    private Collection $emailingHistories;
+
 
     public function __construct()
     {
@@ -101,6 +117,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->stores = new ArrayCollection();
         $this->ticketsEmployee = new ArrayCollection();
         $this->ticketHistories = new ArrayCollection();
+        $this->badges = new ArrayCollection();
+        $this->loyaltyPoints = new ArrayCollection();
+        $this->actionHistories = new ArrayCollection();
+        $this->connectionHistories = new ArrayCollection();
+        $this->emailingHistories = new ArrayCollection();
     }
 
 
@@ -393,8 +414,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 'date' => $this->getUpdatedAt()?->format('d/m/Y'),
                 'time' => $this->getUpdatedAt()?->format('H:i'),
             ],
-            'avatar_image' => $this->getAvatarImage()?->getAvatarUrl(),
-            'avatar' => $this->getAvatarImage()?->getAvatarJson(),
+            'avatar_image' => $this->avatar?->getAvatarJson(),
+            'avatar' => $this->avatar?->getAvatarUrl(),
 
 
         ];
@@ -418,6 +439,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'age' => $this->getAge(),
             'gender' => $this->getGender(),
             'userPersonalInfo' => $this->getUserPersonalInfo()->getUserPersonalInfoJson(),
+            'is_activated' => $this->isIsActive(),
+            'created_at' => [
+                'date' => $this->getCreatedAt()->format('d/m/Y'),
+                'time' => $this->getCreatedAt()->format('H:i'),
+            ],
+            'activated_at' => [
+                'date' => $this->getActivitedAt()?->format('d/m/Y'),
+                'time' => $this->getActivitedAt()?->format('H:i'),
+            ],
+            'avatar_image' => $this->avatar?->getAvatarJson(),
+            'avatar' => $this->avatar?->getAvatarUrl(),
         ];
     }
 
@@ -582,18 +614,168 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAvatarImage(): ?Avatar
+    public function getAvatar(): ?Avatar
     {
-        return $this->avatar_image;
+        return $this->avatar;
     }
 
-    public function setAvatarImage(?Avatar $avatar_image): static
+    public function setAvatar(?Avatar $avatar): static
     {
-        if ($avatar_image->getUser() !== $this) {
-            $avatar_image->setUser($this);
+        if ($avatar->getUser() !== $this) {
+            $avatar->setUser($this);
         }
 
-        $this->avatar_image = $avatar_image;
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Badge>
+     */
+    public function getBadges(): Collection
+    {
+        return $this->badges;
+    }
+
+    public function addBadge(Badge $badge): static
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(Badge $badge): static
+    {
+        $this->badges->removeElement($badge);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LoyaltyPoints>
+     */
+    public function getLoyaltyPoints(): Collection
+    {
+        return $this->loyaltyPoints;
+    }
+
+    public function addLoyaltyPoint(LoyaltyPoints $loyaltyPoint): static
+    {
+        if (!$this->loyaltyPoints->contains($loyaltyPoint)) {
+            $this->loyaltyPoints->add($loyaltyPoint);
+            $loyaltyPoint->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLoyaltyPoint(LoyaltyPoints $loyaltyPoint): static
+    {
+        if ($this->loyaltyPoints->removeElement($loyaltyPoint)) {
+            // set the owning side to null (unless already changed)
+            if ($loyaltyPoint->getUser() === $this) {
+                $loyaltyPoint->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActionHistory>
+     */
+    public function getActionHistories(): Collection
+    {
+        return $this->actionHistories;
+    }
+
+    public function addActionHistory(ActionHistory $actionHistory): static
+    {
+        if (!$this->actionHistories->contains($actionHistory)) {
+            $this->actionHistories->add($actionHistory);
+            $actionHistory->setUserDoneAction($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActionHistory(ActionHistory $actionHistory): static
+    {
+        if ($this->actionHistories->removeElement($actionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($actionHistory->getUserDoneAction() === $this) {
+                $actionHistory->setUserDoneAction(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function getFullName(): string
+    {
+        return $this->getFirstname() . ' ' . $this->getLastname();
+    }
+
+    /**
+     * @return Collection<int, ConnectionHistory>
+     */
+    public function getConnectionHistories(): Collection
+    {
+        return $this->connectionHistories;
+    }
+
+    public function addConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if (!$this->connectionHistories->contains($connectionHistory)) {
+            $this->connectionHistories->add($connectionHistory);
+            $connectionHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if ($this->connectionHistories->removeElement($connectionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($connectionHistory->getUser() === $this) {
+                $connectionHistory->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EmailingHistory>
+     */
+    public function getEmailingHistories(): Collection
+    {
+        return $this->emailingHistories;
+    }
+
+    public function addEmailingHistory(EmailingHistory $emailingHistory): static
+    {
+        if (!$this->emailingHistories->contains($emailingHistory)) {
+            $this->emailingHistories->add($emailingHistory);
+            $emailingHistory->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmailingHistory(EmailingHistory $emailingHistory): static
+    {
+        if ($this->emailingHistories->removeElement($emailingHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($emailingHistory->getReceiver() === $this) {
+                $emailingHistory->setReceiver(null);
+            }
+        }
 
         return $this;
     }

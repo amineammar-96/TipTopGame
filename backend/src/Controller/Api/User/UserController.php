@@ -2,8 +2,11 @@
 
 namespace App\Controller\Api\User;
 
+use App\Entity\ActionHistory;
 use App\Entity\Avatar;
 use App\Entity\User;
+use App\Entity\UserPersonalInfo;
+use App\Service\User\UserService;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -30,12 +33,14 @@ class UserController extends AbstractController
      * @var UserPasswordHasherInterface
      */
     private UserPasswordHasherInterface $passwordEncoder;
+    private UserService $userService;
 
 
-    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager , UserPasswordHasherInterface $passwordEncoder , UserService $userService)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->userService = $userService;
 
     }
 
@@ -82,6 +87,32 @@ class UserController extends AbstractController
         $user->setPhone($data['phone']);
         $user->setStatus($data['status']);
         $user->setGender($data['gender']);
+
+
+
+        $roleLabel = "";
+        if ($this->getUser()->getRoles()[0] === Role::ROLE_ADMIN) {
+            $roleLabel = "L'Administateur";
+        } else if ($this->getUser()->getRoles()[0] == Role::ROLE_STOREMANAGER) {
+            $roleLabel = "Le Manager";
+        }
+
+        $userRole=$user->getRoles()[0];
+        $accountLabel="";
+        if($userRole==Role::ROLE_STOREMANAGER) {
+            $accountLabel = "Manager";
+        }else if($userRole==Role::ROLE_EMPLOYEE) {
+            $accountLabel = "Employé";
+        }
+        $store = $user->getStores()[0] ?? null;
+        $storeName = $store->getName() ?? "";
+        $details = $roleLabel. " a modifié le profil de ".$accountLabel." ".$user->getFullName()." du magasin ".$storeName;
+
+        $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , null , $store , $details);
+
+
+
+
 
 
 
@@ -184,6 +215,63 @@ class UserController extends AbstractController
         ]);
     }
 
+
+
+    public function getParticipantsList(Request $request): JsonResponse
+    {
+
+        $store = $request->get('store', null);
+        $employee = $request->get('employee', null);
+
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.tickets', 't')
+            ->innerJoin('u.role', 'ur')
+            ->where('ur.name = :role')
+            ->setParameter('role', 'ROLE_CLIENT');
+
+
+
+        if($employee != "" && $employee != null){
+            $qb
+                ->andWhere('t.employee = :employeeId')
+                ->setParameter('employeeId', $employee);
+        }
+
+        if ($store !== null && $store !== "") {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
+        }
+
+
+
+
+
+
+        $userRole = $this->getUser()->getRoles()[0];
+        if ($userRole == Role::ROLE_STOREMANAGER || $userRole == Role::ROLE_EMPLOYEE) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
+        }
+
+
+
+        $users = $qb->getQuery()->getResult();
+
+        $usersJson = [];
+        foreach ($users as $user) {
+            $usersJson[] =
+                $user->getUserJson();
+        }
+
+        return $this->json([
+            'users' => $usersJson,
+        ]);
+    }
 
     public function getParticipants(Request $request): JsonResponse
     {
@@ -303,6 +391,7 @@ class UserController extends AbstractController
     {
 
         $store =  $request->get('store' , null);
+        $client =  $request->get('client' , null);
 
         $qb = $this->entityManager->createQueryBuilder('u');
         $qb->select('u')
@@ -315,6 +404,12 @@ class UserController extends AbstractController
             $qb->innerJoin('u.stores', 's')
                 ->andWhere('s.id = :store')
                 ->setParameter('store', $store);
+        }
+
+        if ($client != "" && $client != null) {
+            $qb->innerJoin('u.tickets', 't')
+                ->andWhere('t.user = :client')
+                ->setParameter('client', $client);
         }
 
 
@@ -376,10 +471,26 @@ class UserController extends AbstractController
         $user->setFirstName($firstname);
         $user->setLastName($lastname);
         $user->setPhone($phone);
-        $user->getUserPersonalInfo()->setAddress($address);
-        $user->getUserPersonalInfo()->setPostalCode($postal_code);
-        $user->getUserPersonalInfo()->setCity($city);
-        $user->getUserPersonalInfo()->setCountry($country);
+
+        $userPersonalInfo = $user->getUserPersonalInfo();
+        if(!$userPersonalInfo){
+            $userPersonalInfo = new UserPersonalInfo();
+            $userPersonalInfo->setUser($user);
+            $userPersonalInfo->setAddress($address);
+            $userPersonalInfo->setPostalCode($postal_code);
+            $userPersonalInfo->setCity($city);
+            $userPersonalInfo->setCountry($country);
+            $this->entityManager->persist($userPersonalInfo);
+            $this->entityManager->flush();
+        }else {
+            $user->getUserPersonalInfo()->setAddress($address);
+            $user->getUserPersonalInfo()->setPostalCode($postal_code);
+            $user->getUserPersonalInfo()->setCity($city);
+            $user->getUserPersonalInfo()->setCountry($country);
+        }
+
+
+
 
 
         $this->entityManager->persist($user);
@@ -395,7 +506,7 @@ class UserController extends AbstractController
     public function updateUserAvatar($id, Request $request)
     {
         $user = $this->getUser();
-        $userAvatar = $user->getAvatarImage();
+        $userAvatar = $user->getAvatar();
 
         if ($request->files->has('avatar_file')) {
             $file = $request->files->get('avatar_file');
@@ -417,7 +528,7 @@ class UserController extends AbstractController
                 $userAvatar->setFilename($fileName);
                 $userAvatar->setPath($path);
 
-                $user->setAvatarImage($userAvatar);
+                $user->setAvatar($userAvatar);
 
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
@@ -547,6 +658,57 @@ class UserController extends AbstractController
             'user' => $user->getUserJson()
         ]);
 
+    }
+
+
+
+    //getUsers
+    public function getUsers(Request $request): JsonResponse
+    {
+
+        $store=  $request->get('store' , null);
+        $role=  $request->get('role' , null);
+
+        $loggedUser = $this->getUser();
+        $loggedUserRole = $loggedUser->getRoles()[0];
+
+
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('u')
+            ->from(User::class, 'u');
+
+        if($loggedUserRole == Role::ROLE_STOREMANAGER){
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $loggedUser->getStores()[0]->getId());
+        }
+
+        if ($store != "" && $store != null) {
+            $qb->innerJoin('u.stores', 's')
+                ->andWhere('s.id = :store')
+                ->setParameter('store', $store);
+        }
+
+        if ($role != "" && $role != null) {
+            $qb->innerJoin('u.role', 'r')
+                ->andWhere('r.name = :role')
+                ->setParameter('role', $role);
+        }
+
+        $users = $qb->getQuery()->getResult();
+
+        $usersJson = [];
+
+        foreach ($users as $user) {
+            $usersJson[] =
+                $user->getUserJson();
+        }
+
+        return $this->json([
+            'users' => $usersJson,
+            'status' => 'success',
+        ]);
     }
 
 }

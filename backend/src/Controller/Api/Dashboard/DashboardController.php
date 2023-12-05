@@ -38,6 +38,7 @@ class DashboardController extends AbstractController
             'playedTickets' => 0,
             'confirmedTickets' => 0,
             'pendingTickets' => 0,
+            'loyaltyPoints' => 0,
         ];
 
         foreach ($tickets as $ticket) {
@@ -51,6 +52,13 @@ class DashboardController extends AbstractController
                 $counters['pendingTickets']++;
             }
         }
+
+        $loyaltyPoints = $user->getLoyaltyPoints();
+
+        foreach ($loyaltyPoints as $loyaltyPoint) {
+            $counters['loyaltyPoints'] += $loyaltyPoint->getPoints();
+        }
+
 
         return $this->json([
             'counters' => $counters,
@@ -77,6 +85,7 @@ class DashboardController extends AbstractController
             "confirmedTickets" => 0,
         ];
 
+
         $user = $this->getUser();
         $userRole = $user->getRoles()[0];
 
@@ -84,6 +93,8 @@ class DashboardController extends AbstractController
         $counters['tickets'] = count($tickets);
 
         foreach ($tickets as $ticket) {
+
+
             if ($ticket->getStatus() != Ticket::STATUS_GENERATED) {
                 $counters['printedTickets']++;
             }
@@ -99,7 +110,9 @@ class DashboardController extends AbstractController
 
         $counters['ticketStock'] = $counters['tickets'] - $counters['printedTickets'];
 
+
         $users = $this->entityManager->getRepository(User::class)->findUsersOnRole($user , $storeId);
+
         foreach ($users as $user) {
             if ($user->getRoles()[0] == 'ROLE_CLIENT') {
                 $counters['clients']++;

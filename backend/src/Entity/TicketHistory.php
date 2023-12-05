@@ -95,4 +95,24 @@ class TicketHistory
 
         return $this;
     }
+
+    public function getUpdatedAtJson(): array
+    {
+        return [
+            'date' => $this->getUpdatedAt()?->format('d-m-Y'),
+            'time' => $this->getUpdatedAt()?->format('H:i'),
+        ];
+    }
+
+    public function getTicketHistoryJson(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'user' => $this->getUser()?->getUserJson(),
+            'status' => $this->getStatus(),
+            'employee' => $this->getEmployee()?->getUserJson(),
+            'ticket' => $this->getTicket()?->getTicketJson(),
+            'updated_at' => $this->getUpdatedAtJson()
+        ];
+    }
 }

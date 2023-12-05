@@ -6,3 +6,6 @@ export * from './endpoints/prizeApi';
 export * from './endpoints/EmailTemplatesApi';
 export * from './endpoints/EmailServicesApi';
 export * from './endpoints/EmailTemplatesVariablesApi';
+export * from './endpoints/BadgesApi';
+export * from './endpoints/ActionHistoryApi';
+export * from './endpoints/ConnectionHistoryApi';

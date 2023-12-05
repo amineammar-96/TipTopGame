@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react'
-import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import logoTipTop from '@/assets/images/logoTipTop.png';
@@ -15,12 +14,10 @@ import {
   GiftOutlined,
   MailOutlined,
   PlayCircleOutlined,
-  StarFilled,
   ExclamationCircleOutlined,
-  UsergroupAddOutlined, DashboardOutlined, UserOutlined, LogoutOutlined,
+  DashboardOutlined, UserOutlined, LogoutOutlined,
 } from '@ant-design/icons';
 import {Modal, Space} from 'antd';
-import RedirectService from "@/app/service/RedirectService";
 import Image from "next/image";
 
 
@@ -86,16 +83,15 @@ function NavbarComponent() {
     <div>
 
 
-       <Navbar expand="lg" className={`${styles.navbar}`}>
+       <Navbar expand="xl" className={`${styles.navbar}`}>
     <div className={styles.containerNavbar}>
       <Navbar.Brand className={`${styles.navbarBrand}`} href="#home">
         <Image
             className={`${styles.logoTipTopNavBar}`}
             src={logoTipTop}
           alt={"tiptop"}
-        >
+        />
 
-        </Image>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -137,7 +133,7 @@ function NavbarComponent() {
                             <>
                               <Nav.Link onClick={()=> {
                                 localStorage.removeItem('selectedMenuItem');
-                              }}  href="/dashboard/storeAdmin" className={`${styles.navLink} ${styles.navLinkStoreBtnDashboard}`}><DashboardOutlined /><span className='mx-2'>Tableau de board</span></Nav.Link>
+                              }}  href="/dashboard/store_admin" className={`${styles.navLink} ${styles.navLinkStoreBtnDashboard}`}><DashboardOutlined /><span className='mx-2'>Tableau de board</span></Nav.Link>
                               <Nav.Link onClick={()=>{
                                 logout();
                               }}  className={`${styles.navLink} ${styles.navLinkStoreBtnSignOut}`}><LogoutOutlined /><span className='mx-2'>Se déconnecter</span></Nav.Link>

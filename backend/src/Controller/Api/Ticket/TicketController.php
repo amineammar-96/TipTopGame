@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api\Ticket;
 
+use App\Entity\Badge;
 use App\Entity\EmailService;
+use App\Entity\LoyaltyPoints;
 use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
@@ -284,6 +286,13 @@ class TicketController extends AbstractController
 
     public function confirmTicketPlay(Request $request): JsonResponse
     {
+        if (!$this->getUser()) {
+            return $this->json([
+                'status' => "error",
+                'message' => "User not found",
+            ], 404);
+        }
+
         $data = json_decode($request->getContent(), true);
         $ticketCode = $data['ticketCode'] ?? null;
 
@@ -311,16 +320,93 @@ class TicketController extends AbstractController
         $ticketHistory->setUser($this->getUser());
         $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
         $ticketHistory->setUpdatedAt(new \DateTime());
-        $this->entityManager->persist($ticketHistory);
 
-        $this->entityManager->persist($ticket);
 
-        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
+        $points = 0;
+        $user = $ticket->getUser();
+        $prize = $ticket->getPrize();
+        if ($prize) {
+            $points = floatval($prize->getPrizeValue()) * 15;
+        }
 
-        $this->entityManager->flush();
+        $lastUserBadges= [];
+        foreach ($user->getBadges() as $badge){
+            $lastUserBadges[] = $badge->getId();
+        }
+
+
+        $loyaltyPoint = new LoyaltyPoints();
+        $loyaltyPoint->setPoints($points);
+        $loyaltyPoint->setCreatedAt(new \DateTime());
+        $user->addLoyaltyPoint($loyaltyPoint);
+
+
+        
+        $loyaltyPointsSum = 0;
+        $userLoyaltyPoints= $user->getLoyaltyPoints();
+
+        foreach ($userLoyaltyPoints as $item){
+            $loyaltyPointsSum += $item->getPoints();
+        }
+
+        $badgeLevels = [
+            200 => 1,
+            400 => 2,
+            600 => 3,
+            800 => 4,
+            1000 => 5,
+        ];
+
+        $badgesIds = [];
+        foreach ($badgeLevels as $pointsRange => $badgeId) {
+            if ($loyaltyPointsSum >= $pointsRange) {
+                $badgesIds[] = $badgeId;
+            }
+        }
+
+        $badges = [];
+
+        foreach ($badgesIds as $id) {
+            $badges[] = $this->entityManager->getRepository(Badge::class)->find($id);
+        }
+
+        foreach ($badges as $badge){
+            $user->addBadge($badge);
+        }
+
+
+        $newUserBadges =  array_diff($badgesIds,$lastUserBadges);
+
+
+
+        $gainedBadges= [];
+
+        foreach ($newUserBadges as $badgeId){
+            $bd = $this->entityManager->getRepository(Badge::class)->find($badgeId);
+            $gainedBadges[] = $bd->getBadgeJson();
+        }
+
+        if(count($gainedBadges) > 0){
+           // $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_BADGE_AWARD , $user , ['badges' => $gainedBadges]);
+        }
+
+
+        //$this->entityManager->persist($loyaltyPoint);
+
+        //$this->entityManager->persist($user);
+
+        //$this->entityManager->persist($ticketHistory);
+
+        //$this->entityManager->persist($ticket);
+
+        //$this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
+
+        //$this->entityManager->flush();
 
         return $this->json([
             'ticket' => $ticket->getTicketJson(),
+            'gainedBadges' => $gainedBadges,
+            'userLoyaltyPoints' => $loyaltyPointsSum,
         ], 200);
 
     }
@@ -530,6 +616,116 @@ class TicketController extends AbstractController
             'totalCount' => $totalCount
 
         ], 200);
+    }
+
+
+    //getTicketsHistory
+    public function getTicketsHistory(Request $request): JsonResponse
+    {
+
+        $ticket_code = $request->get('ticket_code', null);
+        $store = $request->get('store', null);
+        $employee = $request->get('employee', null);
+        $client = $request->get('client', null);
+        $status = $request->get('status', null);
+
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('t')
+            ->from(TicketHistory::class, 't');
+
+        if(($ticket_code != "" && $ticket_code != null) || ($status != "" && $status != null) || ($store != "" && $store != null)){
+            $qb->innerJoin('t.ticket', 'ti');
+        }
+
+        if ($ticket_code != "" && $ticket_code != null) {
+            $qb
+                ->andWhere('ti.ticket_code LIKE :ticket_code')
+                ->setParameter('ticket_code', '%' . $ticket_code . '%');
+        }
+
+        if ($status != "" && $status != null) {
+            $qb->andWhere('t.status = :status')
+                ->setParameter('status', $status);
+        }else {
+            $qb->AndWhere('t.status != :status')
+            ->setParameter('status', Ticket::STATUS_GENERATED);
+        }
+
+        if ($store != "" && $store != null) {
+            $qb
+                ->andWhere('ti.store = :store')
+                ->setParameter('store', $store);
+        }
+
+        if ($employee != "" && $employee != null) {
+            $qb->innerJoin('t.employee', 'e')
+                ->andWhere('e.id = :employee')
+                ->setParameter('employee', $employee );
+        }
+
+        if ($client != "" && $client != null && !intval($client)) {
+            $qb->innerJoin('t.user', 'u')
+                ->andWhere('u.id = :client')
+                ->setParameter('client', $client );
+        }
+
+        if ($client != "" && $client != null && intval($client)) {
+            $qb->innerJoin('t.user', 'u')
+                ->andWhere('u.id = :id')
+                ->setParameter('id', $client);
+        }
+
+        $userRole = $this->getUser()->getRoles()[0];
+
+        if ($userRole == Role::ROLE_EMPLOYEE) {
+            $qb->andWhere('t.employee = :employee')
+                ->setParameter('employee', $this->getUser());
+        }
+
+        if ($userRole == Role::ROLE_STOREMANAGER) {
+            $qb->innerJoin('t.ticket', 'ti')
+                ->andWhere('ti.store = :store')
+                ->setParameter('store', $this->getUser()->getStores()[0]);
+        }
+
+        if ($userRole == Role::ROLE_CLIENT) {
+            $qb->innerJoin('t.ticket', 'ti')
+                ->andWhere('ti.user = :user')
+                ->setParameter('user', $this->getUser());
+        }
+
+        $qb->orderBy('t.updated_at', 'DESC');
+
+        $totalCount = count($qb->getQuery()->getResult());
+
+        $currentPage = $page ?? 1;
+
+        $pageSize = $limit ?? 10;
+
+        $qb->setFirstResult(($currentPage - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+        $results = $qb->getQuery()->getResult();
+
+        $ticketHistory = [];
+
+        foreach ($results as $item) {
+            $ticketHistory[] =
+                $item->getTicketHistoryJson();
+        }
+
+        return $this->json([
+            'ticketHistory' => $ticketHistory,
+            'totalCount' => $totalCount
+
+        ], 200);
+
+
+
     }
 
 }
