@@ -83,7 +83,7 @@ export default function HistoryTable({selectedStoreId, data}: storeManagersTable
 
         {
             width: "10%",
-            title: 'Utilisateur',
+            title: 'Rôle',
             key: 'user',
             dataIndex: 'user',
             render: (user: any) => (

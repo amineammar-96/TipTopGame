@@ -6,12 +6,15 @@ use App\Entity\Prize;
 use App\Entity\Ticket;
 use App\Entity\User;
 use DateTime;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Process;
 
-
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Exception as DBALException;
 class DashboardController extends AbstractController
 {
     /**
@@ -20,8 +23,7 @@ class DashboardController extends AbstractController
     private EntityManagerInterface $entityManager;
 
 
-
-    public function __construct(EntityManagerInterface $entityManager )
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
 
@@ -72,7 +74,7 @@ class DashboardController extends AbstractController
 
         $startDate = $data['startDate'] ?? null;
         $endDate = $data['endDate'] ?? null;
-        $storeId=  $data['storeId'] ?? null;
+        $storeId = $data['storeId'] ?? null;
 
 
         $counters = [
@@ -89,7 +91,7 @@ class DashboardController extends AbstractController
         $user = $this->getUser();
         $userRole = $user->getRoles()[0];
 
-        $tickets = $this->entityManager->getRepository(Ticket::class)->findTicketsRelatedToUser($user , $startDate, $endDate, $storeId , $userRole);
+        $tickets = $this->entityManager->getRepository(Ticket::class)->findTicketsRelatedToUser($user, $startDate, $endDate, $storeId, $userRole);
         $counters['tickets'] = count($tickets);
 
         foreach ($tickets as $ticket) {
@@ -111,7 +113,7 @@ class DashboardController extends AbstractController
         $counters['ticketStock'] = $counters['tickets'] - $counters['printedTickets'];
 
 
-        $users = $this->entityManager->getRepository(User::class)->findUsersOnRole($user , $storeId);
+        $users = $this->entityManager->getRepository(User::class)->findUsersOnRole($user, $storeId);
 
         foreach ($users as $user) {
             if ($user->getRoles()[0] == 'ROLE_CLIENT') {
@@ -133,12 +135,12 @@ class DashboardController extends AbstractController
 
         $startDate = $request->get('startDate') ?? date('Y-m-d');
         $endDate = $request->get('endDate') ?? date('Y-m-d');
-        $storeId=  $request->get('storeId') ?? null;
+        $storeId = $request->get('storeId') ?? null;
 
 
         $user = $this->getUser();
 
-        $tickets = $this->entityManager->getRepository(Ticket::class)->findByDateAndStore($startDate, $endDate, $storeId,$user);
+        $tickets = $this->entityManager->getRepository(Ticket::class)->findByDateAndStore($startDate, $endDate, $storeId, $user);
 
         $counters = [
             'tickets' => count($tickets),
@@ -163,13 +165,12 @@ class DashboardController extends AbstractController
         }
 
 
-
         $stats = [];
 
         $gainByAge = $this->getGainByAge($tickets);
         $stats['gainByAge'] = $gainByAge;
 
-        $gainByGender=$this->getGainByGender($tickets);
+        $gainByGender = $this->getGainByGender($tickets);
         $stats['gainByGender'] = $gainByGender;
 
         $gainByPrize = $this->getGainByPrize($tickets);
@@ -191,7 +192,6 @@ class DashboardController extends AbstractController
         $stats["prizesCostTendance"] = $this->getPrizesCostTendance($tickets);
 
         $totalPrizesPrice = $this->getTotalPrizesPrice($tickets);
-
 
 
         return $this->json([
@@ -216,7 +216,7 @@ class DashboardController extends AbstractController
         $userIds = [];
         foreach ($tickets as $ticket) {
             $user = $ticket->getUser();
-            if ($user && !in_array($user->getId(), $userIds)){
+            if ($user && !in_array($user->getId(), $userIds)) {
                 $userIds[] = $user->getId();
                 $age = $user->getAge();
                 if ($age >= 18 && $age <= 24) {
@@ -303,7 +303,7 @@ class DashboardController extends AbstractController
         $stats = [];
         foreach ($tickets as $ticket) {
             $store = $ticket->getStore();
-            if ($store){
+            if ($store) {
                 $city = $store->getCity();
                 if ($city) {
                     if (!isset($stats[$city])) {
@@ -327,13 +327,13 @@ class DashboardController extends AbstractController
             $store = $ticket->getStore();
             if ($store) {
                 $storeName = $store->getName();
-                    if ($storeName) {
-                        if (!isset($stats[$storeName])) {
-                            $stats[$storeName] = 0;
-                        }
-                        $stats[$storeName]++;
+                if ($storeName) {
+                    if (!isset($stats[$storeName])) {
+                        $stats[$storeName] = 0;
                     }
+                    $stats[$storeName]++;
                 }
+            }
 
         }
 
@@ -350,7 +350,7 @@ class DashboardController extends AbstractController
         $userIds = [];
         foreach ($tickets as $ticket) {
             $user = $ticket->getUser();
-            if ($user && !in_array($user->getId(), $userIds)){
+            if ($user && !in_array($user->getId(), $userIds)) {
                 $userIds[] = $user->getId();
                 $username = $user->getFirstName() . ' ' . $user->getLastName();
                 $stats[$username] = [
@@ -377,26 +377,23 @@ class DashboardController extends AbstractController
         }
 
 
-
-
-
         usort($stats, function ($a, $b) {
             $levelA = $a['level'];
             $levelB = $b['level'];
             return $levelB - $levelA;
         });
 
-        $i=0;
+        $i = 0;
         foreach ($stats as $username => $stat) {
             $i++;
             $stats[$username]['key'] = $i;
         }
 
 
-            $top5Clients = array_slice($stats, 0, 50, true);
+        $top5Clients = array_slice($stats, 0, 50, true);
 
-            return $top5Clients;
-        }
+        return $top5Clients;
+    }
 
     private function getParticipationTendance($tickets)
     {
@@ -450,35 +447,35 @@ class DashboardController extends AbstractController
         }
 
 
-        uksort($stats, function($a, $b) {
+        uksort($stats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($statsAux, function($a, $b) {
+        uksort($statsAux, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($thirdStats, function($a, $b) {
+        uksort($thirdStats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($cancelledStats, function($a, $b) {
+        uksort($cancelledStats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($expiredStats, function($a, $b) {
+        uksort($expiredStats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
@@ -549,7 +546,6 @@ class DashboardController extends AbstractController
             "name" => "Expirés",
             "value" => $stats["expired"],
         ];
-
 
 
         return $resArray;
@@ -656,28 +652,26 @@ class DashboardController extends AbstractController
             }
         }
 
-        uksort($stats, function($a, $b) {
+        uksort($stats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($statsAux, function($a, $b) {
+        uksort($statsAux, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($thirdStats, function($a, $b) {
+        uksort($thirdStats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
-
-
 
 
         $stats = array_reverse($stats);
@@ -732,14 +726,14 @@ class DashboardController extends AbstractController
             }
         }
 
-        uksort($stats, function($a, $b) {
+        uksort($stats, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
             return $dateA <=> $dateB;
         });
 
-        uksort($statsAux, function($a, $b) {
+        uksort($statsAux, function ($a, $b) {
             $dateA = DateTime::createFromFormat('d/m/Y', $a);
             $dateB = DateTime::createFromFormat('d/m/Y', $b);
 
@@ -755,6 +749,56 @@ class DashboardController extends AbstractController
         ];
 
 
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function resetGame(Request $request): JsonResponse
+    {
+
+
+
+
+
+        chdir('/Users/amineammar/Desktop/tittopProjet fin d\'année/projet/code source/backend');
+
+        $process = new Process(['php', 'bin/console', 'doctrine:schema:drop --force']);
+
+        $process->mustRun();
+
+
+        $process = new Process(['rm', './migrations/*.php', '--force']);
+        $process->mustRun();
+
+
+
+
+        $process = new Process(['php', 'bin/console', 'cache:clear']);
+        $process->mustRun();
+
+
+        $process = new Process(['php', 'bin/console', 'make:migration']);
+        $process->mustRun();
+
+
+        $process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate']);
+        $process->mustRun();
+
+
+
+
+
+
+
+        return new JsonResponse(['message' => 'Game reset successfully']);
     }
 
 }

@@ -46,8 +46,8 @@ class AddPrizesCommand extends Command
             ['un infuseur à thé', 'Infuser', 'Infuser', 'Infuser', 60.0 , 14.99],
             ['Une boite de 100g d’un thé détox ou d’infusion', 'Tea Box (100g)', 'physical', 'Tea Box (100g)', 20.0 ,24.99],
             ['Une boite de 100g d’un thé signature', 'Signature Tea Box (100g)', 'physical', 'Tea Box (100g)', 10.0 , 29.99],
-            ['un coffret découverte à 39€', 'Discovery Set (Value: 39€)', 'physical', '39€', 6.0 , 39.00],
-            ['un coffret découverte à 69€', 'Discovery Set (Value: 69€)', 'physical', '69€', 4.0 , 69.00],
+            ['un coffret découverte à 39€', 'Discovery box (Value: 39€)', 'physical', '39€', 6.0 , 39.00],
+            ['un coffret découverte à 69€', 'Discovery box (Value: 69€)', 'physical', '69€', 4.0 , 69.00],
         ];
 
         foreach ($prizesData as $prizeData) {

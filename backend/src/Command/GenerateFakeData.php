@@ -56,16 +56,12 @@ class GenerateFakeData extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-
-
         $randomTickets = $this->getRandomTickets();
         $this->generateFakeStores($output);
         $this->generateFakeManager($output);
         $this->generateFakeEmployee($output);
         $this->generateFakeClient($output);
         $this->generateFakeGain($output , $randomTickets);
-
 
         $output->writeln('Fake data generated.');
         return Command::SUCCESS;
@@ -90,7 +86,7 @@ class GenerateFakeData extends Command
 
         return $ticketRepository->createQueryBuilder('t')
             ->setFirstResult($offset)
-            ->setMaxResults(2000)
+            ->setMaxResults(400)
             ->getQuery()
             ->getResult();
     }
@@ -98,7 +94,7 @@ class GenerateFakeData extends Command
     private function generateFakeStores($output)
     {
         $faker = Factory::create();
-        $storeCount = 10;
+        $storeCount = 5;
 
         $cities = ["Paris" , "Lyon" , "Marseille" , "Madrid" , "Bordeaux"];
 
@@ -123,7 +119,7 @@ class GenerateFakeData extends Command
             $this->entityManager->persist($store);
         }
 
-        $output->writeln('10 stores added to the store table.');
+        $output->writeln('5 stores added to the store table.');
         $this->entityManager->flush();
     }
 
@@ -141,7 +137,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -178,7 +174,7 @@ class GenerateFakeData extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln('40 managers added to the user table. (relationship too)');
+        $output->writeln('20 managers added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -197,7 +193,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 300; $i++) {
+        for ($i = 0; $i < 40; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -229,7 +225,7 @@ class GenerateFakeData extends Command
         }
         $this->entityManager->flush();
 
-        $output->writeln('300 employees added to the user table. (relationship too)');
+        $output->writeln('40 employees added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -248,7 +244,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 600; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -279,7 +275,7 @@ class GenerateFakeData extends Command
         }
         $this->entityManager->flush();
 
-        $output->writeln('600 clients added to the user table. (relationship too)');
+        $output->writeln('100 clients added to the user table. (relationship too)');
         return Command::SUCCESS;
     }
 
@@ -296,12 +292,11 @@ class GenerateFakeData extends Command
             return;
         }
 
-        $clients = $this->getRandomUsersByRole($clientRole, 100);
+        $clients = $this->getRandomUsersByRole($clientRole, 20);
 
-        $employees = $this->getRandomUsersByRole($employeeRole, 100);
+        $employees = $this->getRandomUsersByRole($employeeRole, 20);
 
-        //$statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER , Ticket::STATUS_CANCELLED , Ticket::STATUS_EXPIRED];
-        $statuses = [Ticket::STATUS_WINNER];
+        $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER , Ticket::STATUS_CANCELLED , Ticket::STATUS_EXPIRED];
         foreach ($randomTickets as $ticket) {
             $randomDate = new \DateTimeImmutable('now - ' . mt_rand(0, 5) . ' days');
             $randomStatus = $statuses[array_rand($statuses)];
@@ -321,8 +316,12 @@ class GenerateFakeData extends Command
             $ticket->setStore($employee->getStores()[0]);
             $employee->addTicket($ticket);
             $ticket->setUser($client);
+            $client->addStore($employee->getStores()[0]);
+            $store = $employee->getStores()[0];
+            $store->addUser($client);
 
 
+            $this->entityManager->persist($store);
 
             $this->entityManager->persist($ticket);
             $this->entityManager->persist($client);

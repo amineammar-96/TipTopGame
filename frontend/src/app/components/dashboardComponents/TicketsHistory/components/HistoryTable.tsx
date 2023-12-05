@@ -142,7 +142,7 @@ export default function HistoryTable({selectedStoreId, data}: HistoryTableProps)
                 <>
                     {
                         user ?
-                            <span>{user.firstname} {user.lastname}</span>
+                            <span>{user.lastname} {user.firstname}</span>
                             :
                             <span>
                                 <StopOutlined />

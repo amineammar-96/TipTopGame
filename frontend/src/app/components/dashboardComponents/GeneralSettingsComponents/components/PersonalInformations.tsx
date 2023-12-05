@@ -285,7 +285,7 @@ function PersonalInformations() {
                                             )}
 
                                             {personalInfoForm.role === 'ROLE_EMPLOYEE' && (
-                                                <Tag color="orange">Employé de magasin ( caissier )
+                                                <Tag color="orange">Employé ( caissier )
                                                 </Tag>
                                             )}
 

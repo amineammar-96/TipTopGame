@@ -113,7 +113,7 @@ class ActionHistory
     public function getCreatedAtJson(): array
     {
         return [
-            'date' => $this->getCreatedAt()->format('Y-m-d'),
+            'date' => $this->getCreatedAt()->format('d-m-Y'),
             'time' => $this->getCreatedAt()->format('H:i'),
         ];
     }

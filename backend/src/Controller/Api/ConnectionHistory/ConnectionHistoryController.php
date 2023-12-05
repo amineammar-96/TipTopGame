@@ -7,6 +7,7 @@ use App\Entity\ConnectionHistory;
 
 use App\Entity\Role;
 use App\Entity\User;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +40,20 @@ class ConnectionHistoryController extends AbstractController
         $limit = $request->get('limit', 10);
         $start_date = $request->get('start_date', null);
         $end_date = $request->get('end_date', null);
+
+        if ($start_date) {
+            $start_date = DateTime::createFromFormat('d/m/Y', $start_date);
+            $start_date->setTime(0, 0, 0);
+            $start_date = $start_date->format('Y-m-d H:i:s');
+
+        }
+
+        if ($end_date) {
+            $end_date = DateTime::createFromFormat('d/m/Y', $end_date);
+            $end_date->setTime(23, 59, 59);
+            $end_date = $end_date->format('Y-m-d H:i:s');
+        }
+
 
         $query = $this->entityManager->createQueryBuilder()
             ->select('ch')
@@ -74,13 +89,15 @@ class ConnectionHistoryController extends AbstractController
                 ->setParameter('user' , $userEntity);
         }
 
-        if($start_date){
-            $query->andWhere('ch.created_at >= :start_date')
+        if ($start_date && $end_date) {
+            $query->andWhere('ch.connection_date BETWEEN :start_date AND :end_date')
+                ->setParameter('start_date', $start_date)
+                ->setParameter('end_date', $end_date);
+        } elseif ($start_date) {
+            $query->andWhere('ch.connection_date >= :start_date')
                 ->setParameter('start_date', $start_date);
-        }
-
-        if($end_date){
-            $query->andWhere('ch.created_at <= :end_date')
+        } elseif ($end_date) {
+            $query->andWhere('ch.connection_date <= :end_date')
                 ->setParameter('end_date', $end_date);
         }
 

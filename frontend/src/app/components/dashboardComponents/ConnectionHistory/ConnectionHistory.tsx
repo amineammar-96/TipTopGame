@@ -252,12 +252,12 @@ function ConnectionHistory() {
     const handleDateChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
         if (dateString && date) {
-            console.log(date.format('DD/MM/YYYY'));
-            let ch = date.format('DD/MM/YYYY');
-            //setUserForm((prevFormData) => ({
-            //  ...prevFormData,
-            // dateOfBirth: ch,
-            //}));
+            setSearchParam((prevState) => ({
+                ...prevState,
+                start_date: dateString[0],
+                end_date: dateString[1],
+            }));
+
         }
     };
 
@@ -304,9 +304,7 @@ function ConnectionHistory() {
                         <RangePicker
                             className={`${styles.datePickerDashboardHomePage} mt-2`}
 
-                            onChange={()=>{
-                                handleDateChange
-                            }}
+                            onChange={handleDateChange as any}
                             placeholder={['Date de début', 'Date de fin']}
                             format={dateFormat}
                             cellRender={(current:any) => {

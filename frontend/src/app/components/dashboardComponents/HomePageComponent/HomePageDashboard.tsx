@@ -505,7 +505,7 @@ function HomePage() {
 
                                                    <Row className={`${styles.fullWidthElement} w-100`} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} >
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
 
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
@@ -528,7 +528,7 @@ function HomePage() {
                                                            </div>
                                                        </Col>
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
 
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
@@ -551,7 +551,7 @@ function HomePage() {
                                                            </div>
                                                        </Col>
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
 
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
@@ -608,7 +608,7 @@ function HomePage() {
                                                            </div>
                                                        </Col>
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
 
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
@@ -647,7 +647,7 @@ function HomePage() {
                                                            </div>
                                                        </Col>
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
                                                                        <Image src={ClientsImg}  alt={"tickets"}></Image>
@@ -686,7 +686,7 @@ function HomePage() {
                                                            </div>
                                                        </Col>
                                                        <Col className={`w-100 d-flex`} sm={24} md={12} lg={8} span={6}>
-                                                           <div className={`${styles.topCardElement}`}>
+                                                           <div className={`${styles.topCardElement} ${styles.minHeightCard}`}>
                                                                <div className={`${styles.topCardElementText}`}>
                                                                    <div className={`${styles.topCardElementIcon}`}>
                                                                        <Image src={RouletteImg}  alt={"tickets"}></Image>
