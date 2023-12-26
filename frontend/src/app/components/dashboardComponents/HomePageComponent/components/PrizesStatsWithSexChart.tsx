@@ -22,7 +22,7 @@ ChartJS.register(
     Legend
 );
 
-export function PrizesStatsWithSexChart(dataChart: any) {
+export default function PrizesStatsWithSexChart(dataChart: any) {
 
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);

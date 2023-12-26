@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import styles from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
 
-export function PrizeStatsByGenderByAgeChart({ dataChart }: { dataChart: any }) {
+export default function PrizeStatsByGenderByAgeChart({ dataChart }: { dataChart: any }) {
     const [chartLabels, setChartLabels] = useState<string[]>([]);
     const [chartData, setChartData] = useState<number[][]>([]);
 

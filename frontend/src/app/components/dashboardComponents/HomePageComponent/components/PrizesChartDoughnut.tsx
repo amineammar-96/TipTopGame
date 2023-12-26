@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 
-export function PrizesChartDoughunt(dataChart: any) {
+export default function PrizesChartDoughunt(dataChart: any) {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const [chartLabels, setChartLabels] = useState<string[]>([]);

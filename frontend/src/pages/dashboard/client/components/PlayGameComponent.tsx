@@ -4,7 +4,6 @@ import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import {Button, Col, Input, Modal, Row, Tag} from 'antd';
 import LogoutService from "@/app/service/LogoutService";
 import Image from "next/image";
-
 import WheelGamePrizesImg from "@/assets/images/wheel_game_prizes.png";
 import {checkTicketCodeValidity, confirmTicketPlayed, getGainTicketHistory} from "@/app/api";
 import {GiftOutlined, NotificationFilled, PoweroffOutlined, RocketOutlined} from "@ant-design/icons";

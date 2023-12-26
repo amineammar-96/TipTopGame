@@ -13,7 +13,7 @@ import { PolarArea } from 'react-chartjs-2';
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
 
-export function PrizesWinStatsByStore(dataChart: any) {
+export default function PrizesWinStatsByStore(dataChart: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState<number[]>([]);
