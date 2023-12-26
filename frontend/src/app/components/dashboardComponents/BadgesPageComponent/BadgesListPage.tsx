@@ -9,7 +9,6 @@ import LevelFourImg from "@/assets/images/levels/level4.png";
 import LevelFiveImg from "@/assets/images/levels/level5.png";
 import LockIconImg from "@/assets/images/lock.png";
 import TrophyIconImg from "@/assets/images/trophy.png";
-import { Rating } from 'react-simple-star-rating'
 
 
 import {getAllBadges, getClientBadges} from "@/app/api";
@@ -229,18 +228,7 @@ function BadgesListPage() {
 
 
                                     <p className={`mt-5`}></p>
-                                    <Rating
-                                        readonly={true}
-                                       allowHover={false}
-                                       showTooltip={true}
-                                       tooltipArray={['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4', 'Niveau 5']}
-
-                                       initialValue={parseInt(badge.id)}
-                                       size={30}
-                                       tooltipStyle={getTooltipStyle(parseInt(badge.id))}
-
-
-                                    />
+                                    
                                     <div className={`${styles.badgeLevelCardIcons}`}>
                                         {renderBadgeImage(badge.id)}
                                     </div>

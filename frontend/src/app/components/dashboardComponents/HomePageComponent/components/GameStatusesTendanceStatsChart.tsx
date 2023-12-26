@@ -23,7 +23,7 @@ ChartJS.register(
     Legend
 );
 
-export function GameStatusesTendanceStatsChart(dataChart: any) {
+export default function GameStatusesTendanceStatsChart(dataChart: any) {
 
     const[chartLabels, setChartLabels] = useState<string[]>([]);
     const[chartData, setChartData] = useState(null);

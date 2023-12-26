@@ -20,7 +20,6 @@ import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import Image from "next/image";
 import TrophyIconImg from "@/assets/images/trophy.png";
 import LockIconImg from "@/assets/images/lock.png";
-import {Rating} from "react-simple-star-rating";
 import LevelOneImg from "@/assets/images/levels/level1.png";
 import LevelTwoImg from "@/assets/images/levels/level2.png";
 import LevelThreeImg from "@/assets/images/levels/level3.png";
@@ -273,18 +272,7 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
 
 
                             <p className={`mt-3`}></p>
-                            <Rating
-                                readonly={true}
-                                allowHover={false}
-                                showTooltip={true}
-                                tooltipArray={['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4', 'Niveau 5']}
-
-                                initialValue={parseInt(clientBadge.id)}
-                                size={20}
-                                tooltipStyle={getTooltipStyle(parseInt(clientBadge.id))}
-
-
-                            />
+                            
                             <div className={`${styles.badgeLevelCardIcons}`}>
                                 {renderBadgeImage(clientBadge.id)}
                             </div>
