@@ -99,10 +99,13 @@ function NavbarComponent() {
           <div className="d-flex">
           <Nav.Link href="#home" className={`${styles.navLink}`}><HomeOutlined className='mx-2' /> Accueil</Nav.Link>
           <Nav.Link href="#link" className={`${styles.navLink }`}><ExclamationCircleOutlined className='mx-2' />À propos</Nav.Link>
-          <Nav.Link href="#link" className={`${styles.navLink}`}><GiftOutlined className='mx-2' />Historique des gains </Nav.Link>
 
           <Nav.Link href="#link" className={`${styles.navLink}`}><MailOutlined className='mx-2' />Contact</Nav.Link>
-          <Nav.Link href="#link" className={`${styles.navLink}`}><QuestionCircleOutlined  className='mx-2' />FAQ</Nav.Link>
+
+
+
+{/*            <Nav.Link href="#link" className={`${styles.navLink}`}><GiftOutlined className='mx-2' />Historique des gains </Nav.Link>
+            <Nav.Link href="#link" className={`${styles.navLink}`}><QuestionCircleOutlined  className='mx-2' />FAQ</Nav.Link>*/}
 
           </div>
           <div className={`${styles.rightDivNavBar}`}>
