@@ -58,10 +58,14 @@ const RedirectService = () => {
     }
 
 
-    const redirectClientUserToLoginPage = () => {
+    const redirectClientUserToLoginPage = (userRole : any) => {
         const token = localStorage.getItem('loggedInUserToken');
         if (token == null || token == "") {
-            router.push("/client_login");
+            if(userRole == "ROLE_CLIENT"){
+                router.push("/client_login");
+            }else {
+                router.push("/store_login");
+            }
         }
     }
 

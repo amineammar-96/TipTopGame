@@ -9,6 +9,7 @@ use App\Entity\User;
 
 use App\Entity\Role;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 class UserService
@@ -74,7 +75,7 @@ class UserService
 
 
 
-    public function createActionHistory(string $actionType, User $userDoneAction, User $userActionRelatedTo , Store $store , string $details): void
+    public function createActionHistory(string $actionType, User|UserInterface $userDoneAction, ?User $userActionRelatedTo , Store $store , string $details): void
     {
 
         $actionHistory = new ActionHistory();

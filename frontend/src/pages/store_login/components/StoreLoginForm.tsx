@@ -92,6 +92,7 @@ export default function StoreLoginForm() {
 
 
     function login(formData: FieldType) {
+        console.log("formData : ", formData);
         if(formData.email!="" && formData.password!="") {
             setLoadingButton(true);
             //setLoading(true);
@@ -114,7 +115,6 @@ export default function StoreLoginForm() {
             }).catch((err) => {
                 setLoadingButton(false);
                 setLoginError(true);
-                setUserForm(userFormData);
                 Modal.error({
                     className: 'antdLoginRegisterModal',
                     title: 'E-mail ou mot de passe incorrect !',

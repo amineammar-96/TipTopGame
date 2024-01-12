@@ -13,10 +13,10 @@ const LogoutService = () => {
         localStorage.removeItem('loggedInUserEmail');
         localStorage.removeItem('selectedMenuItem');
         localStorage.removeItem('firstLoginClientStatus');
-        if(userRole != "ROLE_CLIENT"){
-            router.push("/store_login");
-        }else {
+        if(userRole === "ROLE_CLIENT"){
             router.push("/client_login");
+        }else {
+            router.push("/store_login");
         }
     }
 

@@ -258,6 +258,7 @@ class StoreController extends AbstractController
         }
         $storeName = $store->getName();
         $details = $roleLabel. " a modifié le magasin ." .$storeName. " ( ". $store->getSiren(). " )";
+
         $this->userService->createActionHistory(ActionHistory::STORES_MANAGEMENT , $this->getUser() , null , $store  , $details);
 
 

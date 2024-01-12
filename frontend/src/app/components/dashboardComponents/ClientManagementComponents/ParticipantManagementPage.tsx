@@ -266,7 +266,7 @@ function ParticipantManagementPage() {
                         name={`email`}
                         label={`Adresse E-mail`}
                     >
-                        <Input className={`mt-2`} placeholder="Nom,.."
+                        <Input className={`mt-2`} placeholder="E-mail,.."
                                onChange={(e) => {
                                    setSearchParam({
                                        ...searchParam,

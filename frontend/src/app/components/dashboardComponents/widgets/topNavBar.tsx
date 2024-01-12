@@ -20,17 +20,7 @@ interface User {
 function TopNavBar() {
 
     const { redirectClientUserToLoginPage } = RedirectService();
-    const logout = () => {
-        localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('loggedInUserId');
-        localStorage.removeItem('loggedInUserRole');
-        localStorage.removeItem('loggedInUserEmail');
-        localStorage.removeItem('loggedInUserToken');
-        localStorage.removeItem('selectedMenuItem');
 
-        redirectClientUserToLoginPage();
-
-    }
 
 
     const [user, setUser] = useState<User | null>(null);
@@ -48,12 +38,18 @@ function TopNavBar() {
 }, []);
 
 
-    useEffect(() => {
-        console.log("User " , user);
-        console.log("User Role " , userRole);
-    }, [user , userRole]);
+    const logout = () => {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('loggedInUserId');
+        localStorage.removeItem('loggedInUserRole');
+        localStorage.removeItem('loggedInUserEmail');
+        localStorage.removeItem('loggedInUserToken');
+        localStorage.removeItem('selectedMenuItem');
 
 
+        redirectClientUserToLoginPage(userRole);
+
+    }
 
 
     const getRoleLabel = (role: string | null) => {
