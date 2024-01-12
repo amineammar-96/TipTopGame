@@ -26,11 +26,8 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
         ];
 
         setMustSpin(false);
-
         if (!mustSpin) {
             const newPrizeNumber = Math.floor(Math.random() * options.length);
-            console.log("New prize number:", newPrizeNumber);
-
             setMustSpin(true);
         }
     };

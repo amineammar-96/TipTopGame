@@ -25,6 +25,7 @@ import BadgesListPage from "@/app/components/dashboardComponents/BadgesPageCompo
 
 
 function ClientDashboard() {
+
     const { redirectUserToHomePage } = RedirectService();
     const [loading, setLoading] = useState(true);
 
@@ -84,6 +85,7 @@ function ClientDashboard() {
         if (userRrole == "ROLE_ADMIN") {
             window.location.href = '/dashboard/store_admin';
         }
+
 
 
 

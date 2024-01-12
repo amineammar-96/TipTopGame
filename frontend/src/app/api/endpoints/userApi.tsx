@@ -2,7 +2,6 @@
 import { AxiosRequestConfig } from 'axios';
 import { fetchJson } from '@/app/api';
 
-const facebookclientid = process.env.FACEBOOK_CLIENT_ID;
 
 
 export async function loginClient(data: any) {
@@ -16,6 +15,19 @@ export async function loginClient(data: any) {
       
     
       return await fetchJson(`/login_check_client`, config);
+}
+
+export async function googleLoginCallBack(code: any) {
+    const queryString = `?code=${encodeURIComponent(code)}`;
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    };
+
+
+    return await fetchJson(`/oauth/google/callback${queryString}`, config);
 }
 
 export async function loginAdmin(data: any) {

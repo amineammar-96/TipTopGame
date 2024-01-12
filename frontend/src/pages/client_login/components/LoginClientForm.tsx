@@ -49,6 +49,12 @@ const userFormData = {
 };
 
 
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_REDIRECT_URL = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV || '';
+
+
 export default function LoginClientForm({ formStep, handleFormStepChange }: Props) {
 
     const [userForm, setUserForm] = useState(userFormData);
@@ -123,7 +129,21 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
         })
     }
     const googleCallBackHandle = () => {
+        console.log('googleCallBackHandle');
+        console.log(GOOGLE_CLIENT_ID);
+        console.log(GOOGLE_CLIENT_SECRET);
+        console.log(GOOGLE_AUTHORIZATION_URL);
+        let url = GOOGLE_AUTHORIZATION_URL;
+        url += '?client_id=' + GOOGLE_CLIENT_ID;
+        url += '&redirect_uri=' + encodeURIComponent(GOOGLE_REDIRECT_URL);
+        url += '&response_type=code';
+        url += '&scope=openid profile email';
 
+        console.log(url);
+
+        //window.location.href = url;
+
+        window.open(url, '_blank');
     }
 
 
@@ -249,9 +269,9 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                     </Form.Item>
                 </Form>
 
-                <Row>
+                <Row className={`m-0 p-0`}>
 
-                    <Col>
+                    <Col className={`m-0 p-0`}>
                         <a href="#" onClick={() => {
                             handleFormStepChange();
                         }} className={`${styles.registerBtn} mb-3`} ><UserAddOutlined className={`${styles.resetPasswordIcon}`} />
@@ -259,8 +279,8 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                     </Col>
                 </Row>
 
-                <Col>
-                    <Row>
+                <Col className={`m-0 p-0`}>
+                    <Row className={`m-0 p-0`}>
                         <div className={`${styles.divider}`}>
                             <div className={`${styles['divider-text']}`}>Ou</div>
                         </div>

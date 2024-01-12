@@ -110,6 +110,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: EmailingHistory::class)]
     private Collection $emailingHistories;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?SocialMediaAccount $socialMediaAccount = null;
+
 
     public function __construct()
     {
@@ -776,6 +779,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $emailingHistory->setReceiver(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSocialMediaAccount(): ?SocialMediaAccount
+    {
+        return $this->socialMediaAccount;
+    }
+
+    public function setSocialMediaAccount(SocialMediaAccount $socialMediaAccount): static
+    {
+        // set the owning side of the relation if necessary
+        if ($socialMediaAccount->getUser() !== $this) {
+            $socialMediaAccount->setUser($this);
+        }
+
+        $this->socialMediaAccount = $socialMediaAccount;
 
         return $this;
     }

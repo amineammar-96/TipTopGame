@@ -1,115 +1,103 @@
 <?php
 namespace App\Controller\Api\User;
 
+use App\Entity\Role;
+use App\Entity\User;
+use Exception;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Facebook;
-
-
+use App\Entity\SocialMediaAccount;
+use Doctrine\ORM\EntityManagerInterface;
 class UserSocialMediaAuthController extends AbstractController
 {
-    //constructor::
+    private $entityManager;
 
-
-
-    public function facebookCallback(Request $request, Facebook $provider)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-
-        $data = $request->getContent();
-        $dataJson = json_decode($data, true);
-
-        $code = $dataJson['code'];
-
-        dd($code);
-
-
-
-
-            $accessToken = $provider->getAccessToken('authorization_code', [
-                'code' => $code,
-            ]);
-
-
-
-            $facebookUser = $provider->getResourceOwner($accessToken);
-
-            // You can now handle the user details or authenticate the user in your application
-            // For example, you can save the user details in the database or log the user in
-
-            // Generate a JWT token for the user
-            $jwtManager = $this->get('lexik_jwt_authentication.jwt_manager');
-            $token = $jwtManager->create($facebookUser->toArray());
-
-            // Return the JWT token to the client
-            return new JsonResponse(['token' => $token]);
-
-
-        //} catch (IdentityProviderException $e) {
-            // Handle authentication failure
-          //  return new JsonResponse(['error' => 'Authentication failed'], 401);
-        //}
-
+        $this->entityManager = $entityManager;
     }
 
-   
-
-    public function googleCallback(Request $request)
+    public function googleCallback(Request $request , JWTTokenManagerInterface $jwtManager)
     {
-        $code = $request->query->get('code');
-        dd($code); // This will display the value of the 'code' parameter in the query string
-    
         try {
+
+            $clientId = $_ENV['GOOGLE_CLIENT_ID'];
+            $clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'];
+            $redirectUri = $_ENV['GOOGLE_REDIRECT_URI_DEV'];
             // Create a new instance of the Google provider
             $provider = new Google([
-                'clientId' => '%env(GOOGLE_CLIENT_ID)%',
-                'clientSecret' => '%env(GOOGLE_CLIENT_SECRET)%',
-                'redirectUri' => 'your_redirect_uri_here',
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+                'redirectUri' => $redirectUri,
             ]);
 
-            // Get the OAuth access token using the callback code
+
             $accessToken = $provider->getAccessToken('authorization_code', [
                 'code' => $request->query->get('code'),
             ]);
 
-            // Use the access token to fetch the user details from Google API
             $googleUser = $provider->getResourceOwner($accessToken);
 
-            // Rest of your code here...
 
-        } catch (IdentityProviderException $e) {
-            // Handle authentication failure
-            return new JsonResponse(['error' => 'Authentication failed'], 401);
+
+            $socialMediaAccountRepository = $this->entityManager->getRepository(SocialMediaAccount::class);
+            $socialMediaAccount = $socialMediaAccountRepository->findOneBy(['google_id' => $googleUser->getId()]);
+
+
+
+            if (!$socialMediaAccount) {
+                $socialMediaAccount = new SocialMediaAccount();
+                $socialMediaAccount->setGoogleId($googleUser->getId());
+
+                $lastName = $googleUser->toArray()['family_name'];
+                $firstName = $googleUser->toArray()['given_name'];
+                $email = $googleUser->toArray()['email'];
+
+                $emailAlreadyExist = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+                if($emailAlreadyExist){
+                    return new JsonResponse(['error' => 'Email already exist' ,
+                        'message' => 'Adresse email déjà utilisée'
+                        ], 401);
+
+                }
+
+
+                $user = new User();
+                $user->setEmail($email);
+                $user->setFirstName($firstName);
+                $user->setLastName($lastName);
+                $user->setIsActive(true);
+                $user->setActivitedAt(new \DateTime());
+                $user->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_CLIENT]));
+                $user->setSocialMediaAccount($socialMediaAccount);
+
+                //$this->entityManager->persist($socialMediaAccount);
+                //$this->entityManager->persist($user);
+                //$this->entityManager->flush();
+
+                $token = $jwtManager->create($socialMediaAccount->getUser());
+
+                return new JsonResponse(['token' => $token ]);
+
+                return new JsonResponse(['token' => $token , 'user' => $user->getUserJson() , 'message' => 'created']);
+            }
+
+
+            $token = $jwtManager->create($socialMediaAccount->getUser());
+
+            return new JsonResponse(['token' => $token , 'user' => $socialMediaAccount->getUser()->getUserJson() , 'message' => 'loggedIn']);
+
+        } catch (Exception $e) {
+
+            return new JsonResponse(['error' => 'Authentication failed' ,
+                'message' => $e->getMessage()
+                ], 401);
         }
     }
-
-    // public function googleCallback(Request $request, GoogleProvider $provider)
-    // {
-    //     $provider = $providerFactory(['clientId' => 'your_client_id', 'clientSecret' => 'your_client_secret']);
-
-    //     try {
-    //         // Get the OAuth access token using the callback code
-    //         $accessToken = $provider->getAccessToken('authorization_code', [
-    //             'code' => $request->query->get('code'),
-    //         ]);
-
-    //         // Use the access token to fetch the user details from Google API
-    //         $googleUser = $provider->getResourceOwner($accessToken);
-
-    //         // You can now handle the user details or authenticate the user in your application
-    //         // For example, you can save the user details in the database or log the user in
-
-    //         // Generate a JWT token for the user
-    //         $jwtManager = $this->get('lexik_jwt_authentication.jwt_manager');
-    //         $token = $jwtManager->create($googleUser->toArray());
-
-    //         // Return the JWT token to the client
-    //         return new JsonResponse(['token' => $token]);
-    //     } catch (IdentityProviderException $e) {
-    //         // Handle authentication failure
-    //         return new JsonResponse(['error' => 'Authentication failed'], 401);
-    //     }
-    // }
 }
+

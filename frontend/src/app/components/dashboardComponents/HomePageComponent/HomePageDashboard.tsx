@@ -665,7 +665,7 @@ function HomePage() {
                                                                        {
                                                                            userRole === "ROLE_ADMIN" && (
                                                                                <>
-                                                                                   Participants Actifs
+                                                                                   Participants
                                                                                </>
                                                                            )
                                                                        }
