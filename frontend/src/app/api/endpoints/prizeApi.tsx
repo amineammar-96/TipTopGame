@@ -13,7 +13,7 @@ export async function getPrizes() {
         }
     };
 
-    return await fetchJson(`/prizes/`, config);
+    return await fetchJson(`/prizes`, config);
 }
 
 

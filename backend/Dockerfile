@@ -14,7 +14,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
 
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
    mv composer.phar /usr/local/bin/composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install -dir=/usr/local/bin --filename=composer
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install pdo pdo_mysql mysqli gd opcache intl zip calendar dom mbstring zip gd xsl && a2enmod rewrite
 RUN pecl install apcu && docker-php-ext-enable apcu
@@ -24,11 +24,27 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions amqp
 
-WORKDIR /var/www
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY . /var/www
+RUN set -eux; \
+    mkdir -p var/cache var/log; \
+    if [ -f composer.json ]; then \
+        composer dump-autoload; \
+        composer dump-env dev; \
+        composer run-script post-install-cmd; \
+        chmod +x bin/console; sync; \
+    fi
+
+WORKDIR /var/www/html
+
+COPY . /var/www/html
 
 # Set the appropriate permissions
-RUN chown -R www-data:www-data /var/www/var
+RUN chown -R www-data:www-data /var/www/html/var
+# Set the appropriate permissions
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/var/cache /var/www/html/var/log
+
+# Make sure directories are writable
+RUN chmod -R 777 /var/www/html/var /var/www/html/var/cache /var/www/html/var/log /var/www/html/var/sessions/
 
 CMD ["apache2-foreground"]
