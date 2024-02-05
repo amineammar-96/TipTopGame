@@ -12,7 +12,7 @@ jobs:
       - run: apk add git
       - checkout
       - setup_remote_docker
-      - echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+      - cat ~/TOKEN.txt | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       - run:
           name: building frontend docker image
           command:|
@@ -31,7 +31,7 @@ jobs:
       - run: apk add git
       - checkout
       - setup_remote_docker
-      - echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+      - cat ~/TOKEN.txt | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       - run:
           name: building backend docker image
           command: |
