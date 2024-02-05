@@ -14,7 +14,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: building frontend docker image
-          command:|
+          command: |
              docker login gchr.io/ -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
              cd frontend
              docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
