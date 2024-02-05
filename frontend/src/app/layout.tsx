@@ -11,6 +11,9 @@ export const metadata = {
 import Navbar from './components/widgets/NavbarComponent';
 import Footer from './components/widgets/FooterComponent';
 
+import { GoogleAnalytics } from '@next/third-parties/google'
+
+
 export default function RootLayout({
   children,
 }: {
@@ -22,6 +25,7 @@ export default function RootLayout({
         <Navbar></Navbar>
         {children}  
         <Footer></Footer>
+        <GoogleAnalytics gaId="G-XYZ" />
       </body>
     </html>
   )
