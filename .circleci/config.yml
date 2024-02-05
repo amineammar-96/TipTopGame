@@ -12,10 +12,10 @@ jobs:
       - run: apk add git
       - checkout
       - setup_remote_docker
-      - cat ~/TOKEN.txt | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       - run:
           name: building frontend docker image
           command: |
+             echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
              cd frontend
              docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
              docker push ghcr.io/furious-ducks-tiptop/frontend:latest
@@ -31,10 +31,10 @@ jobs:
       - run: apk add git
       - checkout
       - setup_remote_docker
-      - cat ~/TOKEN.txt | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       - run:
           name: building backend docker image
           command: |
+             echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
              cd backend
              docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
              docker push ghcr.io/furious-ducks-tiptop/backend:latest
