@@ -18,8 +18,7 @@ jobs:
       - run:
           name: deploy
           command: |
-            ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend && docker-compose pull backend && docker-compose up --force-recreate --no-deps -d frontend backend"
+            ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend && docker-compose pull backend && docker-compose up --force-recreate --no-deps -d frontend backend"
   
 
 workflows:
