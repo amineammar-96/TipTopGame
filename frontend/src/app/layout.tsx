@@ -25,8 +25,8 @@ export default function RootLayout({
         <Navbar></Navbar>
         {children}  
         <Footer></Footer>
-        <GoogleAnalytics gaId="G-XYZ" />
       </body>
+        <GoogleAnalytics gaId="G-XYZ" />
     </html>
   )
 }
