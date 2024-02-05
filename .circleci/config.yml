@@ -8,16 +8,14 @@ jobs:
     environment:
       DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/frontend
     steps:
-      - run: apk update
-      - run: apk add git
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username:  "$CI_REGISTRY_USER"
-          password:  "$CI_REGISTRY_TOKEN"
+          username: $CI_REGISTRY_USER
+          password: $CI_REGISTRY_TOKEN
       - name: building frontend docker image
         run: |
            cd frontend
@@ -31,16 +29,14 @@ jobs:
     environment:
       DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend
     steps:
-      - run: apk update
-      - run: apk add git
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username:  "$CI_REGISTRY_USER"
-          password:  "$CI_REGISTRY_TOKEN"
+          username: $CI_REGISTRY_USER
+          password: $CI_REGISTRY_TOKEN
       - name: building backend docker image
         run: |
            cd backend
@@ -52,34 +48,50 @@ jobs:
     docker:
       - image: ubuntu:latest
     steps:
-      - run:
-          name: prepare
-          command: |
-            apt update; apt install -y git curl zip unzip openssh-client openssh-server
+      - name: prepare
+        run: |
+          apt update; apt install -y git curl zip unzip openssh-client openssh-server
       - name: Checkout code
         uses: actions/checkout@v2
       - name: deploy
         run: |
           ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
-  
 
 workflows:
   build_and_push:
     jobs:
       - build_frontend:
-          context: context
-          filters:
-            tags:
-              only: /^stable.*$/
+          name: Build and Push Frontend
+          runs-on: ubuntu-latest
+          steps:
+            - checkout
+            - name: Build and push frontend image
+              uses: docker/build-push-action@v2
+              with:
+                context: frontend
+                push: true
+                tags: ghcr.io/furious-ducks-tiptop/frontend:latest
 
       - build_backend:
-          context: context
-          filters:
-            tags:
-              only: /^stable.*$/
+          name: Build and Push Backend
+          runs-on: ubuntu-latest
+          steps:
+            - checkout
+            - name: Build and push backend image
+              uses: docker/build-push-action@v2
+              with:
+                context: backend
+                push: true
+                tags: ghcr.io/furious-ducks-tiptop/backend:latest
 
       - deploy_production:
-          context: context
-          filters:
-            tags:
-              only: /^stable.*$/
+          name: Deploy to Production
+          runs-on: ubuntu-latest
+          steps:
+            - name: prepare
+              run: |
+                apt update; apt install -y git curl zip unzip openssh-client openssh-server
+            - checkout
+            - name: deploy
+              run: |
+                ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
