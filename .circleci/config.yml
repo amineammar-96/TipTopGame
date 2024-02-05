@@ -74,6 +74,9 @@ workflows:
 
       - deploy_production:
           context: context
+          requires:
+            - build_frontend
+            - build_backend
           filters:
             tags:
               only: /^stable.*$/
