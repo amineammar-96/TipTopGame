@@ -16,6 +16,7 @@ jobs:
       - run:
           name: building frontend docker image
           command: |
+             cd frontend
              docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
              docker push ghcr.io/furious-ducks-tiptop/frontend:latest
 
@@ -34,6 +35,7 @@ jobs:
       - run:
           name: building backend docker image
           command: |
+             cd backend
              docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
              docker push ghcr.io/furious-ducks-tiptop/backend:latest
 
