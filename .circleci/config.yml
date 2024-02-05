@@ -1,112 +1,66 @@
 version: 2.1
 
 jobs:
-  # Build and push frontend image
   build_frontend:
     docker:
       - image: docker:20.10.8
-    environment:
-      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/frontend
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: $CI_REGISTRY_USER
-          password: $CI_REGISTRY_TOKEN
-      - name: building frontend docker image
-        run: |
-           cd frontend
-           docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
-           docker push ghcr.io/furious-ducks-tiptop/frontend:latest
+      - checkout
+      - run:
+          name: Login to GitHub Container Registry
+          command: echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+      - run:
+          name: Building frontend Docker image
+          command: |
+             cd frontend
+             docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
+             docker push ghcr.io/furious-ducks-tiptop/frontend:latest
 
-  # Build and push backend image
   build_backend:
     docker:
       - image: docker:20.10.8
-    environment:
-      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: $CI_REGISTRY_USER
-          password: $CI_REGISTRY_TOKEN
-      - name: building backend docker image
-        run: |
-           cd backend
-           docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
-           docker push ghcr.io/furious-ducks-tiptop/backend:latest
+      - checkout
+      - run:
+          name: Login to GitHub Container Registry
+          command: echo "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+      - run:
+          name: Building backend Docker image
+          command: |
+             cd backend
+             docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
+             docker push ghcr.io/furious-ducks-tiptop/backend:latest
 
-  # Deploy to production environment
   deploy_production:
     docker:
       - image: ubuntu:latest
     steps:
-      - name: prepare
-        run: |
-          apt update; apt install -y git curl zip unzip openssh-client openssh-server
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: deploy
-        run: |
-          ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
+      - checkout
+      - run:
+          name: Prepare
+          command: |
+            apt update; apt install -y git curl zip unzip openssh-client openssh-server
+      - run:
+          name: Deploy
+          command: |
+            ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
 
 workflows:
+  version: 2
   build_and_push:
     jobs:
       - build_frontend:
-          name: Build and Push Frontend
-          runs-on: ubuntu-latest
-          steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v1
-              with:
-                registry: ghcr.io
-                username: $CI_REGISTRY_USER
-                password: $CI_REGISTRY_TOKEN
-            - name: Build and push frontend image
-              uses: docker/build-push-action@v2
-              with:
-                context: frontend
-                push: true
-                tags: ghcr.io/furious-ducks-tiptop/frontend:latest
-
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
       - build_backend:
-          name: Build and Push Backend
-          runs-on: ubuntu-latest
-          steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v1
-              with:
-                registry: ghcr.io
-                username: $CI_REGISTRY_USER
-                password: $CI_REGISTRY_TOKEN
-            - name: Build and push backend image
-              uses: docker/build-push-action@v2
-              with:
-                context: backend
-                push: true
-                tags: ghcr.io/furious-ducks-tiptop/backend:latest
-
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
       - deploy_production:
-          name: Deploy to Production
-          runs-on: ubuntu-latest
-          steps:
-            - name: prepare
-              run: |
-                apt update; apt install -y git curl zip unzip openssh-client openssh-server
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - name: deploy
-              run: |
-                ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
