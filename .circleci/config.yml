@@ -64,7 +64,14 @@ workflows:
           name: Build and Push Frontend
           runs-on: ubuntu-latest
           steps:
-            - checkout
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                registry: ghcr.io
+                username: $CI_REGISTRY_USER
+                password: $CI_REGISTRY_TOKEN
             - name: Build and push frontend image
               uses: docker/build-push-action@v2
               with:
@@ -76,7 +83,14 @@ workflows:
           name: Build and Push Backend
           runs-on: ubuntu-latest
           steps:
-            - checkout
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                registry: ghcr.io
+                username: $CI_REGISTRY_USER
+                password: $CI_REGISTRY_TOKEN
             - name: Build and push backend image
               uses: docker/build-push-action@v2
               with:
@@ -91,7 +105,8 @@ workflows:
             - name: prepare
               run: |
                 apt update; apt install -y git curl zip unzip openssh-client openssh-server
-            - checkout
+            - name: Checkout code
+              uses: actions/checkout@v2
             - name: deploy
               run: |
                 ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
