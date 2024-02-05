@@ -53,7 +53,7 @@ jobs:
           name: deploy
           command: |
             
-            ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose up --force-recreate --no-deps -d frontend"
+            ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose pull backend; docker-compose up --force-recreate --no-deps -d frontend backend"
   
 
 workflows:
