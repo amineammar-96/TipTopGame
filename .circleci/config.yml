@@ -1,26 +1,46 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+  # Build and push frontend image
+  build_frontend:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+      - image: docker:20.10.8
+    environment:
+      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/frontend
     steps:
+      - run: apk update
+      - run: apk add git
       - checkout
+      - setup_remote_docker
+      - run: docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: building frontend docker image
+          command: |
+             docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
+             docker push ghcr.io/furious-ducks-tiptop/frontend:latest
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+  # Build and push backend image
+  build_backend:
+    docker:
+      - image: docker:20.10.8
+    environment:
+      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend
+    steps:
+      - run: apk update
+      - run: apk add git
+      - checkout
+      - setup_remote_docker
+      - run: docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      - run:
+          name: building backend docker image
+          command: |
+             docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
+             docker push ghcr.io/furious-ducks-tiptop/backend:latest
+
+  # Deploy to production environment
+  deploy_production:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - run:
+          name: prepa
