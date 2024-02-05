@@ -6,6 +6,9 @@ jobs:
   deploy_production:
     docker:
       - image: ubuntu:latest
+    environment:
+      KNOWN_HOSTS: |-
+        85.31.239.78
     steps:
       - run:
           name: prepare
