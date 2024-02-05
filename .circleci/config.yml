@@ -17,7 +17,7 @@ jobs:
           command: |
              echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
              cd frontend
-             docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
+             docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest -t ghcr.io/furious-ducks-tiptop/frontend:0.0.1 .
              docker push ghcr.io/furious-ducks-tiptop/frontend:latest
 
   # Build and push backend image
