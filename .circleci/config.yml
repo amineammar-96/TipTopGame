@@ -43,4 +43,34 @@ jobs:
       - image: ubuntu:latest
     steps:
       - run:
-          name: prepa
+          name: prepare
+          command: |
+            apt update; apt install -y git curl zip unzip openssh-client openssh-server
+      - checkout
+      - run:
+          name: deploy
+          command: |
+            
+            ssh $VM_USER@$VM_IPADDRESS -p $VM_PASSWORD  "cd docker ; docker-compose pull frontend; docker-compose up --force-recreate --no-deps -d frontend"
+  
+
+workflows:
+  build_and_push:
+    jobs:
+      - build_frontend:
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
+
+      - build_backend:
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
+
+      - deploy_production:
+          context: context
+          filters:
+            tags:
+              only: /^stable.*$/
