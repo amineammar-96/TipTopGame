@@ -59,6 +59,7 @@ jobs:
             yum makecache
             yum install -y git curl zip unzip openssh-clients openssh-server
       - checkout
+      - add_ssh_keys
       - run:
           name: deploy
           command: |
