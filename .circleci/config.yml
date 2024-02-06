@@ -50,9 +50,14 @@ jobs:
           name: prepare
           command: |
             yum update -y
+            yum clean packages
+            yum clean metadata
+            yum makecache
             rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
             yum reinstall -y gpg-pubkey
             yum clean packages
+            yum clean metadata
+            yum makecache
             yum install -y git curl zip unzip openssh-clients openssh-server
             # Optionally, configure GPG key verification in yum.conf
             echo "gpgcheck=1" | sudo tee -a /etc/yum.conf
