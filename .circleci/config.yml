@@ -49,6 +49,7 @@ jobs:
       - run:
           name: prepare
           command: |
+            yum clean packages
             yum update -y
             yum clean packages
             yum clean metadata
