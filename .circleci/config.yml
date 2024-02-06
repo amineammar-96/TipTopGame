@@ -67,17 +67,17 @@ jobs:
 workflows:
   build_and_push:
     jobs:
-      - build_frontend:
-          context: context
-          filters:
-            tags:
-              only: /^stable.*$/
+      # - build_frontend:
+      #     context: context
+      #     filters:
+      #       tags:
+      #         only: /^stable.*$/
 
-      - build_backend:
-          context: context
-          filters:
-            tags:
-              only: /^stable.*$/
+      # - build_backend:
+      #     context: context
+      #     filters:
+      #       tags:
+      #         only: /^stable.*$/
 
       - deploy_production:
           context: context
