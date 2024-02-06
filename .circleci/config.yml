@@ -49,6 +49,7 @@ jobs:
       - run:
           name: prepare
           command: |
+            rm /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
             yum update -y
             rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
             # Re-import the GPG key
