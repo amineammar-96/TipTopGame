@@ -60,6 +60,7 @@ jobs:
             yum install -y git curl zip unzip openssh-clients openssh-server
       - checkout
       - add_ssh_keys
+      - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
       - run:
           name: deploy
           command: |
