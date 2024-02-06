@@ -45,6 +45,6 @@ RUN chown -R www-data:www-data /var/www/html/var
 RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/var/cache /var/www/html/var/log
 
 # Make sure directories are writable
-RUN chmod -R 777 /var/www/html/var /var/www/html/var/cache /var/www/html/var/log /var/www/html/var/sessions/
+RUN chmod -R 777 /var/www/html/var 
 
 CMD ["apache2-foreground"]
