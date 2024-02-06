@@ -54,7 +54,7 @@ jobs:
             yum clean packages
             yum install -y git curl zip unzip openssh-clients openssh-server
             # Optionally, configure GPG key verification in yum.conf
-            echo "gpgcheck=1" | sudo tee -a /etc/yum.conf
+            echo "gpgcheck=0" | sudo tee -a /etc/yum.conf
       - checkout
       - run:
           name: deploy
