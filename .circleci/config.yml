@@ -51,12 +51,6 @@ jobs:
           command: |
             yum update -y
             yum install -y git curl zip unzip openssh-clients docker-compose
-            # Démarrer le service Docker
-            systemctl start docker
-            # Activer le démarrage automatique de Docker
-            systemctl enable docker
-            # Se connecter à Docker Hub (si nécessaire)
-            # echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
       - checkout
       - run:
           name: deploy
