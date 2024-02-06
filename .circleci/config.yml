@@ -50,7 +50,7 @@ jobs:
           name: prepare
           command: |
             yum update -y
-            yum install -y git curl zip unzip openssh-clients docker-compose
+            yum install -y git curl zip unzip openssh-clients openssh-server
       - checkout
       - run:
           name: deploy
