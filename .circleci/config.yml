@@ -44,7 +44,7 @@ jobs:
   # Deploy to production environment
   deploy_production:
     docker:
-      - image: ubuntu:latest
+      - image: almalinux:8.8
     steps:
       - run:
           name: prepare
