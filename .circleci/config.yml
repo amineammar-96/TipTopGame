@@ -49,13 +49,12 @@ jobs:
       - run:
           name: prepare
           command: |
-            yum clean packages
             yum update -y
-            yum clean packages
-            yum clean metadata
-            yum makecache
             rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
-            yum reinstall -y gpg-pubkey
+            # Re-import the GPG key
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
+            # Check repository configuration
+            cat /etc/yum.repos.d/*.repo
             yum clean packages
             yum clean metadata
             yum makecache
