@@ -17,9 +17,22 @@
   flex-direction: column !important;
 }
 
+@media (max-width: 768px) {
+  .footerNewsletterDiv {
+    padding: 0 2% !important;
+  }
+}
+
 .footerNewsletterDiv h5 {
   color: white;
   font-size: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  .footerNewsletterDiv h5 {
+    font-size: 0.8rem !important;
+    padding: 0 !important;
+  }
 }
 
 .footerSendBtn {
@@ -35,6 +48,14 @@
   font-size: 1.2rem !important;
 }
 
+@media (max-width: 768px) {
+  .footerSendBtn {
+    font-size: 0.8rem !important;
+    padding: 0 10px !important;
+  }
+}
+
+
 .footerSendBtn:hover {
 opacity: 0.9 !important;
 }
@@ -42,6 +63,9 @@ opacity: 0.9 !important;
 .footerNewsletterInput {
   max-width: 26vw !important;
   min-height: 60px !important;
+  min-width: 210px !important;
+
+
 }
 
 .containerFooterLinks {

@@ -1,0 +1,11 @@
+.navbar-toggler {
+  float: right;
+  margin: 2rem;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-toggler {
+    float: right;
+    margin: .2rem;
+  }
+}
