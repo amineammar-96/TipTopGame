@@ -3,7 +3,7 @@
 
 :root{
   --black : #2E3138;
-  --green : #87BE4B;
+  --green : #87be4b;
   --navbar-bg : white;
   --navbar-link-text-color : #000000;
   --navbar-link-text-color-hover : #87BE4B;
@@ -162,12 +162,12 @@ body {
 
 
 .landing-page-btn {
-  background-color: #ffffff !important;
+  background-color: var(--navbar-actions-bg) !important;
   border: 1px solid var(--navbar-actions-bg) !important;
   margin: 0 25px;
   padding: 10px 20px !important;
   border-radius: 50px !important;
-  color: black !important;
+  color: #ffffff !important;
   display: flex !important;
   height: 3rem !important;
   justify-content: center;
@@ -177,6 +177,5 @@ body {
 
 
 .landing-page-btn:hover {
-  background-color: var(--green) !important;
-  color: white !important;
+  opacity: 0.8;
 }
