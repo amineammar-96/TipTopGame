@@ -27,6 +27,10 @@ class PrizeController extends AbstractController
     }
 
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getAllPrizes(Request $request): JsonResponse
     {
         $prizes = $this->entityManager->getRepository(Prize::class)->findAll();

@@ -88,6 +88,7 @@ class TicketController extends AbstractController
         $qb->select('t')
             ->from(Ticket::class, 't');
 
+
         if ($ticket_code != "" && $ticket_code != null) {
             $qb->andWhere('t.ticket_code LIKE :ticket_code')
                 ->setParameter('ticket_code', '%' . $ticket_code . '%');

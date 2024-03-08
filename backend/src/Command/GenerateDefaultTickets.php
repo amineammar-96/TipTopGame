@@ -59,11 +59,13 @@ class GenerateDefaultTickets extends Command
         $generatedTicketCodes = [];
 
         for ($i = 0; $i < $ticketCount; $i++) {
-            do {
-                $randomTicketCode = 'TK' . substr(uniqid(), -8);
-            } while (in_array($randomTicketCode, $generatedTicketCodes));
+            echo 'Generating ticket ' . ($i + 1) . ' of ' . $ticketCount . PHP_EOL;
+            $output->writeln('Generating ticket ' . ($i + 1) . ' of ' . $ticketCount);
+            //do {
+            $randomTicketCode = 'TK' . substr(uniqid(), -8);
+            //} while (in_array($randomTicketCode, $generatedTicketCodes));
 
-            $generatedTicketCodes[] = $randomTicketCode;
+            //$generatedTicketCodes[] = $randomTicketCode;
 
             $randomNumber = mt_rand(1, $totalWinningRate);
             $winningPrize = null;
@@ -101,6 +103,8 @@ class GenerateDefaultTickets extends Command
                 $this->entityManager->persist($ticket);
                 $this->entityManager->persist($ticketHistory);
             }
+
+            $output->writeln('Generated ticket ' . ($i + 1) . ' of ' . $ticketCount);
         }
 
         $this->entityManager->flush();

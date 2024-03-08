@@ -46,7 +46,7 @@ function getItem(
 
 const items: MenuItem[] = [
     getItem('Tableau de bord', 'dashboardItem', <DashboardOutlined />),
-    getItem('Testez Votre Chance', 'playGameItem', <PlayCircleOutlined />),
+    getItem('Tentez Votre Chance', 'playGameItem', <PlayCircleOutlined />),
     getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
         getItem('Tickets associés', 'ticketsItem' , <BarcodeOutlined />),
         getItem('Historiques des gains', 'historyPrizesItem' , <HistoryOutlined />),
@@ -260,10 +260,6 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
                                     alt={"TrophyIconImg"}
                                 >
                                 </Image>
-
-
-
-
 
 
                     <div className={`${styles.ticketCardBody}`}>

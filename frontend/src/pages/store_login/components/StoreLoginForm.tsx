@@ -170,7 +170,7 @@ export default function StoreLoginForm() {
                     <Row md={6} className={'mt-5 justify-content-center'}>
                         <Col md={4} className={'mt-5 justify-content-center'}>
 
-
+{/*
                             <Row className={`${styles.loginLogo} p-0 m-0`}>
                                 <a className={`${styles.loginLogo} p-0 m-0`} href="/">
                                     <Image
@@ -180,7 +180,7 @@ export default function StoreLoginForm() {
 
                                     </Image>
                                 </a>
-                            </Row>
+                            </Row>*/}
 
                             <Row className={`mt-5 px-5 d-flex justify-content-center `}>
                                 <Form

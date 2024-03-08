@@ -86,7 +86,7 @@ class GenerateFakeData extends Command
 
         return $ticketRepository->createQueryBuilder('t')
             ->setFirstResult($offset)
-            ->setMaxResults(400)
+            ->setMaxResults(1200)
             ->getQuery()
             ->getResult();
     }
@@ -97,9 +97,6 @@ class GenerateFakeData extends Command
         $storeCount = 5;
 
         $cities = ["Paris" , "Lyon" , "Marseille" , "Madrid" , "Bordeaux"];
-
-
-
 
 
         for ($i = 0; $i < $storeCount; $i++) {
@@ -137,7 +134,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -193,7 +190,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -244,7 +241,7 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
             $user->setEmail(Factory::create()->email);
@@ -293,10 +290,12 @@ class GenerateFakeData extends Command
         }
 
         $clients = $this->getRandomUsersByRole($clientRole, 20);
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
 
         $employees = $this->getRandomUsersByRole($employeeRole, 20);
 
-        $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER , Ticket::STATUS_CANCELLED , Ticket::STATUS_EXPIRED];
+        $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER];
         foreach ($randomTickets as $ticket) {
             $randomDate = new \DateTimeImmutable('now - ' . mt_rand(0, 5) . ' days');
             $randomStatus = $statuses[array_rand($statuses)];
@@ -318,6 +317,9 @@ class GenerateFakeData extends Command
             $ticket->setUser($client);
             $client->addStore($employee->getStores()[0]);
             $store = $employee->getStores()[0];
+            if($randomStatus === Ticket::STATUS_PRINTED) {
+                $client = $anonymousUser;
+            }
             $store->addUser($client);
 
 

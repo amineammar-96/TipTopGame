@@ -86,8 +86,9 @@ function ClientDashboard() {
             window.location.href = '/dashboard/store_admin';
         }
 
-
-
+        if(userRrole == null || userRrole == "") {
+            window.location.href = '/client_login';
+        }
 
         }, [userRrole]);
 

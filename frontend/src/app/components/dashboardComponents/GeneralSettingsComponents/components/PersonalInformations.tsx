@@ -467,103 +467,109 @@ function PersonalInformations() {
                             </Row>
 
 
-                            <Divider />
+                            { personalInfoForm.role != 'ROLE_ADMIN' && (
+                                <>
+                                    <Divider />
 
-                            <strong className={`my-5 d-flex justify-content-start`}>
-                                Informations du magasin
-                            </strong>
-
-
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.name ?? ''} label="Nom du magasin" name="storeName" >
-                                        <Input
-                                            readOnly={true}
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, name: e.target.value}});
-                                            }}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.address ?? ''} label="Adresse du magasin" name="storeAddress" >
-                                        <Input
-                                            readOnly={true}
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, address: e.target.value}});
-                                            }}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.city ?? ''} label="Ville du magasin" name="storeCity" >
-                                        <Input
-                                            readOnly={true}
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, city: e.target.value}});
-                                            }}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.postal_code ?? ''} label="Code postal du magasin" name="storePostalCode">
-                                        <Input
-                                            readOnly={true}
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, postal_code: e.target.value}});
-                                            }}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                    <strong className={`my-5 d-flex justify-content-start`}>
+                                        Informations du magasin principal
+                                    </strong>
 
 
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.country ?? ''} label="Pays du magasin" name="storeCountry" >
-                                        <Input
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, country: e.target.value}});
-                                            }}
-                                            readOnly={true}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.phone ?? ''} label="Numéro de téléphone du magasin" name="storePhone">
-                                        <Input
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, phone: e.target.value}});
-                                            }}
-                                            readOnly={true}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.name ?? ''} label="Nom du magasin" name="storeName" >
+                                                <Input
+                                                    readOnly={true}
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, name: e.target.value}});
+                                                    }}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.address ?? ''} label="Adresse du magasin" name="storeAddress" >
+                                                <Input
+                                                    readOnly={true}
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, address: e.target.value}});
+                                                    }}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
 
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item initialValue={personalInfoForm.store?.email ?? ''} label="Adresse E-mail du magasin" name="storeEmail">
-                                        <Input
-                                            onChange={(e) => {
-                                                setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, email: e.target.value}});
-                                            }}
-                                            readOnly={true}
-                                            placeholder="Aucun magasin n'est associé à votre compte"
-                                        />
-                                    </Form.Item>
-                                </Col>
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.city ?? ''} label="Ville du magasin" name="storeCity" >
+                                                <Input
+                                                    readOnly={true}
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, city: e.target.value}});
+                                                    }}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.postal_code ?? ''} label="Code postal du magasin" name="storePostalCode">
+                                                <Input
+                                                    readOnly={true}
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, postal_code: e.target.value}});
+                                                    }}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
 
-                            </Row>
+
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.country ?? ''} label="Pays du magasin" name="storeCountry" >
+                                                <Input
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, country: e.target.value}});
+                                                    }}
+                                                    readOnly={true}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.phone ?? ''} label="Numéro de téléphone du magasin" name="storePhone">
+                                                <Input
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, phone: e.target.value}});
+                                                    }}
+                                                    readOnly={true}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item initialValue={personalInfoForm.store?.email ?? ''} label="Adresse E-mail du magasin" name="storeEmail">
+                                                <Input
+                                                    onChange={(e) => {
+                                                        setPersonalInfoForm({...personalInfoForm, store: {...personalInfoForm.store, email: e.target.value}});
+                                                    }}
+                                                    readOnly={true}
+                                                    placeholder="Aucun magasin n'est associé à votre compte"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+
+                                    </Row>
+
+
+                                </>
+                            )}
 
 
 

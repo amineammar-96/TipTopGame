@@ -9,7 +9,7 @@
   --navbar-link-text-color-hover : #87BE4B;
   --navbar-link-bg-color : #ffffff;
   --navbar-link-bg-color-hover : #fdfdfd;
-  --navbar-actions-bg : #87BE4B;
+  --navbar-actions-bg : #99b64f;
   --navbar-actions-text-color : #ffffff;
 }
 
@@ -158,4 +158,25 @@ body {
     justify-content: center;
     align-items: center;
   width: 100%;
+}
+
+
+.landing-page-btn {
+  background-color: #ffffff !important;
+  border: 1px solid var(--navbar-actions-bg) !important;
+  margin: 0 25px;
+  padding: 10px 20px !important;
+  border-radius: 50px !important;
+  color: black !important;
+  display: flex !important;
+  height: 3rem !important;
+  justify-content: center;
+  font-size: 1.2rem !important;
+}
+
+
+
+.landing-page-btn:hover {
+  background-color: var(--green) !important;
+  color: white !important;
 }
