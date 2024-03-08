@@ -162,26 +162,20 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
     return (
         <div className={`${styles.loginForm} `}>
             <Row className={`${styles.loginFormTopHeader} p-0 m-0`}>
-                <Col md={1}>
-                    <a href="/">
+                <Col>
+                    <h1><a href="/">
                         <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
                     </a>
-                </Col>
-                <Col>
-                    <h1>Connexion à votre compte</h1>
+                        Connexion à votre compte <LoginOutlined className={`${styles.loginIcon}`} /></h1>
                 </Col>
 
-                <Col className={`d-flex justify-content-end`} style={{maxWidth: '5rem'}}>
-                    <LoginOutlined className={`${styles.loginIcon}`} />
-
-                </Col>
 
             </Row>
             <Row className={`${styles.loginLogo} p-0 m-0`}>
                 <a className={`${styles.loginLogo} p-0 m-0`} href="/">
                     <Image
                         src={logoTipTopImg}
-                        alt="Picture of the author"
+                        alt="Picture of the logo"
                     >
 
                     </Image>
@@ -189,7 +183,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
             </Row>
 
-            <Row className={`mt-5 px-5 d-flex justify-content-center `}>
+            <Row className={`mt-5 px-sm-2 px-lg-5 d-flex justify-content-center `}>
                 <Form
                     name="basic"
                     labelCol={{ span: 8 }}
@@ -314,27 +308,9 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                 </Col>
             </Row>
 
-            <Row className="px-3 py-2 mt-3 pt-2">
-                <Col className={`w-100 d-flex`} >
-                    <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
-                        <div className={`${styles.containerLoginFooterLinks} d-flex `}>
-                            <div className={`${styles.LoginLinksDiv} d-flex`}>
-                                    <Nav className="me-auto d-flex justify-content-between w-100">
-                                        <Nav.Link href="#home" className={`${styles.navLinkLogin}`}><AppstoreFilled className='mx-2' /> Termes et conditions</Nav.Link>
-                                        <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><ExclamationCircleOutlined className='mx-2' />Politique De Confidentialité</Nav.Link>
-                                        <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><MailOutlined className='mx-2' />Contact</Nav.Link>
-                                    </Nav>
-                            </div>
 
 
-
-                        </div>
-                    </Navbar>
-                </Col>
-
-            </Row>
-
-            <Row>
+            <Row className={`p-0 m-0 mt-4`}>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
                         <p>&copy; 2023 Furious Ducks. All rights reserved.</p>

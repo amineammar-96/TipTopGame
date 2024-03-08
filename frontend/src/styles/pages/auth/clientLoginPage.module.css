@@ -1,6 +1,16 @@
 .loginPageMainDiv{
 min-height: 100vh !important;
 }
+
+@media screen and (max-width: 768px) {
+    .loginPageMainDiv{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 !important;
+    }
+}
+
 .loginPageMainDivLeftSide{
 
 }
@@ -10,16 +20,30 @@ min-height: 100vh !important;
     object-fit: cover;
   max-height: 100vh;
   min-height: 100%;
+}
 
+@media screen and (max-width: 768px) {
+    .loginPageMainDivLeftSide img{
+        max-height: 30vh !important;
+        min-height: 100% !important;
+    }
 }
 
 .loginPageMainDivRightSide{
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+}
 
+@media screen and (max-width: 991px) {
+    .loginPageMainDivRightSide{
+    }
 }
 
 .loginForm{
-    padding: 0px !important;
+    padding: 0 !important;
     padding-top: 1% !important;
+    max-width: 90vw;
 }
 
 .loginForm h1{
@@ -31,6 +55,19 @@ min-height: 100vh !important;
     justify-content: space-between;
     width: 100%;
     padding-top: 2% !important;
+}
+
+.loginFormTopHeader h1{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+@media screen and (max-width: 768px) {
+    .loginFormTopHeader h1{
+        font-size: 1.2rem;
+    }
 }
 
 .loginIcon {

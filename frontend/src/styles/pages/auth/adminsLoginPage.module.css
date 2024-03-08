@@ -278,11 +278,17 @@ min-height: 100vh !important;
 }
 
 .loginFormTopHeaderAux {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  align-items: center !important;
+
 }
+
+@media screen and (max-width: 768px) {
+    .loginFormTopHeaderAux {
+        display: flex !important;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
 .leftArrowIcon,
 .rightArrowIcon{
     font-size: 1.2rem !important;
@@ -306,4 +312,12 @@ min-height: 100vh !important;
     padding: 0;
     text-align: left;
     width: 100%;
+    display: flex;
+    justify-content: space-between !important;
+}
+
+@media screen and (max-width: 768px) {
+    .adminsLoginFormtopHeaderText {
+        font-size: 1.2rem;
+    }
 }

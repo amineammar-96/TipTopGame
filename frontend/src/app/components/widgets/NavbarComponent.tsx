@@ -83,7 +83,7 @@ function NavbarComponent() {
                   <Nav.Link href="/" className={`${styles.navLink}`}><HomeOutlined className='mx-2' /> Accueil</Nav.Link>
                   <Nav.Link href="/about" className={`${styles.navLink}`}><ExclamationCircleOutlined className='mx-2' />À propos</Nav.Link>
                   <Nav.Link href="/contact" className={`${styles.navLink}`}><MailOutlined className='mx-2' />Contact</Nav.Link>
-                  <Nav.Link href="/store" className={`${styles.navLink}`}><AppstoreFilled className='mx-2' /> Politique De Confidentialité</Nav.Link>
+                  <Nav.Link href="/info" className={`${styles.navLink}`}><AppstoreFilled className='mx-2' /> Politique De Confidentialité</Nav.Link>
                 </div>
                 <div className={`${styles.rightDivNavBar}`}>
                   {!loading && (

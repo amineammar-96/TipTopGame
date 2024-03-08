@@ -145,42 +145,23 @@ export default function StoreLoginForm() {
             <>
                 <Row className={`${styles.loginFormTopHeaderAux} p-0 m-0 pt-0`}>
                     <Col>
-                        <Row className={'justify-content-center d-flex align-items-center'}>
-                            <Col md={1}>
-                                <a href="/">
+                        <Row className={'justify-content-center d-flex align-items-center w-100'}>
+                            <Col className={"w-100"}>
+                                <h1 className={`${styles.adminsLoginFormtopHeaderText}`}><a href="/">
                                     <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
-                                </a>
-                            </Col>
-                            <Col>
-                                <h1 className={`${styles.adminsLoginFormtopHeaderText}`}>Connexion à votre compte
-                                    TipTop (Espace Administateur)
+                                </a> Espace Administrateur <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
                                 </h1>
                             </Col>
                         </Row>
                     </Col>
 
-                    <Col className={`d-flex justify-content-end`}>
-                        <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
-                    </Col>
 
                 </Row>
                 <div className={`${styles.loginForm} mt-0 pt-0 `}>
 
 
-                    <Row md={6} className={'mt-5 justify-content-center'}>
-                        <Col md={4} className={'mt-5 justify-content-center'}>
-
-{/*
-                            <Row className={`${styles.loginLogo} p-0 m-0`}>
-                                <a className={`${styles.loginLogo} p-0 m-0`} href="/">
-                                    <Image
-                                        src={logoTipTopImg}
-                                        alt="Picture of the author"
-                                    >
-
-                                    </Image>
-                                </a>
-                            </Row>*/}
+                    <Row className={'mt-5 justify-content-center'}>
+                        <Col sm={12} md={8} lg={7} xl={5} className={'mt-5 justify-content-center'}>
 
                             <Row className={`mt-5 px-5 d-flex justify-content-center `}>
                                 <Form
@@ -273,26 +254,7 @@ export default function StoreLoginForm() {
 
 
                     <div className="px-3 py-2 mt-5 pt-5">
-                        <Row className="px-3 py-2 mt-5 pt-5">
-                            <Col className={`w-100 d-flex`}>
-                                <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
-                                    <div className={`${styles.containerLoginFooterLinks} d-flex `}>
-                                        <div className={`${styles.LoginLinksDiv} d-flex`}>
-                                            <Nav className="me-auto d-flex justify-content-between w-100">
-                                                <Nav.Link href="#home" className={`${styles.navLinkLogin}`}><AppstoreFilled
-                                                    className='mx-2'/> Termes et conditions</Nav.Link>
-                                                <Nav.Link href="#link"
-                                                          className={`${styles.navLinkLogin}`}><ExclamationCircleOutlined
-                                                    className='mx-2'/>Politique De Confidentialité</Nav.Link>
-                                                <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><MailOutlined
-                                                    className='mx-2'/>Contact</Nav.Link>
-                                            </Nav>
-                                        </div>
-                                    </div>
-                                </Navbar>
-                            </Col>
 
-                        </Row>
 
                         <Row>
                             <Col>
