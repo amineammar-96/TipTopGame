@@ -213,3 +213,133 @@ body, * {
 .about_content_box_all {
   padding: 28px;
 }
+
+.ant-btn-primary {
+  background-color: #7BC558 !important;
+  border-color: #7BC558 !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #7BC558 !important;
+  border-color: #7BC558 !important;
+  cursor: pointer;
+}
+
+.refuse-button {
+  background-color: #FF0000 !important;
+  border-color: #FF0000 !important;
+  text-align: center;
+}
+
+.refuse-button span {
+  color: white !important;
+}
+
+.refuse-button:hover {
+  background-color: #FF0000 !important;
+  border-color: #FF0000 !important;
+  cursor: pointer;
+}
+
+.cookie-consent-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483645;
+  box-sizing: border-box;
+  width: 100%;
+
+  background-color: #F1F6F4;
+}
+
+.cookie-consent-banner__inner {
+  max-width: 1460px;
+  margin: 0 auto;
+  padding: 10px 0;
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.cookie-consent-banner__copy {
+  margin-bottom: 2px;
+}
+
+.cookie-consent-banner__actions {
+
+}
+
+.cookie-consent-banner__actions button {
+  border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    outline: none;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.cookie-consent-banner__header {
+  margin-bottom: 8px;
+
+  font-family: "CeraPRO-Bold", sans-serif, arial;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.cookie-consent-banner__description {
+  font-family: "CeraPRO-Regular", sans-serif, arial;
+  font-weight: normal;
+  color: #838F93;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.cookie-consent-banner__cta {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 164px;
+  padding: 11px 13px;
+
+  border-radius: 2px;
+
+  background-color: #2CE080;
+
+  color: #FFF;
+  text-decoration: none;
+  text-align: center;
+  font-family: "CeraPRO-Regular", sans-serif, arial;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.cookie-consent-banner__cta--secondary {
+  padding: 9px 13px;
+
+  border: 2px solid #3A4649;
+
+  background-color: transparent;
+
+  color: #2CE080;
+}
+
+.cookie-consent-banner__cta:hover {
+  background-color: #20BA68;
+}
+
+.cookie-consent-banner__cta--secondary:hover {
+  border-color: #838F93;
+
+  background-color: transparent;
+
+  color: #22C870;
+}
+
+.cookie-consent-banner__cta:last-child {
+  margin-left: 16px;
+}
