@@ -1,27 +1,30 @@
 
 
 .navbar {
-    position: fixed !important;
+    /*position: fixed !important;*/
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     background-color: var( --navbar-bg) !important;
     z-index: 1000 !important;
-    /* Add transition for smooth effect */
+    padding: 0 !important;
+    padding-right: 1rem !important;
+    padding-bottom: 0.9rem !important;
     transition: background-color 0.3s ease !important;
-    padding: 2rem 0 !important;
-    padding-bottom: 1.3rem !important;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
 
 }
 
 .containerNavbar{
-    margin: 0 !important;
+    margin: 0!important;
     padding: 0 !important;
-    display: flex !important;
-    justify-content: flex-end  !important;
-    align-items: center !important;
-    width: 90% !important;
+    width: 100% !important;
+}
+
+@media screen and (max-width: 768px) {
+    .containerNavbar{
+        margin: .8rem !important;
+    }
 }
 
 .navLink{
@@ -52,11 +55,18 @@
     margin: 0 10rem;
 }
 .logoTipTopNavBar {
-    position: absolute;
-    left: 0 !important;
-    top: 20% !important;
-    width: 15rem !important;
-    height: 3rem !important;
+    float: left;
+    width: 16rem;
+    height: 4rem;
+}
+
+
+@media screen and (max-width: 768px) {
+    .logoTipTopNavBar {
+        width: 10rem;
+        height: 3rem;
+        left: 0;
+    }
 }
 
 .rightDivNavBar{
@@ -159,5 +169,9 @@
   }
 
 .linksDivNavBar {
-    padding-left: 5rem !important;
+    padding-left: 1rem !important;
 }
+
+
+
+

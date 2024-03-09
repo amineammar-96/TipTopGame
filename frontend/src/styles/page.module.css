@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 0 !important;
   min-height: 100vh;
   background-color: rgba(255, 255, 255, 0.15) !important;
 }

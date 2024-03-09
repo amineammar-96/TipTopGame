@@ -33,7 +33,7 @@ class Ticket
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    #[ORM\ManyToOne(inversedBy: 'tickets', cascade: ['persist'])]
     private ?Prize $prize = null;
 
     #[ORM\Column]

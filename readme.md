@@ -141,55 +141,6 @@ Game reset successfully.
 ```
 
 
-# OR
-
-Generate data step by step:
-1) Generate Roles (ROLE_ADMIN, ROLE_STOREMANAGER, ROLE_EMPLOYEE, ROLE_CLIENT , ROLE_BAILIFF , ROLE_ANONYMOUS)
-2) Generate Store (TipTop) &&  Admin (Eric Bourdon (azerty123456) - super admin)  - Generate Anonyme user
-3) Generate Prizes (5 prizes)
-4) Generate Tickets 
-5) Generate Fake Data (Stores, Managers, Employees, Clients , Tickets gain history )
-6) Generate Emailing Services (Check the code in src/Command)
-7) Generate Emailing Templates variables (Check the code in src/Command)
-8) Generate Emailing Templates (Check the code in src/Command)
-
-
-```bash
-php bin/console doctrine:migrations:migrate
-```
-
-```bash
-+ Check generate data commandes in src/Command 
-
-
-#1 generate roles 
-php bin/console app:create-default-role
-
-#2 add tiptop store , admin and anonyme user 
-php bin/console app:create-default-tiptop-company
-
-#3 generate prizes
-php bin/console app:add-prizes
-
-#4 generate tickets
-php bin/console app:generate-tickets
-
-#5 generate fake data
-php bin/console app:generate-data
-
-#6 generate email services
-php bin/console app:generate-email-services
-
-#7 generate email templates variables
-php bin/console app:generate-email-templates-variables
-
-#8 generate email templates
-php bin/console app:generate-email-templates
-
-```
-
-
-
 Next.js
 ```bash
 npm run dev
@@ -199,10 +150,7 @@ yarn dev
 pnpm dev
 ```
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 
 

@@ -8,6 +8,7 @@ import TeaBoxImg from "@/assets/images/teaBox.png";
 import TeaBoxSignatureImg from "@/assets/images/teaBoxSignature.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import SurpriseBoxImg from "@/assets/images/surprise.png";
+import BoxImg from "@/assets/images/box.png";
 import {getTickets , getPrizes} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
 import {Button, Form, Input, Select, Space, theme} from 'antd';
@@ -168,10 +169,17 @@ function TicketsPageDashboard() {
 
     }
 
-    const renderPrizeImage = (prizeId: string) => {
+    const renderPrizeImage = (prizeId: string , status : string) => {
         if(prizeId==null) {
             return (<></>);
         }
+
+        if (status=="2" && userRole!="ROLE_ADMIN") {
+            return (
+                <Image src={BoxImg} alt={"BoxImg"}></Image>
+            );
+        }
+
         switch (prizeId.toString()) {
             case "1":
                 return (
@@ -253,6 +261,14 @@ function TicketsPageDashboard() {
                                             </Tag>
 
                                         )}
+                                        {ticket.status=="6" && (
+                                            <Tag icon={
+                                                <CloseCircleOutlined />
+                                            } color="error">
+                                                {getTicketStatusLabel(ticket.status.toString())}
+                                            </Tag>
+
+                                        )}
 
 
                                     </p>
@@ -264,31 +280,33 @@ function TicketsPageDashboard() {
 
 
 
-                                    {(userRole === 'ROLE_ADMIN' || ticket.status=="4") &&  (
+                                    {(userRole === 'ROLE_ADMIN' || ticket.status=="4" || ticket.status=="6" || ticket.status=="5" || ticket.status=="2" || ticket.status=="3" ) &&  (
                                         <>
                                             <p><strong>Gain:</strong></p>
                                             <div className={`${styles.ticketCardIconsPrize}`}>
-                                                {renderPrizeImage(ticket.prize.id)}
+                                                {renderPrizeImage(ticket.prize.id , ticket.status)}
                                             </div>
-                                            <p className={`${styles.prizeLabel}`}>{ticket.prize.label}</p>
+                                            {(ticket.status=="4" || ticket.status=="3" || ticket.status=="5" || ticket.status=="6") && (
+                                                <p className={`${styles.prizeLabel}`}>{ticket.prize.label}</p>
+                                            )}
                                         </>
                                     )}
 
 
 
-                                    {ticket.status=="1" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de Génération:</strong>Le {ticket.ticket_generated_at.date} à {ticket.ticket_generated_at.time} </p>
+                                    {(ticket.status=="1" )&& (
+                                        <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date de Génération:</strong>Le {ticket.ticket_generated_at.date} à {ticket.ticket_generated_at.time} </p>
                                     )}
-                                    {ticket.status=="2" && (
+                                    {(ticket.status!="1") && (
                                         <>
-                                             <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
+                                             <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date d'impression:</strong>Le {ticket.ticket_printed_at.date} à {ticket.ticket_printed_at.time} </p>
                                         </>
                                          )}
                                     {ticket.status=="3" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                        <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date de jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
                                     )}
                                     {ticket.status=="4" && (
-                                        <p className={`mt-5 ${styles.prizeDateGeneration}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
+                                        <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
                                     )}
 
                                     {ticket.status=="3" && (userRole=="ROLE_ADMIN" || userRole=="ROLE_STOREMANAGER") &&
@@ -302,6 +320,15 @@ function TicketsPageDashboard() {
                                             </a>
 
                                         )}
+
+
+                                    {ticket.status=="5" && (
+                                        <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date d'expiration:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                    )}
+
+                                    {ticket.status=="6" && (
+                                        <p className={`mt-2 ${styles.prizeDateGeneration}`}><strong>Date d'annulation:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                    )}
 
                                     <Button onClick={()=> {
                                         openDetailsModal(ticket);
@@ -735,6 +762,16 @@ function TicketsPageDashboard() {
                                         }
                                     </Tag>
                                 )}
+
+                                {selectedTicket?.status=="6" && (
+                                    <Tag icon={
+                                        <CloseCircleOutlined />
+                                    } color="error">
+                                        {getTicketStatusLabel(selectedTicket?.status.toString())}
+                                    </Tag>
+
+                                )}
+
                             </p>
                             <p className={`${styles.barCode}`}><strong>Code de Ticket:</strong> <span className={styles.barCodeText}>#{selectedTicket?.ticket_code} <div className={`${styles.ticketCardIconsBarCode}`}>
                                         <Image src={BarcodeTicketImg} alt={"Code a barre"}></Image>
@@ -750,7 +787,7 @@ function TicketsPageDashboard() {
                                     {selectedTicket?.ticket_printed_at.date} à {selectedTicket?.ticket_printed_at.time}
                                 </span>
                                 </p>
-                                    {selectedTicket?.status=="3" && (
+                                    {(selectedTicket?.status=="3" || selectedTicket?.status=="4") && (
                                         <p>
                                             <strong>Participant : <br/>
                                             </strong>
@@ -781,13 +818,16 @@ function TicketsPageDashboard() {
 
 
 
-                            {(userRole === 'ROLE_ADMIN' || selectedTicket?.status=="4") &&  (
+                            {(userRole === 'ROLE_ADMIN' || selectedTicket?.status=="4" || selectedTicket?.status=="6" || selectedTicket?.status=="5" || selectedTicket?.status=="2" || selectedTicket?.status=="3" ) &&  (
                                 <>
                                     <p><strong>Gain:</strong></p>
                                     <div className={`${styles.ticketCardIconsPrize}`}>
-                                        {renderPrizeImage(selectedTicket?.prize.id as string)}
+                                        {renderPrizeImage(selectedTicket?.prize.id as string , selectedTicket?.status as string)}
                                     </div>
-                                    <p className={`${styles.prizeLabel}`}>{selectedTicket?.prize.label}</p>
+                                    {(selectedTicket?.status=="4" || selectedTicket?.status=="3" || selectedTicket?.status=="5" || selectedTicket?.status=="6") && (
+                                        <p className={`${styles.prizeLabel}`}>{selectedTicket?.prize.label}</p>
+                                    )}
+
                                 </>
                             )}
 
@@ -819,6 +859,11 @@ function TicketsPageDashboard() {
                                     </a>
 
                                 )}
+
+
+                            {selectedTicket?.status=="6" && (
+                                <p className={`mt-1 ${styles.prizeDateGeneration}`}><strong>Date d'annulation:</strong>Le {selectedTicket?.updated_at.date} à {selectedTicket?.updated_at.time} </p>
+                            )}
 
 
                         </div>

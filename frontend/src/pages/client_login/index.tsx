@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap';
 import { Button } from 'antd';
 import '../../app/globals.css'
+import '../../app/responsive.css'
+
 import Dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import styles from '../../styles/pages/auth/clientLoginPage.module.css';
@@ -55,7 +57,7 @@ export default function userLogin() {
       <Row className={`${styles.loginPageMainDiv} m-0`}>
         {formStep == 1 ? (
           <>
-            <Col className={`${styles.loginPageMainDivLeftSide} p-0 m-0`} xl={8} sm={0} md={6}>
+            <Col className={`${styles.loginPageMainDivLeftSide} p-0 m-0`} xl={8} sm={0} md={3}>
                 <Image
                     src={loginFormImg}
                     alt="Landing Image"
@@ -82,7 +84,7 @@ export default function userLogin() {
 
         {formStep == 1 ? (
           <>
-            <Col className={`${styles.loginPageMainDivRightSide}`} xl={4}   md={6}  sm={12} >
+            <Col className={`${styles.loginPageMainDivRightSide}`} xl={4}   md={9}  sm={12} >
               <LoginClientForm  formStep={formStep} handleFormStepChange={handleFormStepChange}></LoginClientForm>
             </Col>
           </>

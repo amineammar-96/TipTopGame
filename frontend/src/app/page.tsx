@@ -14,6 +14,8 @@ export default function Home() {
 
     const [loading, setLoading] = useState(true);
 
+    const [stepWindow, setStepWindow] = useState(0);
+
     useEffect(() => {
         setTimeout(() => {
             setLoading(false);
