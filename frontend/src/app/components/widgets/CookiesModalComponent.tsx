@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button, Modal } from 'antd';
 
 export default function CookiesModalComponent() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const handleAccept = () => {
-    // Logique d'acceptation des cookies ici
+    localStorage.setItem('cookiesAccepted', 'true');
     setIsModalOpen(false);
   };
 
   const handleRefuse = () => {
     // Logique de refus des cookies ici
+    localStorage.setItem('cookiesAccepted', 'false');
     setIsModalOpen(false);
   };
+
+    useEffect(() => {
+    if (localStorage.getItem('cookiesAccepted') !== 'true') {
+      setIsModalOpen(true);
+    }
+    }, []);
 
   return (
     <>
@@ -32,7 +39,7 @@ export default function CookiesModalComponent() {
             Accepter
           </Button>,
         ]}
-        style={{ top: 'auto', left: 20, bottom: 0, right: 'auto', position: 'fixed' }}
+        className={"cookiesModal"}
       >
         <p>Nous souhaitons vous informer que notre site web utilise des cookies pour améliorer votre expérience en ligne. Ces petits fichiers texte sont stockés sur votre appareil afin d'optimiser la navigation, personnaliser le contenu, et analyser l'utilisation du site.</p>
         

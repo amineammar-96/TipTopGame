@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+    ApartmentOutlined,
     AppstoreOutlined,
     BarcodeOutlined,
     BulbOutlined,
@@ -40,54 +41,23 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-    getItem('Tableau de bord', 'dashboardItem', <DashboardOutlined />),
+    getItem('Tirage au sort', 'tirageAuSort', <ApartmentOutlined />),
+
+    getItem('Historique des gains', 'historyPrizesItem' ,<HistoryOutlined />),
+    getItem('Historique des tickets', 'ticketsHistoryItem' , <FileSearchOutlined />),
+    getItem('Tickets', 'ticketsItem' , <BarcodeOutlined />),
+    getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
+    getItem('Clients Inscrits', 'statisticItemClients' , <GlobalOutlined />),
+    getItem('Participants Actifs ', 'statisticItemPrizes' , <SketchOutlined />),
 
 
 
-    getItem('Gestion des magasins', 'storesItem', <AppstoreOutlined />, [
-        getItem('Magasins', 'storesManagementItem' , <ShopOutlined />),
-        getItem('Gestion des Profils', 'profilesManagementItem' , <UserOutlined />),
-    ]),
 
-    getItem('Gestion des clients', 'clientsItem', <TeamOutlined /> , [
-        getItem('Clients Inscrits', 'statisticItemClients' , <GlobalOutlined />),
-        getItem('Participants Actifs ', 'statisticItemPrizes' , <SketchOutlined />),
-    ]),
-
-    getItem('Jeu-Concours', 'gameItem', <BulbOutlined />, [
-        getItem('Historique des gains', 'historyPrizesItem' ,<SoundOutlined />),
-        getItem('Historique des tickets', 'ticketsHistoryItem' , <FileSearchOutlined />),
-        getItem('Tickets', 'ticketsItem' , <BarcodeOutlined />),
-        getItem('Lots des gains', 'prizesLotsItem' , <GiftOutlined />),
-        getItem('Badges de Récompenses', 'badgesItem' , <CrownOutlined />),
-    ]),
-
-
-    getItem('Règlement du Jeu', 'gameConfigItem', <ControlOutlined />, [
-        getItem('Géneral', 'datesConfigItem' , <ControlOutlined />),
-        getItem('Tirage au sort final', 'finalDrawItem' , <GoldOutlined />),
-    ]),
-
-
-    getItem('Historique générale', 'generalHistory', <HistoryOutlined />, [
-        getItem('Historique des connexions', 'connectionsHistory' , <LoginOutlined />),
-        getItem('Historique des actions' , 'actionHistory' , <FieldTimeOutlined />),
-        getItem('Historique des e-mails' , 'emailsHistory' ,<SolutionOutlined />),
-
-
-    ]),
-
-
-
-    getItem('Paramètres', 'settingsItem', <SettingOutlined />, [
-        getItem('Paramètres Généraux', 'generalSettingsItem' , <SettingOutlined />),
-        getItem('Modèles E-mails', 'CorrespandancesTemplates' , <MailOutlined />),
-    ]),
 
 ];
 
 
-const rootSubmenuKeys = ['dashboardItem', 'storesItem', 'clientsItem' , 'gameItem', 'gameConfigItem', 'generalHistory' , 'settingsItem'];
+const rootSubmenuKeys = ['tirageAuSort', 'historyPrizesItem', 'ticketsHistoryItem', 'ticketsItem', 'prizesLotsItem', 'statisticItemClients', 'statisticItemPrizes'];
 interface SidebarProps {
     onMenuItemClick: (menuItemKey: string) => void;
     selectedMenuItem: string;

@@ -90,6 +90,10 @@ function ClientDashboard() {
             window.location.href = '/client_login';
         }
 
+        if(userRrole == "ROLE_BAILIFF") {
+            window.location.href = '/dashboard/store_bailiff';
+        }
+
         }, [userRrole]);
 
     return (

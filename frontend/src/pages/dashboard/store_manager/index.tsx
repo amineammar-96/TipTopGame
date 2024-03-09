@@ -70,6 +70,9 @@ function storeAdminDashboard() {
             window.location.href = '/dashboard/storeAdmin';
         }
 
+        if(userRrole == "ROLE_BAILIFF") {
+            window.location.href = '/dashboard/store_bailiff';
+        }
 
     }, [userRrole]);
 

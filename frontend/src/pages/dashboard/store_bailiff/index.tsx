@@ -1,34 +1,19 @@
-import React, {Component, useEffect, useState} from 'react';
-import Sidebar from "@/pages/dashboard/store_admin/components/sidebar";
-import {Row,Col} from "antd";
+import React, {useEffect, useState} from 'react';
+import Sidebar from "@/pages/dashboard/store_bailiff/components/sidebar";
+import {Col, Row} from "antd";
 import TopNavBar from "@/app/components/dashboardComponents/widgets/topNavBar";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import "@/styles/pages/dashboards/globalDashboardStyle.css";
-import StoresManagement from "@/app/components/dashboardComponents/StoreManagementComponent/StoresManagement";
-
-
-import RedirectService from "@/app/service/RedirectService";
-import ProfilesManagement from "@/app/components/dashboardComponents/ProfilesManagementComponent/ProfilesManagement";
-import HomePage from "@/app/components/dashboardComponents/HomePageComponent/HomePageDashboard";
 import TicketsPageDashboard from "@/app/components/dashboardComponents/TicketsPageComponent/TicketsPageDashboard";
 import PrizesListPage from "@/app/components/dashboardComponents/PrizesPageComponent/PrizesListPage";
-import ClientManagementPage
-    from "@/app/components/dashboardComponents/ClientManagementComponents/ClientManagementPage";
+import ClientManagementPage from "@/app/components/dashboardComponents/ClientManagementComponents/ClientManagementPage";
 import ParticipantManagementPage
     from "@/app/components/dashboardComponents/ClientManagementComponents/ParticipantManagementPage";
 import GameGainHistoryPage from "@/app/components/dashboardComponents/GameGainHistory/GameGainHistoryPage";
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
-import CorrespandancesTemplates
-    from "@/app/components/dashboardComponents/CorrespandancesTemplatesComponents/CorrespandancesTemplates";
-import GeneralSettingsTemplates
-    from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
-import BadgesListPage from "@/app/components/dashboardComponents/BadgesPageComponent/BadgesListPage";
-import ActionHistoryPage from "@/app/components/dashboardComponents/ActionHistory/ActionHistoryPage";
 import TicketsHistory from "@/app/components/dashboardComponents/TicketsHistory/TicketsHistory";
-import ConnectionHistory from "@/app/components/dashboardComponents/ConnectionHistory/ConnectionHistory";
-import EmailingHistory from "@/app/components/dashboardComponents/EmailingHistory/EmailingHistory";
-import GameSettingsTemplates from "@/app/components/dashboardComponents/GameSettingsComponent/GameSettingsTemplates";
-import TirageAuSortTemplate from "@/app/components/dashboardComponents/TirageAuSortComponent/TirageAuSortTemplate";
+import TirageAuSortBailiffTemplate
+    from "@/app/components/dashboardComponents/TirageAuSortBailiffComponent/TirageAuSortBailiffTemplate";
 
 function storeAdminDashboard() {
 
@@ -73,6 +58,12 @@ function storeAdminDashboard() {
         }
 
         if (userRrole == "ROLE_ADMIN") {
+            window.location.href = '/dashboard/store_admin';
+        }
+
+
+
+            if (userRrole == "ROLE_BAILIFF") {
             setLoading(false);
         }
 
@@ -104,23 +95,14 @@ function storeAdminDashboard() {
                                     <TopNavBar></TopNavBar>
                                 </Row>
                                 <Row className={styles.mainContent}>
-                                    {selectedMenuItem==="dashboardItem" && <HomePage></HomePage>}
-                                    {selectedMenuItem==="storesManagementItem" && <StoresManagement></StoresManagement>}
-                                    {selectedMenuItem==="profilesManagementItem" && <ProfilesManagement></ProfilesManagement>}
-                                    {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
-                                    {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
                                     {selectedMenuItem==="statisticItemClients" && <ClientManagementPage></ClientManagementPage>}
                                     {selectedMenuItem==="statisticItemPrizes" && <ParticipantManagementPage></ParticipantManagementPage>}
                                     {selectedMenuItem==="historyPrizesItem" && <GameGainHistoryPage></GameGainHistoryPage>}
-                                    {selectedMenuItem==="CorrespandancesTemplates" && <CorrespandancesTemplates></CorrespandancesTemplates>}
-                                    {selectedMenuItem==="generalSettingsItem" && <GeneralSettingsTemplates></GeneralSettingsTemplates>}
-                                    {selectedMenuItem==="badgesItem" && <BadgesListPage></BadgesListPage>}
-                                    {selectedMenuItem==="actionHistory" && <ActionHistoryPage></ActionHistoryPage>}
                                     {selectedMenuItem==="ticketsHistoryItem" && <TicketsHistory></TicketsHistory>}
-                                    {selectedMenuItem==="connectionsHistory" && <ConnectionHistory></ConnectionHistory>}
-                                    {selectedMenuItem==="emailsHistory" && <EmailingHistory></EmailingHistory>}
-                                    {selectedMenuItem==="datesConfigItem" && <GameSettingsTemplates></GameSettingsTemplates>}
-                                    {selectedMenuItem==="finalDrawItem" && <TirageAuSortTemplate></TirageAuSortTemplate>}
+                                    {selectedMenuItem==="ticketsItem" && <TicketsPageDashboard></TicketsPageDashboard>}
+                                    {selectedMenuItem==="prizesLotsItem" && <PrizesListPage></PrizesListPage>}
+
+                                    {selectedMenuItem==="tirageAuSort" &&<TirageAuSortBailiffTemplate></TirageAuSortBailiffTemplate>}
 
 
 

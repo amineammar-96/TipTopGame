@@ -32,6 +32,8 @@ function LandingPageTopSection() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const user = localStorage.getItem('loggedInUser');
         const token = localStorage.getItem('loggedInUserToken');
         const userRole = localStorage.getItem('loggedInUserRole');
@@ -59,6 +61,7 @@ function LandingPageTopSection() {
             setData(response.prizes);
             setTotalPrizeCount(response.prizes.length);
             setLoading(false);
+            window.scrollTo(0, 0);
         }).catch((err) => {
             if (err.response) {
 

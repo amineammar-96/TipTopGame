@@ -195,3 +195,33 @@ export async function getTicketsHistory(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 }
+
+export async function getGameConfig() {
+
+    const url = '/game_config';
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+
+    return await fetchJson(url, config);
+}
+
+
+export async function updateGameConfig(data: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/game_config/update`, config);
+}

@@ -214,20 +214,21 @@ body, * {
   padding: 28px;
 }
 
-.ant-btn-primary {
+.ant-modal-content .ant-btn-primary {
   background-color: #7BC558 !important;
   border-color: #7BC558 !important;
 }
 
-.ant-btn-primary:hover {
+.ant-modal-content .ant-btn-primary:hover {
   background-color: #7BC558 !important;
   border-color: #7BC558 !important;
   cursor: pointer;
+  opacity: 0.8;
 }
 
 .refuse-button {
-  background-color: #FF0000 !important;
-  border-color: #FF0000 !important;
+  background-color: #ff4747 !important;
+  border-color: #ff4747 !important;
   text-align: center;
 }
 
@@ -236,14 +237,22 @@ body, * {
 }
 
 .refuse-button:hover {
-  background-color: #FF0000 !important;
-  border-color: #FF0000 !important;
+  background-color: #ff4747 !important;
+  border-color: #ff4747 !important;
   cursor: pointer;
+    opacity: 0.8;
 }
 
 .cookie-consent-banner {
+  box-sizing: border-box;
+  width: 100%;
+
+  background-color: #F1F6F4;
+}
+
+.gameinfo-consent-banner {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   z-index: 2147483645;
   box-sizing: border-box;
@@ -251,6 +260,7 @@ body, * {
 
   background-color: #F1F6F4;
 }
+
 
 .cookie-consent-banner__inner {
   max-width: 1460px;
@@ -261,6 +271,17 @@ body, * {
   gap: 1rem;
   justify-content: center;
   align-items: center;
+}
+
+.gameinfo-consent-banner__inner {
+    max-width: 1460px;
+    margin: 0 auto;
+    padding: 10px 0;
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .cookie-consent-banner__copy {
@@ -307,7 +328,7 @@ body, * {
 
   border-radius: 2px;
 
-  background-color: #2CE080;
+  background-color: var(--green);
 
   color: #FFF;
   text-decoration: none;
@@ -325,11 +346,11 @@ body, * {
 
   background-color: transparent;
 
-  color: #2CE080;
+  color: var(--green);
 }
 
 .cookie-consent-banner__cta:hover {
-  background-color: #20BA68;
+  background-color: var(--green);
 }
 
 .cookie-consent-banner__cta--secondary:hover {
@@ -337,9 +358,115 @@ body, * {
 
   background-color: transparent;
 
-  color: #22C870;
+  color: var(--green);
 }
 
 .cookie-consent-banner__cta:last-child {
   margin-left: 16px;
+}
+
+
+.timeContainer {
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeContainer .wrapper {
+  width: 360px;
+  padding: 5px;
+  max-height: 400px;
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  padding-left: 0 !important;
+}
+
+.timeContainer .wrapper div {
+  color: #ccc;
+  text-align: center;
+  width: 24%;
+  height: 60px;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeContainer .wrapper div:first-child{
+  background: #87BE4BFF;
+  color: white !important;
+}
+
+.timeContainer .wrapper div:nth-child(2){
+  background: #87BE4BFF;
+  color: white !important;
+}
+
+.timeContainer .wrapper div:nth-child(3){
+  background: #252323;
+  color: #fff !important;
+}
+
+.timeContainer .wrapper div:last-child{
+  background: #252323;
+  color: #fff !important;
+}
+
+
+
+.timeContainer .wrapper div h2 {
+  font-size: 1.5rem;
+  color: white !important;
+  justify-content: center !important;
+    align-items: center !important;
+  margin: 0 !important;
+
+}
+
+.circleDiv {
+  position: fixed;
+  z-index: -1;
+  top: calc(50% - 237px);
+  left: calc(-50% + 474px);
+  width: 474px;
+  height: 474px;
+  border-radius: 100%;
+  border: 6px dashed #00A3D0;
+  animation: rotatingCircle infinite linear 60s;
+}
+
+@keyframes rotatingCircle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  pointer-events: none;
+  user-select: none;
+  backdrop-filter: invert(100%);
+}
+
+.cookiesModal {
+  top: auto;
+  left: 10px;
+  bottom: 80px;
+  right: auto;
+  position: fixed;
 }

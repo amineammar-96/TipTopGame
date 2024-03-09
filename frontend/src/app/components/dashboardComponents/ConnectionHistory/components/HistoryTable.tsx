@@ -49,6 +49,8 @@ export default function HistoryTable({selectedStoreId, data}: storeManagersTable
                 return 'Manager de magasin';
             case 'ROLE_CLIENT':
                 return 'Client';
+            case 'ROLE_BAILIFF':
+                return 'Espace Huissier';
             default:
                 return 'Inconnu';
         }
