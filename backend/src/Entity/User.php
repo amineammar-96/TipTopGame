@@ -286,7 +286,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials() : void
     {
         // If you have any sensitive data in your entity that should be removed after authentication,
         // you can handle it here. For most cases, you can leave it empty.
