@@ -64,10 +64,12 @@ class UserAuthController extends AbstractController {
                 $plainPassword = $userFormData[ 'password' ];
                 if ( $user ) {
                     if ( !$this->passwordEncoder->isPasswordValid( $user, $plainPassword ) ) {
-                        return new JsonResponse( [ 'error' => 'Invalid credentials' ], 401 );
+                        return new JsonResponse( [ 'error' => 'Invalid credentials',
+                            'credentials' => $userFormData ], 401 );
                     }
                 }
             }
+
 
             if ( !$user ) {
                 return new JsonResponse( [ 'error' => 'Authentication failed' , 'message' => "user not found" ], 401 );
