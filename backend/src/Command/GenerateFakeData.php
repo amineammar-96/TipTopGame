@@ -286,7 +286,7 @@ class GenerateFakeData extends Command
         $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
         $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
         $gameConfigStartDate = null;
-        $dateFormat = 'd-m-Y';
+        $dateFormat = 'd/m/Y';
         if($gameConfig){
             $gameConfigStartDate = \DateTime::createFromFormat($dateFormat , $gameConfig->getStartDate());
         }
@@ -308,7 +308,6 @@ class GenerateFakeData extends Command
         $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER];
         foreach ($randomTickets as $ticket) {
             $randomDate = $gameConfigStartDate;
-            dd($randomDate);
             $randomDate->modify('+'.rand(1, 5).' days');
             $randomStatus = $statuses[array_rand($statuses)];
 
