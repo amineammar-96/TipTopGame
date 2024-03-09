@@ -5,7 +5,9 @@ namespace App\Controller\Api\GameConfig;
 
 use App\Entity\GameConfig;
 
+use App\Entity\User;
 use DateTime;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,12 +74,39 @@ class GameConfigController extends AbstractController
                 $gameStatus = "A venir";
             }else if($now > $startDate && $now < $principalPeriodFinishAt){
                 $gameStatus = "En cours";
+                $interval = $principalPeriodFinishAt->diff($now);
+                $timeRemainingToStart = [
+                    'days' => $interval->format('%a'),
+                    'hours' => $interval->format('%h'),
+                    'minutes' => $interval->format('%i'),
+                    'seconds' => $interval->format('%s')
+                ];
             }else if($now > $principalPeriodFinishAt && $now < $validationPeriodFinishAt){
                 $gameStatus = "Validation";
+                $interval = $validationPeriodFinishAt->diff($now);
+                $timeRemainingToStart = [
+                    'days' => $interval->format('%a'),
+                    'hours' => $interval->format('%h'),
+                    'minutes' => $interval->format('%i'),
+                    'seconds' => $interval->format('%s')
+                ];
             }else if($now > $validationPeriodFinishAt){
                 $gameStatus = "Terminé";
+                $interval = $validationPeriodFinishAt->diff($now);
+                $timeRemainingToStart = [
+                    'days' => $interval->format('%a'),
+                    'hours' => $interval->format('%h'),
+                    'minutes' => $interval->format('%i'),
+                    'seconds' => $interval->format('%s')
+                ];
             }
 
+        }
+
+        $participantsCount = 0;
+        $participants = $this->entityManager->getRepository(User::class)->findUniqueParticipants();
+        if($participants){
+            $participantsCount = count($participants);
         }
 
 
@@ -87,7 +116,8 @@ class GameConfigController extends AbstractController
             'validationPeriodFinishAt' => $this->getDateTimeAsJson($validationPeriodFinishAt),
             'timeRemainingToStart' => $timeRemainingToStart,
             'gameStatus' => $gameStatus,
-            'time' => $gameConfig ? $gameConfig->getTime() : '00:00'
+            'time' => $gameConfig ? $gameConfig->getTime() : '00:00',
+            'participantsCount' => $participantsCount
         ]);
 
 
@@ -97,7 +127,7 @@ class GameConfigController extends AbstractController
      * @isGranted("ROLE_ADMIN")
      * @param Request $request
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateGameConfig(Request $request): JsonResponse
     {

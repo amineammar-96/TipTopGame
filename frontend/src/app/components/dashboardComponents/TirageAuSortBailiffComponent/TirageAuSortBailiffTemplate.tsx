@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
+import {Col, Divider, Row, Tag} from "antd";
+import {getGameConfig} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
-import {Button, Col, Divider, Form, Input, Modal, Row, Tag} from "antd";
-import {getGameConfig, updateGameConfig} from "@/app/api";
+import participantsTable
+    from "@/app/components/dashboardComponents/ClientManagementComponents/components/ParticipantsTable";
 
 
 interface DataType {
@@ -17,9 +19,8 @@ interface TimeRemaining {
     seconds: number
 }
 
-function GameSettingsTemplates() {
-
-
+function TirageAuSortBailiffTemplate() {
+    const [gameStatus, setGameStatus] = useState<string>("");
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();
 
@@ -58,10 +59,7 @@ function GameSettingsTemplates() {
         time: ""
     });
 
-    const [lockedForm, setLockedForm] = useState<boolean>(true);
-
-    const [gameStatus, setGameStatus] = useState<string>("");
-
+    const [participantsCount , setParticipantsCount] = useState<number>(0);
     function fetchGameConfig() {
         setLoading(true);
         getGameConfig().then((response) => {
@@ -104,6 +102,8 @@ function GameSettingsTemplates() {
                     seconds: timeRemainingToStart.seconds
                 });
 
+                setParticipantsCount(response.participantsCount);
+
             }
         }).catch((err) => {
             if (err.response) {
@@ -121,63 +121,6 @@ function GameSettingsTemplates() {
         fetchGameConfig();
     }, []);
 
-
-
-    function onFinish() {
-        console.log("finish")
-        console.log(gameConfig)
-        setLockedForm(true);
-
-
-    }
-
-    function updateStartDateGame() {
-        Modal.confirm({
-            title: 'Êtes-vous sûr de vouloir modifier la date de début du jeu ?',
-            content: 'Cela peut affecter les joueurs et les tickets déjà enregistrés',
-            okText: 'Oui',
-            okType: 'danger',
-            cancelText: 'Non',
-            onOk() {
-                updateGameConfig(gameConfig).then((response) => {
-                    if (response) {
-                        Modal.success({
-                            title: 'Date de début du jeu modifiée avec succès',
-                            content: 'La date de début du jeu a été modifiée avec succès',
-                        });
-
-                        setLockedForm(true);
-                        fetchGameConfig();
-                    }
-                }).catch((err) => {
-                    if (err.response) {
-                        if (err.response.status === 401) {
-                            logoutAndRedirectAdminsUserToLoginPage();
-                        }
-                    } else {
-                        Modal.error({
-                            title: 'Erreur lors de la modification de la date de début du jeu',
-                            content: 'Une erreur s\'est produite lors de la modification de la date de début du jeu',
-                        });
-                    }
-                });
-            },
-        });
-    }
-
-    function enableUpdate() {
-        Modal.confirm({
-            title: 'Êtes-vous sûr de vouloir modifier la date de début du jeu ?',
-            content: 'Cela peut affecter les joueurs et les tickets déjà enregistrés',
-            okText: 'Oui',
-            okType: 'danger',
-            cancelText: 'Non',
-            onOk() {
-                setLockedForm(false);
-            },
-        });
-    }
-
     const statusColors: Record<string, string> = {
         "A venir": "processing",
         "En cours": "success",
@@ -190,17 +133,39 @@ function GameSettingsTemplates() {
         setClassColorTag(statusColors[gameStatus] as any);
     }, [gameStatus]);
 
-        return (
+
+
+    return (
         <div className={styles.homePageContent}>
 
             <div className={`${styles.homePageContentTopHeader}`}>
                 <h1 className={`mx-3`}>
-                    Paramètres de Jeu TipTop
+                    Tirage au sort final
                 </h1>
                 <div className={`${styles.ticketsCardsMain} mt-5`}>
                     <div className={`${styles.ticketsCardsDiv} ${styles.correspandancesDiv} mb-5 px-4`}>
-
                         <div className={` w-100 ${styles.templatesPersoDiv}`}>
+
+
+                            {gameStatus === "Terminé" && (
+                                <>
+                                    <h5 className={"mt-5"}>
+                                        Veuillez procéder au tirage au sort final
+                                    </h5>
+
+                                    <ul>
+                                        <li>
+                                    <span>
+                                        Nombre de clients participants : {participantsCount}
+                                    </span>
+                                        </li>
+
+                                    </ul>
+
+                                    <Divider/>
+                                </>
+                            )}
+
                             <h5 className={"mt-5"}>
 
                                 {gameStatus === "A venir" && (
@@ -211,7 +176,7 @@ function GameSettingsTemplates() {
 
                                 {gameStatus === "En cours" && (
                                     <>
-                                        Date du jeu 🏁
+                                    Date du jeu 🏁
                                     </>
                                 )}
 
@@ -265,95 +230,9 @@ function GameSettingsTemplates() {
 
                             </h5>
 
-                            <Divider/>
-
-                            <Row
-                                className={`w-100`}
-                            >
-                                <>
-                                    <Form
-                                        name="userInfo"
-                                        onFinish={onFinish}
-                                        layout="vertical"
-                                        key={gameConfig.startDate}
-                                        className={`w-100`}
-                                    >
-
-
-                                        <strong className={`my-5 d-flex justify-content-start`}>
-                                            Veuillez entrer la date de début du jeu
-                                        </strong>
-
-                                        <Row gutter={16} style={{
-                                            width: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'flex-start',
-                                            alignItems: 'flex-end'
-                                        }}>
-                                            <Col span={6}>
-                                                <Form.Item
-                                                    initialValue={gameConfig.startDate}
-                                                    style={{width: '100%', margin: 0, padding: 0}}
-                                                    name="gameStartDate"
-                                                    label="Date de début"
-                                                    rules={[{
-                                                        required: true,
-                                                        message: 'Veuillez entrer la date de début !'
-                                                    }]}
-                                                >
-                                                    <Input defaultValue={gameConfig.startDate}
-                                                           value={gameConfig.startDate} type="date"
-                                                           onChange={(e) => setGameConfig({
-                                                               ...gameConfig,
-                                                               startDate: e.target.value
-                                                           })} disabled={lockedForm}/>
-                                                </Form.Item>
-
-                                            </Col>
-
-
-                                            <Col span={3}>
-                                                <Form.Item
-                                                    initialValue={gameConfig.time}
-                                                    style={{width: '100%', margin: 0, padding: 0}}
-                                                    name="gameTime"
-                                                    label="Heure de début"
-                                                    rules={[{
-                                                        required: true,
-                                                        message: 'Veuillez entrer l\'heure de début !'
-                                                    }]}
-                                                >
-                                                    <Input defaultValue={gameConfig.time}
-                                                           value={gameConfig.time} type="time"
-                                                           onChange={(e) => setGameConfig({
-                                                               ...gameConfig,
-                                                               time: e.target.value
-                                                           })} disabled={lockedForm}/>
-
-                                                </Form.Item>
-                                            </Col>
-
-
-                                            <Col span={6}>
-                                                {lockedForm && <Button type="primary"
-                                                                       onClick={() => enableUpdate()}>Modifier</Button>}
-                                                {!lockedForm && <Button type="primary"
-                                                                        onClick={() => updateStartDateGame()}>Enregistrer</Button>}
-                                            </Col>
-
-                                        </Row>
-
-
-                                    </Form>
-
-
-                                </>
-                            </Row>
 
 
                             <Divider/>
-
-
                             <strong className={`my-5 d-flex justify-content-start`}>
                                 Vue d'ensemble
                             </strong>
@@ -404,7 +283,30 @@ function GameSettingsTemplates() {
                                 <Col span={24}
                                      className={"m-0 p-0 d-flex flex-column justify-content-start align-items-start"}>
                                     <h5>
-                                        Temps restant avant le début du jeu
+                                        {gameStatus === "A venir" && (
+                                            <>
+                                                Le jeu débute dans
+                                            </>
+                                        )}
+
+                                        {gameStatus === "En cours" && (
+                                            <>
+                                                Fin du jeu dans
+                                            </>
+                                        )}
+
+                                        {gameStatus === "Validation" && (
+                                            <>
+                                                Fin de la période de validation dans
+                                            </>
+                                        )}
+
+                                        {gameStatus === "Terminé" && (
+                                            <>
+                                                Cloturé depuis
+                                            </>
+                                        )}
+
                                     </h5>
                                     <section className="timeContainer">
                                         <div className="wrapper">
@@ -451,4 +353,4 @@ function GameSettingsTemplates() {
         );
 }
 
-export default GameSettingsTemplates;
+export default TirageAuSortBailiffTemplate;
