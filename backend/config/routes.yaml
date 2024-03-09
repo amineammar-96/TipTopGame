@@ -393,3 +393,15 @@ get_emailing_history:
     path: /api/emailing_history
     controller: App\Controller\Api\EmailingHistory\EmailingHistoryController::getEmailingHistory
     methods: GET
+
+#get game_config
+get_game_config:
+    path: /api/game_config
+    controller: App\Controller\Api\GameConfig\GameConfigController::getGameConfig
+    methods: GET
+
+#update game_config
+update_game_config:
+    path: /api/game_config/update
+    controller: App\Controller\Api\GameConfig\GameConfigController::updateGameConfig
+    methods: POST
