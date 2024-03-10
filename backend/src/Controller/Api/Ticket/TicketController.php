@@ -355,6 +355,7 @@ class TicketController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $ticketCode = $data['ticketCode'] ?? null;
 
+
         $ticket = $this->entityManager->getRepository(Ticket::class)->findOneBy(
             ['ticket_code' => $ticketCode,
                 'status' => Ticket::STATUS_PRINTED
@@ -384,8 +385,9 @@ class TicketController extends AbstractController
         $points = 0;
         $user = $ticket->getUser();
         $prize = $ticket->getPrize();
+
         if ($prize) {
-            $points = floatval($prize->getPrizeValue()) * 15;
+            $points = floatval($prize->getPrice()) * 10;
         }
 
         $lastUserBadges= [];
@@ -407,6 +409,9 @@ class TicketController extends AbstractController
         foreach ($userLoyaltyPoints as $item){
             $loyaltyPointsSum += $item->getPoints();
         }
+
+        $loyaltyPointsSum += $points;
+
 
         $badgeLevels = [
             200 => 1,
@@ -446,16 +451,13 @@ class TicketController extends AbstractController
         }
 
         if(count($gainedBadges) > 0){
-           // $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_BADGE_AWARD , $user , ['badges' => $gainedBadges]);
+            //$this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_BADGE_AWARD , $user , ['badges' => $gainedBadges]);
         }
 
 
         //$this->entityManager->persist($loyaltyPoint);
-
         //$this->entityManager->persist($user);
-
         //$this->entityManager->persist($ticketHistory);
-
         //$this->entityManager->persist($ticket);
 
         //$this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);

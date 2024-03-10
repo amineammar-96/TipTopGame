@@ -794,6 +794,10 @@ function TicketsPageDashboard() {
                                             <span>
                                                 {selectedTicket?.user.firstname} {selectedTicket?.user.lastname}
                                             </span>
+                                            <br/>
+                                            <span>
+                                                {selectedTicket?.user.email}
+                                            </span>
                                         </p>
                                     )}
                                 <p>
@@ -802,6 +806,12 @@ function TicketsPageDashboard() {
                                     <span>
                                     {selectedTicket?.employee.firstname} {selectedTicket?.employee.lastname}
                                 </span>
+
+                                    <br/>
+                                    <span>
+                                    {selectedTicket?.employee.email}
+                                </span>
+
                                 </p>
 
                                     <p>
