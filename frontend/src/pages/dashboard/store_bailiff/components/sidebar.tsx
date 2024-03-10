@@ -1,22 +1,14 @@
 import React, {useState} from 'react';
 import {
     ApartmentOutlined,
-    AppstoreOutlined,
     BarcodeOutlined,
-    BulbOutlined,
-    ControlOutlined, CrownOutlined,
-    DashboardOutlined, FieldTimeOutlined, FileSearchOutlined,
+    FileSearchOutlined,
     GiftOutlined,
     GlobalOutlined,
-    GoldOutlined,
-    HistoryOutlined, LoginOutlined,
-    MailOutlined,
+    HistoryOutlined,
     MenuFoldOutlined,
-    MenuUnfoldOutlined, MessageOutlined,
-    SettingOutlined,
-    ShopOutlined,
-    SketchOutlined, SolutionOutlined, SoundOutlined, TeamOutlined,
-    UserOutlined
+    MenuUnfoldOutlined,
+    SketchOutlined
 } from '@ant-design/icons';
 import type {MenuProps} from 'antd';
 import {Button, Menu, Row} from 'antd';

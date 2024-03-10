@@ -1,7 +1,6 @@
 "use client";
 
 import React, {useEffect, useState} from 'react';
-import { Button, Modal } from 'antd';
 import {CheckOutlined, InfoCircleOutlined} from "@ant-design/icons";
 
 export default function TopInfoBannerComponent() {

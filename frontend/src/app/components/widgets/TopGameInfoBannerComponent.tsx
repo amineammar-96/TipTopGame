@@ -1,10 +1,9 @@
 "use client";
 
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Modal, Tag} from 'antd';
-import {CheckOutlined, CloseOutlined, InfoCircleOutlined} from "@ant-design/icons";
+import {Col, Tag} from 'antd';
+import {CloseOutlined} from "@ant-design/icons";
 import {getGameConfig} from "@/app/api";
-
 
 
 interface DataType {
@@ -204,13 +203,13 @@ export default function TopGameInfoBannerComponent() {
                               </h5>
                               <section className="timeContainer">
                                   <div className="wrapper">
-                                      <div className="days">
+                                      <div className={`days ${gameStatus == "Terminé" && "red-bg"}`}>
                                           <h2 id="days">
                                               {timeRemaining.days}
                                           </h2>
                                           Jours
                                       </div>
-                                      <div className="hours">
+                                      <div className={`hours ${gameStatus == "Terminé" && "red-bg"}`}>
                                           <h2 id="hours">
                                               {timeRemaining.hours}
                                           </h2>
@@ -234,7 +233,7 @@ export default function TopGameInfoBannerComponent() {
 
                           <div className="cookie-consent-banner__actions">
                               <button className="cookie-consent-banner__button" onClick={() => closeTopBanner()}>
-                                  <CloseOutlined />
+                                  <CloseOutlined/>
                               </button>
                           </div>
 

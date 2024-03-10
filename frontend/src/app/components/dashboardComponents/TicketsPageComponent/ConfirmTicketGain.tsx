@@ -212,7 +212,20 @@ function ConfirmTicketGain() {
                 confimGainTicket(ticketId).then((response) => {
                     Modal.success({
                         title: 'Confirmation de gain',
-                        content: 'Le gain a été confirmé avec succès !',
+                        content: <>
+                            <strong>
+                                Le gain a été confirmé avec succès !
+                            </strong>
+
+                            <p>
+                                Un email de confirmation a été envoyé au client. 🚀 ✅
+                            </p>
+
+                            <p>
+                                E-mail envoyé à {email}
+                            </p>
+
+                        </>,
                         okText: 'Fermer',
                         cancelText: 'Annuler',
                         onOk: () => {

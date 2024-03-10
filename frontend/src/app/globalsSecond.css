@@ -402,10 +402,18 @@ body, * {
   color: white !important;
 }
 
+
 .timeContainer .wrapper div:nth-child(2){
   background: #87BE4BFF;
   color: white !important;
 }
+
+
+.timeContainer .red-bg {
+    background: #ff4747 !important;
+    color: white !important;
+}
+
 
 .timeContainer .wrapper div:nth-child(3){
   background: #252323;
@@ -469,4 +477,18 @@ body, * {
   bottom: 80px;
   right: auto;
   position: fixed;
+}
+
+.ant-modal .ant-btn-default {
+  background-color: #1f1e1e !important;
+  border-color: #1f1e1e !important;
+  color: white !important;
+}
+
+.ant-modal .ant-btn-default:hover {
+  background-color: #1f1e1e !important;
+  border-color: #1f1e1e !important;
+  cursor: pointer;
+  opacity: 0.8;
+  color: white !important;
 }
