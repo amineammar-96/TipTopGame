@@ -48,7 +48,7 @@ RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/h
 RUN chmod -R 777 /var/www/html/var
 
 # Copy Xdebug configuration
-COPY php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Expose Xdebug port
 EXPOSE 9003
