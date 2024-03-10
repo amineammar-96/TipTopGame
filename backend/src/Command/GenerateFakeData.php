@@ -2,23 +2,19 @@
 
 namespace App\Command;
 
-use App\Entity\Prize;
+use App\Entity\GameConfig;
 use App\Entity\Role;
 use App\Entity\Store;
 use App\Entity\Ticket;
 use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Entity\UserPersonalInfo;
-use App\Repository\PrizeRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Exception;
+use Faker\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\DBAL\Connection;
-use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class GenerateFakeData extends Command
@@ -26,81 +22,41 @@ class GenerateFakeData extends Command
     protected static $defaultName = 'app:generate-data';
 
     private EntityManagerInterface $entityManager;
-    private PrizeRepository $prizeRepository;
-
-    private Connection $connection;
-
     private UserPasswordHasherInterface $passwordEncoder;
 
-
-    public function __construct(EntityManagerInterface $entityManager, PrizeRepository $prizeRepository , Connection $connection , UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder)
     {
         parent::__construct();
-
         $this->entityManager = $entityManager;
-        $this->prizeRepository = $prizeRepository;
-        $this->connection = $connection;
         $this->passwordEncoder = $passwordEncoder;
-
     }
 
     protected function configure()
     {
-        $this->setDescription('Generate fake data for stores, tickets, user, (managers , employee,client) table.');
+        $this->setDescription('Generate fake data for stores, tickets, user, (managers, employees, clients) table.');
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     * @throws Exception
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $faker = Factory::create('fr_FR');
+
+        $this->generateFakeStores($output, $faker);
+        $this->generateFakeUsers($output, $faker, 'storemanager', Role::ROLE_STOREMANAGER, 5);
+        $this->generateFakeUsers($output, $faker, 'employee', Role::ROLE_EMPLOYEE, 20);
+        $this->generateFakeUsers($output, $faker, 'client', Role::ROLE_CLIENT, 30);
+
         $randomTickets = $this->getRandomTickets();
-        $this->generateFakeStores($output);
-        $this->generateFakeManager($output);
-        $this->generateFakeEmployee($output);
-        $this->generateFakeClient($output);
-        $this->generateFakeGain($output , $randomTickets);
+        $this->generateFakeGains($output, $faker, $randomTickets);
 
         $output->writeln('Fake data generated.');
         return Command::SUCCESS;
     }
 
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    private function getRandomTickets(): array
+    private function generateFakeStores(OutputInterface $output, $faker)
     {
-        $ticketRepository = $this->entityManager->getRepository(Ticket::class);
-
-        $totalTickets = $ticketRepository->createQueryBuilder('t')
-            ->select('COUNT(t.id)')
-            ->where('t.status = 1')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $offset = mt_rand(0, max(0, $totalTickets - 3000));
-
-        return $ticketRepository->createQueryBuilder('t')
-            ->setFirstResult($offset)
-            ->setMaxResults(400)
-            ->getQuery()
-            ->getResult();
-    }
-
-    private function generateFakeStores($output)
-    {
-        $faker = Factory::create();
         $storeCount = 5;
 
-        $cities = ["Paris" , "Lyon" , "Marseille" , "Madrid" , "Bordeaux"];
-
-
-
-
+        $cities = ["Paris", "Lyon", "Marseille", "Madrid", "Nice"];
 
         for ($i = 0; $i < $storeCount; $i++) {
             $store = new Store();
@@ -116,6 +72,7 @@ class GenerateFakeData extends Command
             $store->setOpeningDate($faker->dateTimeThisDecade);
             $store->setPhone($faker->phoneNumber);
             $store->setSiren($faker->randomNumber(9, true));
+
             $this->entityManager->persist($store);
         }
 
@@ -123,13 +80,15 @@ class GenerateFakeData extends Command
         $this->entityManager->flush();
     }
 
-    private function generateFakeManager($output): int
+    private function generateFakeUsers(OutputInterface $output, $faker, $type, $role, $count)
     {
-        $storeManagerRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_STOREMANAGER]);
-        if (!$storeManagerRole) {
-            $output->writeln('Error: ROLE_STOREMANAGER role not found.');
+        $roleEntity = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $role]);
+
+        if (!$roleEntity) {
+            $output->writeln("Error: $role role not found.");
             return Command::FAILURE;
         }
+
         $allStores = $this->entityManager->getRepository(Store::class)->findAll();
 
         if (empty($allStores)) {
@@ -137,322 +96,173 @@ class GenerateFakeData extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $store = $allStores[array_rand($allStores)];
             $user = new User();
-            $user->setEmail(Factory::create()->email);
-            $user->setFirstname(Factory::create()->firstName);
-            $user->setLastname(Factory::create()->lastName);
-            $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
-            $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
-            $user->setStatus(User::STATUS_OPEN);
-
-            $user->setCreatedAt(new \DateTime());
-            $user->setIsActive(Factory::create()->boolean(70));
-            $user->setActivitedAt(new \DateTime());
-
-            $user->setPhone(Factory::create()->phoneNumber);
-            $plainPassword="azerty";
+            $user->setEmail($faker->email);
+            $user->setFirstname($faker->firstName);
+            $user->setLastname($faker->lastName);
+            $user->setGender($faker->randomElement(['Homme', 'Femme']));
+            $dob = $faker->dateTimeBetween('-100 years', '-16 years');
+            $user->setDateOfBirth($dob);
+            $user->setPhone($faker->phoneNumber);
+            $plainPassword = "azerty";
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
-            $user->setRole($storeManagerRole);
+            $user->setRole($roleEntity);
             $user->addStore($store);
             $store->addUser($user);
-            $this->entityManager->persist($store);
-            $this->entityManager->persist($user);
+            $user->setStatus(User::STATUS_OPEN);
+            $user->setCreatedAt(new DateTime());
+            $user->setIsActive($faker->boolean(70));
+            $user->setActivitedAt(new DateTime());
 
             $userPersonalInfo = new UserPersonalInfo();
             $userPersonalInfo->setUser($user);
-            $userPersonalInfo->setAddress('18 rue Léon Frot');
-            $userPersonalInfo->setPostalCode('75011');
-            $userPersonalInfo->setCity('Paris');
+            $userPersonalInfo->setAddress($faker->streetAddress);
+            $userPersonalInfo->setPostalCode($faker->postcode);
+            $userPersonalInfo->setCity($faker->city);
             $userPersonalInfo->setCountry('France');
 
+            $this->entityManager->persist($user);
             $this->entityManager->persist($userPersonalInfo);
-
         }
 
         $this->entityManager->flush();
 
-        $output->writeln('20 managers added to the user table. (relationship too)');
+        $output->writeln("$count $type added to the user table. (relationship too)");
         return Command::SUCCESS;
     }
 
-    private function generateFakeEmployee(OutputInterface $output)
+    private function getRandomTickets(): array
     {
-        $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
-        if (!$employeeRole) {
-            $output->writeln('Error: ROLE_EMPLOYEE role not found.');
-            return Command::FAILURE;
-        }
+        $ticketRepository = $this->entityManager->getRepository(Ticket::class);
 
-        $allStores = $this->entityManager->getRepository(Store::class)->findAll();
+        $totalTickets = $ticketRepository->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.status = 1')
+            ->getQuery()
+            ->getSingleScalarResult();
 
-        if (empty($allStores)) {
-            $output->writeln('Error: No stores found in the database.');
-            return Command::FAILURE;
-        }
+        $offset = mt_rand(0, max(0, $totalTickets - 50));
 
-        for ($i = 0; $i < 40; $i++) {
-            $store = $allStores[array_rand($allStores)];
-            $user = new User();
-            $user->setEmail(Factory::create()->email);
-            $user->setFirstname(Factory::create()->firstName);
-            $user->setLastname(Factory::create()->lastName);
-            $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
-            $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
-            $user->setPhone(Factory::create()->phoneNumber);
-            $plainPassword="azerty";
-            $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
-            $user->setPassword($hashedPassword);
-            $user->setRole($employeeRole);
-            $user->addStore($store);
-            $store->addUser($user);
-            $user->setStatus(User::STATUS_OPEN);
-            $user->setCreatedAt(new \DateTime());
-            $user->setIsActive(Factory::create()->boolean(70));
-            $user->setActivitedAt(new \DateTime());
-
-            $userPersonalInfo = new UserPersonalInfo();
-            $userPersonalInfo->setUser($user);
-            $userPersonalInfo->setAddress('18 rue Léon Frot');
-            $userPersonalInfo->setPostalCode('75011');
-            $userPersonalInfo->setCity('Paris');
-            $userPersonalInfo->setCountry('France');
-
-            $this->entityManager->persist($store);
-            $this->entityManager->persist($user);
-        }
-        $this->entityManager->flush();
-
-        $output->writeln('40 employees added to the user table. (relationship too)');
-        return Command::SUCCESS;
+        return $ticketRepository->createQueryBuilder('t')
+            ->setFirstResult($offset)
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
     }
 
-    private function generateFakeClient(OutputInterface $output)
-    {
-        $clientRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_CLIENT]);
-        if (!$clientRole) {
-            $output->writeln('Error: ROLE_CLIENT role not found.');
-            return Command::FAILURE;
-        }
-
-        $allStores = $this->entityManager->getRepository(Store::class)->findAll();
-
-        if (empty($allStores)) {
-            $output->writeln('Error: No stores found in the database.');
-            return Command::FAILURE;
-        }
-
-        for ($i = 0; $i < 100; $i++) {
-            $store = $allStores[array_rand($allStores)];
-            $user = new User();
-            $user->setEmail(Factory::create()->email);
-            $user->setFirstname(Factory::create()->firstName);
-            $user->setLastname(Factory::create()->lastName);
-            $user->setGender(Factory::create()->randomElement(['Homme', 'Femme']));
-            $user->setDateOfBirth(Factory::create()->dateTimeThisCentury);
-            $user->setStatus(User::STATUS_OPEN);
-            $user->setPhone(Factory::create()->phoneNumber);
-            $plainPassword="azerty";
-            $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
-            $user->setPassword($hashedPassword);
-            $user->setRole($clientRole);
-            $user->addStore($store);
-            $store->addUser($user);
-            $this->entityManager->persist($store);
-            $this->entityManager->persist($user);
-
-            $user->setCreatedAt(new \DateTime());
-            $user->setIsActive(Factory::create()->boolean(70));
-            $user->setActivitedAt(new \DateTime());
-            $userPersonalInfo = new UserPersonalInfo();
-            $userPersonalInfo->setUser($user);
-            $userPersonalInfo->setAddress('18 rue Léon Frot');
-            $userPersonalInfo->setPostalCode('75011');
-            $userPersonalInfo->setCity('Paris');
-            $userPersonalInfo->setCountry('France');
-        }
-        $this->entityManager->flush();
-
-        $output->writeln('100 clients added to the user table. (relationship too)');
-        return Command::SUCCESS;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function generateFakeGain(OutputInterface $output, array $randomTickets): void
+    private function generateFakeGains(OutputInterface $output, $faker, array $randomTickets)
     {
         $clientRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_CLIENT]);
         $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
+        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
+        $gameConfigStartDate = null;
+        $dateFormat = 'd/m/Y H:i';
+        if ($gameConfig) {
+            $gameConfigStartDate = DateTime::createFromFormat($dateFormat, $gameConfig->getStartDate() . " " . $gameConfig->getTime());
+        }
 
         if (!$clientRole || !$employeeRole) {
             $output->writeln('Error: CLIENT or EMPLOYEE role not found.');
             return;
         }
 
-        $clients = $this->getRandomUsersByRole($clientRole, 20);
+        $clients = $this->getRandomUsersByRole($clientRole);
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
 
-        $employees = $this->getRandomUsersByRole($employeeRole, 20);
+        $employees = $this->getRandomUsersByRole($employeeRole);
 
-        $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER , Ticket::STATUS_CANCELLED , Ticket::STATUS_EXPIRED];
+        $statuses = [Ticket::STATUS_PRINTED, Ticket::STATUS_PENDING_VERIFICATION, Ticket::STATUS_WINNER];
+
         foreach ($randomTickets as $ticket) {
-            $randomDate = new \DateTimeImmutable('now - ' . mt_rand(0, 5) . ' days');
-            $randomStatus = $statuses[array_rand($statuses)];
-
-
+            $randomDate = clone $gameConfigStartDate;
             $client = $clients[array_rand($clients)];
-            $client->addTicket($ticket);
             $employee = $employees[array_rand($employees)];
-            $ticket->setStatus(
-                $randomStatus
-            );
-            $ticket->setTicketPrintedAt($randomDate);
-            $ticket->setWinDate($randomDate);
-            $ticket->setTicketGeneratedAt($randomDate);
-            $ticket->setUpdatedAt($randomDate);
-            $ticket->setEmployee($employee);
-            $ticket->setStore($employee->getStores()[0]);
-            $employee->addTicket($ticket);
-            $ticket->setUser($client);
-            $client->addStore($employee->getStores()[0]);
-            $store = $employee->getStores()[0];
-            $store->addUser($client);
 
+            $clientAux = $clients[array_rand($clients)];
 
-            $this->entityManager->persist($store);
+            foreach ($statuses as $randomStatus) {
+                $randomDate->modify(rand(1, 24) . ' hours');
+                $randomDate->modify(rand(1, 60) . ' minutes');
+                $randomDate->modify(rand(1, 60) . ' seconds');
 
-            $this->entityManager->persist($ticket);
-            $this->entityManager->persist($client);
-            $this->entityManager->persist($employee);
+                if ($randomStatus === Ticket::STATUS_PENDING_VERIFICATION) {
+                    $randomDate->modify(rand(1, 7) . ' days');
+                }
 
-            $this->createTicketHistory($ticket , $randomDate , $randomStatus , $employees , $clients);
+                if ($randomStatus === Ticket::STATUS_WINNER) {
+                    $randomDate->modify(rand(7, 60) . ' days');
+                }
+
+                if ($randomStatus === Ticket::STATUS_PRINTED) {
+                    $client = $anonymousUser;
+                } else {
+                    $client = $clientAux;
+                }
+
+                $this->updateTicket($ticket, $client, $employee, $randomStatus, clone $randomDate);
+                $this->createTicketHistory($ticket, clone $randomDate, $randomStatus, $employee, $client);
             }
-
+        }
 
         $this->entityManager->flush();
 
         $output->writeln('Fake gains generated and linked to clients and employees.');
     }
 
-    private function getRandomUsersByRole(Role $role, int $count): array
+    private function createTicketHistory(Ticket $ticket, DateTime $randomDate, string $randomStatus, User $employee, User $client): void
+    {
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($ticket);
+        $ticketHistory->setUser($client);
+        $ticketHistory->setEmployee($employee);
+        $ticketHistory->setStatus($randomStatus);
+        $ticketHistory->setUpdatedAt($randomDate);
+
+        $this->entityManager->persist($ticketHistory);
+    }
+
+    private function updateTicket(Ticket $ticket, User $client, User $employee, int $randomStatus, DateTime $randomDate): void
+    {
+        $ticket->setStatus($randomStatus);
+
+        if ($randomStatus === Ticket::STATUS_WINNER) {
+            $ticket->setWinDate($randomDate);
+        }
+
+        if ($randomStatus === Ticket::STATUS_PRINTED) {
+            $ticket->setTicketPrintedAt($randomDate);
+        }
+
+        $ticket->setUpdatedAt($randomDate);
+        $ticket->setEmployee($employee);
+        $ticket->setUser($client);
+        $ticket->setStore($employee->getStores()[0]);
+
+        $employee->addTicket($ticket);
+        $client->addTicket($ticket);
+        $client->addStore($employee->getStores()[0]);
+        $store = $employee->getStores()[0];
+
+        $store->addUser($client);
+
+        $this->entityManager->persist($store);
+        $this->entityManager->persist($ticket);
+        $this->entityManager->persist($client);
+    }
+
+    private function getRandomUsersByRole(Role $role): array
     {
         $users = $this->entityManager->getRepository(User::class)->findBy(['role' => $role]);
 
-        if (count($users) < $count) {
-            return [];
+        if (count($users) < 20) {
+            return $users;
         }
 
         shuffle($users);
-        return array_slice($users, 0, $count);
-    }
-
-    private function createTicketHistory(mixed $ticket, \DateTimeImmutable $randomDate, mixed $randomStatus, array $employees, array $clients): void
-    {
-        switch ($randomStatus) {
-            case Ticket::STATUS_PRINTED:
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-                break;
-            case Ticket::STATUS_PENDING_VERIFICATION:
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-                break;
-            case Ticket::STATUS_WINNER:
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_WINNER);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-                break;
-            case Ticket::STATUS_CANCELLED:
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_CANCELLED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-                break;
-            case Ticket::STATUS_EXPIRED:
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_PENDING_VERIFICATION);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-
-                $ticketHistory = new TicketHistory();
-                $ticketHistory->setTicket($ticket);
-                $ticketHistory->setUser($clients[array_rand($clients)]);
-                $ticketHistory->setEmployee($employees[array_rand($employees)]);
-                $ticketHistory->setStatus(Ticket::STATUS_EXPIRED);
-                $ticketHistory->setUpdatedAt($randomDate);
-                $this->entityManager->persist($ticketHistory);
-                break;
-        }
+        return array_slice($users, 0, 20);
     }
 }

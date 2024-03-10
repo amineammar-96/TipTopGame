@@ -64,6 +64,10 @@ function storeAdminDashboard() {
             window.location.href = '/dashboard/store_admin';
         }
 
+        if(userRrole == "ROLE_BAILIFF") {
+            window.location.href = '/dashboard/store_bailiff';
+        }
+
 
     }, [userRrole]);
 

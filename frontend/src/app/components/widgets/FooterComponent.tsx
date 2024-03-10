@@ -55,23 +55,10 @@ const FooterComponent = () => {
         <Col className={`w-100 d-flex`} >
         <Navbar expand="lg" className={`${styles.footerLinksDiv}`}>
       <div className={`${styles.containerFooterLinks} d-flex `}>
-      <div className={`${styles.linksDiv} d-flex`}>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto d-flex justify-content-between w-100">
-            <Nav.Link href="#home" className={`${styles.navLink}`}><AppstoreFilled className='mx-2' /> Termes et conditions</Nav.Link>
-            <Nav.Link href="#link" className={`${styles.navLink }`}><ExclamationCircleOutlined className='mx-2' />Politique De Confidentialité</Nav.Link>
-            <Nav.Link href="#link" className={`${styles.navLink}`}><ToolFilled className='mx-2' />Support</Nav.Link>
 
-            <Nav.Link href="#link" className={`${styles.navLink}`}><MailOutlined className='mx-2' />Contact</Nav.Link>
-            <Nav.Link href="#link" className={`${styles.navLink}`}><QuestionCircleOutlined  className='mx-2' />FAQ</Nav.Link>
-           
-          </Nav>
-        </Navbar.Collapse>
-        </div>
 
         <div className={`${styles.linksDiv} d-flex`}>
-        <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Furious Ducks. Tous droits réservés. Ce site est un projet étudiant.</p>
         </div>
       
       </div>
@@ -79,11 +66,6 @@ const FooterComponent = () => {
         </Col>
         
       </Row>
-      {/* <Row className="copyright-row">
-        <Col className={`d-flex justify-content-center py-5`} span={24}>
-          <p>&copy; 2023 Your Company Name. All rights reserved.</p>
-        </Col>
-      </Row> */}
     </div>
   );
 };

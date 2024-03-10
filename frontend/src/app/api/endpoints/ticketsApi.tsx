@@ -93,7 +93,21 @@ export async function confirmPrintTicket(data: any) {
     return await fetchJson(`/print_ticket`, config);
 }
 
-//confirmTicketPlayed
+
+export async function printRandomTicket() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson(`/print_random_ticket`, config);
+}
+
+
 export async function confirmTicketPlayed(ticketCode: string) {
     const token = localStorage.getItem('loggedInUserToken');
     const config: AxiosRequestConfig = {
@@ -194,4 +208,34 @@ export async function getTicketsHistory(searchParams: any) {
     };
 
     return await fetchJson(finalUrl, config);
+}
+
+export async function getGameConfig() {
+
+    const url = '/game_config';
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+
+    return await fetchJson(url, config);
+}
+
+
+export async function updateGameConfig(data: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/game_config/update`, config);
 }

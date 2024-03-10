@@ -27,6 +27,10 @@ import LevelFourImg from "@/assets/images/levels/level4.png";
 import LevelFiveImg from "@/assets/images/levels/level5.png";
 import {Rating} from "react-simple-star-rating";
 
+import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
+
+
+
 interface PrizeType {
     'id' : any;
     'label' : any;
@@ -320,8 +324,7 @@ function PlayGameComponent() {
                 title: 'Félicitations !',
                 content: <>
                     <div className={`${styles.modalWithGifImage}`}>
-                        <Image src={welcomeImgAux} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
-                        <Image src={welcomeImg} alt={"Bienvenu"} className={`${styles.gifImage}`}/>
+                        <Fireworks autorun={{ speed: 3 }} />
                         <p>
                             Félicitations, vous avez gagné  {
                             prize[0]?.label
@@ -434,6 +437,7 @@ function PlayGameComponent() {
                             title: 'Félicitations !',
                             content: <>
                                 <div className={`${styles.modalWithGifImage}`}>
+                                    <Fireworks autorun={{ speed: 3 }} />
                                     <p>
                                         Félicitations, vous avez remporté  <span className={`mx-1`}></span>
                                         {gainedBadgesList.length > 1 && (
@@ -531,7 +535,7 @@ function PlayGameComponent() {
     const [loading, setLoading] = useState(false);
 
     const ref = useRef<any>(null)
-    const [ticketCode, setTicketCode] = useState('');
+    const [ticketCode, setTicketCode] = useState('TK6349465A');
 
     const [spinning, setSpinning] = useState(false);
     const [validTicketCode, setValidTicketCode] = useState('');
@@ -667,12 +671,13 @@ function PlayGameComponent() {
     ]
 
     const data = [
-        { option: 'Infuseur à thé', style: { backgroundColor: '#7BC558', textColor: '#ffffff' , fontSize:13 } },
-        { option: '100g (détox ou d’infusion)', style: { backgroundColor: '#42B2FF', textColor: '#ffffff' , fontSize:12 } },
-        { option: '100g d’un thé signature', style: { backgroundColor: '#008080', textColor: '#ffffff' , fontSize:12 } },
-        { option: 'Coffret à 39€', style: { backgroundColor: '#EBB3E6', textColor: '#ffffff', fontSize:14 } },
-        { option: 'Coffret à 69€', style: { backgroundColor: '#FFD700', textColor: '#ffffff' , fontSize:14 } },
-    ]
+        { option: 'Infuseur à thé', image: { uri: '/images/infuser.png' , landscape:true , sizeMultiplier:"0.9" , width: 100 , height: 100 }, style: { backgroundColor: '#f3fd9b', textColor: '#ffffff', fontSize: 12 } },
+        { option: '100g (détox ou d’infusion)', image: { uri: '/images/teaBox.png', landscape:true , sizeMultiplier:"0.9" , width: 100 , height: 100 }, style: { backgroundColor: '#ffe0fb', textColor: '#ffffff', fontSize: 12 } },
+        { option: '100g d’un thé signature', image: { uri: '/images/teaBoxSignature.png' , landscape:true , sizeMultiplier:"0.9" , width: 100 , height: 100 }, style: { backgroundColor: '#e6f2fd', textColor: '#ffffff', fontSize: 12 } },
+        { option: 'Coffret à 39€', image: { uri: '/images/surprise.png' , landscape:true , sizeMultiplier:"0.9" , width: 100 , height: 100 }, style: { backgroundColor: '#cafdb2', textColor: '#ffffff', fontSize: 12 } },
+        { option: 'Coffret à 69€', image: { uri: '/images/surprisePlus.png' , landscape:true , sizeMultiplier:"0.8" , width: 100 , height: 100 }, style: { backgroundColor: '#abe0fd', textColor: '#ffffff', fontSize: 12 } },
+    ];
+
 
     const renderDynamicWheel = () => {
        return (
@@ -916,6 +921,7 @@ function PlayGameComponent() {
                 </p>
 
             </Modal>
+
         </div>
     );
 }

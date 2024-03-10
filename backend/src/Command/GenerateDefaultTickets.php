@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\GameConfig;
 use App\Entity\Prize;
 use App\Entity\Role;
 use App\Entity\Ticket;
@@ -54,16 +55,25 @@ class GenerateDefaultTickets extends Command
             return $sum + $prize->getWinningRate();
         }, 0);
 
-        $ticketCount = 5000;
+        $ticketCount = 1000;
         $tickets = [];
         $generatedTicketCodes = [];
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
+        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
+        $gameConfigStartDate = null;
+        $dateFormat = 'd/m/Y H:i';
+        if($gameConfig){
+            $gameConfigStartDate = \DateTime::createFromFormat($dateFormat , $gameConfig->getStartDate()." " . $gameConfig->getTime());
+        }
 
         for ($i = 0; $i < $ticketCount; $i++) {
-            do {
-                $randomTicketCode = 'TK' . substr(uniqid(), -8);
-            } while (in_array($randomTicketCode, $generatedTicketCodes));
+            $output->writeln('Generating ticket ' . ($i + 1) . ' of ' . $ticketCount);
+            //do {
+            $randomTicketCode = 'TK' . substr(uniqid(), -8);
+            //} while (in_array($randomTicketCode, $generatedTicketCodes));
 
-            $generatedTicketCodes[] = $randomTicketCode;
+            //$generatedTicketCodes[] = $randomTicketCode;
 
             $randomNumber = mt_rand(1, $totalWinningRate);
             $winningPrize = null;
@@ -77,17 +87,13 @@ class GenerateDefaultTickets extends Command
                 }
             }
 
-            $adminRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ADMIN]);
-            $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
-            $user = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $adminRole]);
-            $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
 
 
             if ($winningPrize) {
                 $ticket = new Ticket();
                 $ticket->setPrize($winningPrize);
                 $ticket->setTicketCode(strtoupper($randomTicketCode));
-                $ticket->setTicketGeneratedAt(new \DateTimeImmutable());
+                $ticket->setTicketGeneratedAt($gameConfigStartDate ? $gameConfigStartDate : new \DateTime());
                 $ticket->setTicketPrintedAt(null);
                 $ticket->setWinDate(null);
                 $ticket->setStatus(Ticket::STATUS_GENERATED);
@@ -95,12 +101,14 @@ class GenerateDefaultTickets extends Command
                 $ticketHistory = new TicketHistory();
                 $ticketHistory->setTicket($ticket);
                 $ticketHistory->setUser($anonymousUser);
-                $ticketHistory->setEmployee($user);
+                $ticketHistory->setEmployee(null);
                 $ticketHistory->setStatus(Ticket::STATUS_GENERATED);
                 $ticketHistory->setUpdatedAt(new \DateTime());
                 $this->entityManager->persist($ticket);
                 $this->entityManager->persist($ticketHistory);
             }
+
+            $output->writeln('Generated ticket ' . ($i + 1) . ' of ' . $ticketCount);
         }
 
         $this->entityManager->flush();

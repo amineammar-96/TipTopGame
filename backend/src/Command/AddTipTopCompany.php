@@ -48,6 +48,8 @@ class AddTipTopCompany extends Command
         $this->generateAnonymousProfile($this->entityManager , $output);
         $userManager=$this->addStoreManagerProfile();
         $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $userManager, $store);
+        $this->generateBailiffProfile($this->entityManager , $output);
+
 
         $output->writeln('Company and manager profile added  to the role table. (relationship too)');
 
@@ -163,6 +165,41 @@ class AddTipTopCompany extends Command
         $entityManager->persist($anonymousUser);
         $entityManager->flush();
         $output->writeln('Anonymous profile added to the role table.');
+
+    }
+
+    private function generateBailiffProfile(EntityManagerInterface $entityManager, OutputInterface $output)
+    {
+$roleRepository = $entityManager->getRepository(Role::class);
+        $bailiffRole = $roleRepository->findOneBy(['name' => Role::ROLE_BAILIFF]);
+        $bailiffUser = new User();
+        $bailiffUser->setLastname('Rick');
+        $bailiffUser->setFirstname('Arnaud');
+        $bailiffUser->setGender('Homme');
+        $bailiffUser->setEmail('rick.arnaud@gmail.com');
+
+        $bailiffUser->setRole($bailiffRole);
+        $bailiffUser->setStatus(User::STATUS_OPEN);
+        $bailiffUser->setCreatedAt(new \DateTime());
+        $bailiffUser->setIsActive(true);
+        $bailiffUser->setActivitedAt(new \DateTime());
+        $bailiffUser->setDateOfBirth(new \DateTime('1980-01-06'));
+        $plainedPassword = 'azerty123456';
+        $hashedPassword = $this->passwordEncoder->hashPassword($bailiffUser, $plainedPassword);
+        $bailiffUser->setPassword($hashedPassword);
+
+        $userPersonalInfo = new UserPersonalInfo();
+        $userPersonalInfo->setUser($bailiffUser);
+        $userPersonalInfo->setAddress('18 rue Léon Frot');
+        $userPersonalInfo->setPostalCode('75011');
+        $userPersonalInfo->setCity('Paris');
+        $userPersonalInfo->setCountry('France');
+
+        $entityManager->persist($userPersonalInfo);
+
+        $entityManager->persist($bailiffUser);
+        $entityManager->flush();
+        $output->writeln('Bailiff profile added to the role table.');
 
     }
 }

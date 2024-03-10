@@ -244,18 +244,13 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
     return (
         <div className={`${styles.loginForm} `}>
             <Row className={`${styles.loginFormTopHeader} p-0 m-0`}>
-                <Col md={1}>
-                    <a href="/">
-                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
-                    </a>
-                </Col>
+
                 <Col>
-                    <h1>Inscrivez-vous</h1>
+                    <h1> <a href="/">
+                        <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
+                    </a>Inscrivez-vous<UserAddOutlined className={`${styles.loginIcon}`}/></h1>
                 </Col>
 
-                <Col className={`d-flex justify-content-end`} style={{maxWidth: '5rem'}}>
-                    <UserAddOutlined className={`${styles.loginIcon}`}/>
-                </Col>
 
             </Row>
             <Row className={`${styles.loginLogo} p-0 m-0`}>
@@ -269,7 +264,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                 </a>
             </Row>
 
-            <Row className={`mt-5 px-5 d-flex justify-content-center `}>
+            <Row className={`mt-5 px-md-5 px-sm-1  d-flex justify-content-center `}>
                 <Form
                     name="basic"
                     labelCol={{span: 8}}
@@ -452,7 +447,7 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                 </Row>
 
                 <Col>
-                    <Row className={`mt-3 px-5 d-flex justify-content-center `}>
+                    <Row className={`mt-3  px-sm-2 px-md-5 d-flex justify-content-center `}>
                         <div className={`${styles.divider}`}>
                             <div className={`${styles['divider-text']}`}>Ou</div>
                         </div>

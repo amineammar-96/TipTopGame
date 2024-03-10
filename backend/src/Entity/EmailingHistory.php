@@ -20,12 +20,12 @@ class EmailingHistory
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $sent_at = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'emailingHistories')]
+    #[ORM\JoinColumn(unique: false, nullable: false)]
     private ?EmailService $service = null;
 
     #[ORM\ManyToOne(inversedBy: 'emailingHistories')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(unique: false, nullable: true)]
     private ?User $receiver = null;
 
     public function getId(): ?int
