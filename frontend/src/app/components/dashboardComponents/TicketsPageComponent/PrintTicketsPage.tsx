@@ -4,10 +4,10 @@ import {Card, Col, message, Modal, Row, Spin} from 'antd';
 import Image from 'next/image';
 import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
 
-import {confirmPrintTicket, getTicketByCode} from "@/app/api";
+import {confirmPrintTicket, getTicketByCode, printRandomTicket} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
 import {Button, Form, Input, Select, Space, theme} from 'antd';
-import {PrinterOutlined} from "@ant-design/icons";
+import {PrinterOutlined, UndoOutlined} from "@ant-design/icons";
 import {
     CheckCircleOutlined,
     ClockCircleOutlined,
@@ -365,9 +365,9 @@ function TicketsPageDashboard() {
             <Row className={`${styles.fullWidthElement} w-100 d-flex`} gutter={24}>
                 <Col span={24} key={`barCode`}>
                     <Form.Item
-                        className={`${styles.formItem} searchTicketFormItem mb-5 pb-5`}
+                        className={`${styles.formItem} searchTicketFormItem mb-5 pb-2`}
                         name={`code`}
-                        label={`Code de Ticket:`}
+                        label={`Entrer le code à barre du ticket manuellement`}
                     >
                         <Input className={`mt-2`} placeholder="Code à barre de Ticket"
                                onChange={(e) => {
@@ -387,22 +387,104 @@ function TicketsPageDashboard() {
         return children;
     };
 
+    function handlePrintAutoTicket() {
+        Modal.confirm({
+            title: 'Impression de Ticket',
+            icon: <PrinterOutlined />,
+            content: <>
+                <p>Voulez-vous vraiment imprimer un ticket aléatoire ?</p>
+            </>,
+            okText: 'Imprimer',
+            cancelText: 'Annuler',
+            onOk: () => {
+                printRandomTicket().then(response => {
+                    console.log('response : ', response);
+                    Modal.success({
+                        title: 'Impression de Ticket',
+                        icon: <PrinterOutlined />,
+                        content: (
+                            <div>
+                                <p>Le ticket a été imprimé avec succès !</p>
+                                <p>Code de Ticket : {response.ticket.ticket_code}</p>
+                            </div>
+                        ),
+                        onOk: () => {
+                            setSearchParam({
+                                ...searchParam,
+                                ticket_code: response.ticket.ticket_code,
+                            });
+                        }
+                    });
+                }).catch(err => {
+                    if (err.response) {
+                        if (err.response.status === 401) {
+                            logoutAndRedirectAdminsUserToLoginPage();
+                        }else {
+                            Modal.error({
+                                title: 'Impression de Ticket',
+                                icon: <PrinterOutlined />,
+                                okText: 'D\'accord',
+                                content: (
+                                    <div>
+                                        <p>Une erreur est survenue lors de l'impression du ticket !</p>
+                                        <p>
+                                            Veuillez contactez l'administrateur du système
+                                        </p>
+                                    </div>
+                                ),
+                            });
+                        }
+                    } else {
+                        Modal.error({
+                            title: 'Impression de Ticket',
+                            icon: <PrinterOutlined />,
+                            content: (
+                                <div>
+                                    <p>Une erreur est survenue lors de l'impression du ticket !</p>
+                                </div>
+                            ),
+                        });
+                    }
+                })
+            },
+        });
+    }
+
     const renderSearchForm = () => {
         return (
             <>
                 <Form form={form} name="advanced_search" className={`${styles.searchOneTicketForm}`}>
                     <Row className={`${styles.fullWidthElement}`} gutter={24}>{getFields()}</Row>
+                    <Row className={`${styles.fullWidthElement}`} gutter={24}>
+                        <strong>
+                            Ou générer un ticket aléatoire pour impression
+                        </strong>
+                    </Row>
+
+
                     <div className={`mt-0 w-100`} style={{textAlign: 'right'}}>
-                        <Space size="small">
+                        <Space size="small" className={`w-100 d-flex justify-content-between`}>
+                            <Button
+                                className={`${styles.greenButton}`}
+
+                                onClick={() => {
+                                    form.resetFields();
+                                    handlePrintAutoTicket();
+                                }}
+                            >
+                                Impression automatique <PrinterOutlined />
+                            </Button>
+
                             <Button
                                 className={`${styles.submitButtonBlue}`}
 
                                 onClick={() => {
                                     form.resetFields();
                                     setSearchParam(defaultSearchParams);
+                                    setData(undefined);
                                 }}
                             >
-                                Réinitialiser
+                                <UndoOutlined />
                             </Button>
 
                         </Space>
@@ -436,16 +518,7 @@ function TicketsPageDashboard() {
                             }
                             {!loading && (
                                <>
-                                   <Col key={"resultTikcets"} className={`w-100 d-flex justify-content-between mt-3 px-4`} xs={24} sm={24} md={24} lg={24} span={6}>
-                                    <h6>
-                                        Résultat de recherche
-                                    </h6>
-                                       <h6>
-                                           {data?.length ? '' : '0'} {data?.length} Ticket trouvé
 
-                                       </h6>
-
-                                   </Col>
 
                                        <div className={`w-100 justify-content-center`}>
                                            {renderTickets()}
@@ -454,9 +527,7 @@ function TicketsPageDashboard() {
 
                                    {totalTicketsCount==0 && (
                                         <Col key={"noResultTikcets"} className={`w-100 d-flex justify-content-between mt-3 px-4`} xs={24} sm={24} md={24} lg={24} span={6}>
-                                             <h6>
-                                                  Aucun ticket trouvé !
-                                             </h6>
+
                                         </Col>
 
                                    )}

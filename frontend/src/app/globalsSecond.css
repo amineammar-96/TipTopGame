@@ -478,3 +478,17 @@ body, * {
   right: auto;
   position: fixed;
 }
+
+.ant-modal .ant-btn-default {
+  background-color: #1f1e1e !important;
+  border-color: #1f1e1e !important;
+  color: white !important;
+}
+
+.ant-modal .ant-btn-default:hover {
+  background-color: #1f1e1e !important;
+  border-color: #1f1e1e !important;
+  cursor: pointer;
+  opacity: 0.8;
+  color: white !important;
+}

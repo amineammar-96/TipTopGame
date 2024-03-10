@@ -9,6 +9,7 @@ use App\Entity\TicketHistory;
 use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
 use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use App\Entity\Role;
 use App\Entity\Store;
@@ -283,6 +284,64 @@ class TicketController extends AbstractController
 
     }
 
+
+    /**
+     * @IsGranted("ROLE_EMPLOYEE")
+     * @param Request $request
+     * @return JsonResponse
+     * @throws NonUniqueResultException
+     */
+
+    public function printRandomTicket(Request $request): JsonResponse
+    {
+        $generatedTickets = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->createQueryBuilder('t')
+            ->where('t.status = :status')
+            ->setParameter('status', Ticket::STATUS_GENERATED)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $loggedEmployee = $this->getUser();
+
+        if (!$generatedTickets) {
+            return $this->json([
+                'status' => "error",
+                'message' => "No ticket to print",
+            ], 404);
+        }
+
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS])]);
+
+
+        $generatedTickets->setTicketPrintedAt(new \DateTime());
+        $generatedTickets->setStatus(Ticket::STATUS_PRINTED);
+        $generatedTickets->setEmployee($loggedEmployee);
+        $generatedTickets->setStore($loggedEmployee->getStores()[0]);
+        $generatedTickets->setUpdatedAt(new \DateTime());
+
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($generatedTickets);
+        $ticketHistory->setEmployee($loggedEmployee);
+        $ticketHistory->setUser($anonymousUser);
+        $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+        $ticketHistory->setUpdatedAt(new \DateTime());
+
+
+        $this->entityManager->persist($ticketHistory);
+        $this->entityManager->persist($generatedTickets);
+        $this->entityManager->flush();
+
+
+
+
+        return $this->json([
+            'ticket' => $generatedTickets->getTicketJson(),
+        ], 200);
+
+    }
+
     public function confirmTicketPlay(Request $request): JsonResponse
     {
         if (!$this->getUser()) {
@@ -291,6 +350,7 @@ class TicketController extends AbstractController
                 'message' => "User not found",
             ], 404);
         }
+
 
         $data = json_decode($request->getContent(), true);
         $ticketCode = $data['ticketCode'] ?? null;
