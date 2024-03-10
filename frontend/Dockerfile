@@ -13,9 +13,6 @@ RUN npm i --save --legacy-peer-deps
 # Copy the rest of the application code to the container
 COPY . ./
 
-# Copy the environment file to the container
-COPY .env.production .env
-
 # Build the Next.js app
 RUN npm run build
 
