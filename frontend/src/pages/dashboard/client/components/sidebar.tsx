@@ -18,8 +18,6 @@ import style from '@/styles/pages/dashboards/storeAdminDashboard.module.css';
 import {getClientBadges} from "@/app/api";
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
 import Image from "next/image";
-import TrophyIconImg from "@/assets/images/trophy.png";
-import LockIconImg from "@/assets/images/lock.png";
 import LevelOneImg from "@/assets/images/levels/level1.png";
 import LevelTwoImg from "@/assets/images/levels/level2.png";
 import LevelThreeImg from "@/assets/images/levels/level3.png";
@@ -241,58 +239,6 @@ function Sidebar({ onMenuItemClick, selectedMenuItem , toggleCollapsed , collaps
             onClick={({ key }) => onMenuItemClick(key)}
         />
 
-            {(userRole == "ROLE_CLIENT" && !collapsed) && (
-                <div className={`${styles.badgeLevelCardSideBar} ${styles.badgeLevelCardCheckedSideBar}`}>
-
-                   <div>
-                       <strong>
-                           <p className={`${styles.badgeLabelSideBar}`}>
-                            <span>
-                                                 Badge
-                                            </span>
-                           </p>
-                       </strong>
-                   </div>
-
-                                <Image
-                                    className={`${styles.checkedIcon}`}
-                                    src={TrophyIconImg}
-                                    alt={"TrophyIconImg"}
-                                >
-                                </Image>
-
-
-                    <div className={`${styles.ticketCardBody}`}>
-                        <div className={`${styles.badgeLevelCardText} mb-1`}>
-
-
-
-                            <p className={`mt-3`}></p>
-                            
-                            <div className={`${styles.badgeLevelCardIcons}`}>
-                                {renderBadgeImage(clientBadge.id)}
-                            </div>
-
-
-                            <div className={`${styles.badgeCardContent}`}>
-                                <p className={`${styles.badgeLabelSideBar}`}>
-                                    <span>
-                                                 {clientBadge.name}
-                                            </span>
-                                </p>
-                            </div>
-                            <div className={`${styles.badgeCardContent}`}>
-                            </div>
-
-
-
-
-
-                        </div>
-                    </div>
-
-                </div>
-            )}
 
         </div>
     );
