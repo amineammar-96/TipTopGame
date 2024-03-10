@@ -35,17 +35,23 @@ RUN set -eux; \
         chmod +x bin/console; sync; \
     fi
 
+
+# Set the working directory
 WORKDIR /var/www/html
 
+# delete cache and logs
+RUN rm -rf var/cache/* var/log/*
+
+# Copy the code
 COPY . /var/www/html
 
+
 # Set the appropriate permissions
-RUN chown -R www-data:www-data /var/www/html/var
-# Set the appropriate permissions
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/var/cache /var/www/html/var/log
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/config /var/www/html/templates /var/www/html/src /var/www/html/bin
 
 # Make sure directories are writable
 RUN chmod -R 777 /var/www/html/var
+
 
 # Copy Xdebug configuration
 COPY php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
