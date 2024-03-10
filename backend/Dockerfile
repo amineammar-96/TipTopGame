@@ -39,6 +39,9 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html
 
+# delete cache and logs
+RUN rm -rf var/cache/* var/log/*
+
 # Set the appropriate permissions
 RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/config /var/www/html/templates /var/www/html/src /var/www/html/bin /var/www/html/vendor
 
