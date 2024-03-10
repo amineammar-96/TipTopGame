@@ -35,15 +35,19 @@ RUN set -eux; \
         chmod +x bin/console; sync; \
     fi
 
-WORKDIR /var/www/html
 
-COPY . /var/www/html
+# Set the working directory
+WORKDIR /var/www/html
 
 # delete cache and logs
 RUN rm -rf var/cache/* var/log/*
 
+# Copy the code
+COPY . /var/www/html
+
+
 # Set the appropriate permissions
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/config /var/www/html/templates /var/www/html/src /var/www/html/bin /var/www/html/vendor
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/config /var/www/html/templates /var/www/html/src /var/www/html/bin
 
 # Make sure directories are writable
 RUN chmod -R 777 /var/www/html/var
