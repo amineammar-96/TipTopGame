@@ -402,10 +402,18 @@ body, * {
   color: white !important;
 }
 
+
 .timeContainer .wrapper div:nth-child(2){
   background: #87BE4BFF;
   color: white !important;
 }
+
+
+.timeContainer .red-bg {
+    background: #ff4747 !important;
+    color: white !important;
+}
+
 
 .timeContainer .wrapper div:nth-child(3){
   background: #252323;

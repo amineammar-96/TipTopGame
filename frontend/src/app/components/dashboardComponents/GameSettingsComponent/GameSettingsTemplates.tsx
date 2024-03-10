@@ -404,17 +404,51 @@ function GameSettingsTemplates() {
                                 <Col span={24}
                                      className={"m-0 p-0 d-flex flex-column justify-content-start align-items-start"}>
                                     <h5>
-                                        Temps restant avant le début du jeu
+
+                                        {gameStatus === "A venir" && (
+                                            <>
+                                                Temps restant avant le début du jeu 🚀
+                                            </>
+                                        )}
+
+                                        {gameStatus === "En cours" && (
+                                            <>
+                                                Temps restant avant la fin du jeu 🏁
+                                            </>
+                                        )}
+
+                                        {gameStatus === "Validation" && (
+                                            <>
+                                                Temps restant avant la fin de la période de validation 🕣
+                                            </>
+                                        )}
+
+                                        {gameStatus === "Terminé" && (
+                                            <>
+                                                Le jeu est terminé depuis ✅
+                                            </>
+                                        )}
+
+
+                                        <Tag color={classColorTag} className="ms-3">{gameStatus}</Tag>
+                                        <br/>
+                                        {gameStatus === "En cours" && (
+                                            <>
+                                                <small>
+                                                    Du {gameConfigOriginal.startDate} à {gameConfigOriginal.time} jusqu'au {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
+                                                </small>
+                                            </>
+                                        )}
                                     </h5>
                                     <section className="timeContainer">
                                         <div className="wrapper">
-                                            <div className="days">
+                                            <div className={`days ${gameStatus=="Terminé" && "red-bg"}`}>
                                                 <h2 id="days">
                                                     {timeRemaining.days}
                                                 </h2>
                                                 Jours
                                             </div>
-                                            <div className="hours">
+                                            <div className={`hours ${gameStatus=="Terminé" && "red-bg"}`}>
                                                 <h2 id="hours">
                                                     {timeRemaining.hours}
                                                 </h2>

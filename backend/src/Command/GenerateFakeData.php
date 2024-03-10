@@ -286,9 +286,9 @@ class GenerateFakeData extends Command
         $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
         $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
         $gameConfigStartDate = null;
-        $dateFormat = 'd/m/Y';
+        $dateFormat = 'd/m/Y H:i';
         if($gameConfig){
-            $gameConfigStartDate = \DateTime::createFromFormat($dateFormat , $gameConfig->getStartDate());
+            $gameConfigStartDate = \DateTime::createFromFormat($dateFormat , $gameConfig->getStartDate()." " . $gameConfig->getTime());
         }
 
 
@@ -307,12 +307,17 @@ class GenerateFakeData extends Command
 
         $statuses = [Ticket::STATUS_PRINTED , Ticket::STATUS_PENDING_VERIFICATION , Ticket::STATUS_WINNER];
         foreach ($randomTickets as $ticket) {
-            $randomDate = $gameConfigStartDate;
+            $randomDate = clone $gameConfigStartDate;
             $randomDate->modify('+'.rand(1, 5).' days');
             $randomStatus = $statuses[array_rand($statuses)];
 
 
             $client = $clients[array_rand($clients)];
+
+            if($randomStatus === Ticket::STATUS_PRINTED) {
+                $client = $anonymousUser;
+            }
+
             $client->addTicket($ticket);
             $employee = $employees[array_rand($employees)];
             $ticket->setStatus(
@@ -331,9 +336,6 @@ class GenerateFakeData extends Command
             $ticket->setUser($client);
             $client->addStore($employee->getStores()[0]);
             $store = $employee->getStores()[0];
-            if($randomStatus === Ticket::STATUS_PRINTED) {
-                $client = $anonymousUser;
-            }
             $store->addUser($client);
 
 

@@ -59,42 +59,47 @@ function ClientDashboard() {
     }, []);
 
 
-    const [userRrole , setUserRole] = useState<string | null>(null);
+    const [userRole , setUserRole] = useState<string | null>(null);
     const [userToken , setUserToken] = useState<string | null>(null);
     useEffect(() => {
         setUserRole(localStorage.getItem('loggedInUserRole'));
-        setUserToken(localStorage.getItem('loggedInUserToken'));
-        if (userToken == null && userToken == "") {
-            window.location.href = '/client_login';
-        }
+        setUserToken(localStorage.getItem('loggedInUserToken') ?? "");
         setLoading(true)
     }, []);
 
     useEffect(() => {
+        if (userToken == "") {
+            window.location.href = '/client_login';
+        }
+    }, [userRole]);
+
+    useEffect(() => {
         setLoading(true);
-        if (userRrole == "ROLE_STOREMANAGER") {
-            window.location.href = '/dashboard/store_manager';
-        }
-        if (userRrole == "ROLE_EMPLOYEE") {
-            window.location.href = '/dashboard/store_employee';
-        }
-        if (userRrole == "ROLE_CLIENT") {
+        
+        if(userRole){
+            if (userRole == "ROLE_STOREMANAGER") {
+                window.location.href = '/dashboard/store_manager';
+            }
+            if (userRole == "ROLE_EMPLOYEE") {
+                window.location.href = '/dashboard/store_employee';
+            }
+            if (userRole == "ROLE_CLIENT") {
+                setLoading(false);
+            }
+
+            if (userRole == "ROLE_ADMIN") {
+                window.location.href = '/dashboard/store_admin';
+            }
+
+
+            if(userRole == "ROLE_BAILIFF") {
+                window.location.href = '/dashboard/store_bailiff';
+            }
+        }else {
             setLoading(false);
         }
 
-        if (userRrole == "ROLE_ADMIN") {
-            window.location.href = '/dashboard/store_admin';
-        }
-
-        if(userRrole == null || userRrole == "") {
-            window.location.href = '/client_login';
-        }
-
-        if(userRrole == "ROLE_BAILIFF") {
-            window.location.href = '/dashboard/store_bailiff';
-        }
-
-        }, [userRrole]);
+        }, [userRole]);
 
     return (
         <>

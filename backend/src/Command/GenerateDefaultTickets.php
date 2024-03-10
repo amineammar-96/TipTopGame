@@ -61,7 +61,11 @@ class GenerateDefaultTickets extends Command
         $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
         $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $anonymousRole]);
         $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
-
+        $gameConfigStartDate = null;
+        $dateFormat = 'd/m/Y H:i';
+        if($gameConfig){
+            $gameConfigStartDate = \DateTime::createFromFormat($dateFormat , $gameConfig->getStartDate()." " . $gameConfig->getTime());
+        }
 
         for ($i = 0; $i < $ticketCount; $i++) {
             $output->writeln('Generating ticket ' . ($i + 1) . ' of ' . $ticketCount);
@@ -89,7 +93,7 @@ class GenerateDefaultTickets extends Command
                 $ticket = new Ticket();
                 $ticket->setPrize($winningPrize);
                 $ticket->setTicketCode(strtoupper($randomTicketCode));
-                $ticket->setTicketGeneratedAt(new \DateTimeImmutable());
+                $ticket->setTicketGeneratedAt($gameConfigStartDate ? $gameConfigStartDate : new \DateTime());
                 $ticket->setTicketPrintedAt(null);
                 $ticket->setWinDate(null);
                 $ticket->setStatus(Ticket::STATUS_GENERATED);
