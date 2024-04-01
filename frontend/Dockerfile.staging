@@ -20,7 +20,7 @@ RUN npm run build
 
 ENV NODE_ENV staging
 # Expose the port that the app will run on
-EXPOSE 3001
+EXPOSE 3002
 
 # Start the app in development mode
 CMD ["npm", "run", "staging"]
