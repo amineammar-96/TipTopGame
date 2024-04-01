@@ -68,10 +68,10 @@ function ClientDashboard() {
     }, []);
 
     useEffect(() => {
-        if (userToken == "") {
-            window.location.href = '/client_login';
+        if (userToken === null && userRole === null) {
+            //window.location.href = '/client_login';
         }
-    }, [userRole]);
+    }, [userToken , userRole]);
 
     useEffect(() => {
         setLoading(true);
@@ -91,12 +91,9 @@ function ClientDashboard() {
                 window.location.href = '/dashboard/store_admin';
             }
 
-
             if(userRole == "ROLE_BAILIFF") {
                 window.location.href = '/dashboard/store_bailiff';
             }
-        }else {
-            setLoading(false);
         }
 
         }, [userRole]);

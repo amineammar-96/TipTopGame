@@ -62,6 +62,14 @@ const dateFormat = 'DD/MM/YYYY';
 
 const {RangePicker} = DatePicker;
 
+
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_REDIRECT_URL = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV || '';
+
+
+
 export default function RegisterClientForm({formStep, handleFormStepChange}: Props) {
 
 
@@ -240,6 +248,19 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
+
+    const googleCallBackHandle = () => {
+        console.log('googleCallBackHandle');
+        console.log(GOOGLE_CLIENT_ID);
+        console.log(GOOGLE_CLIENT_SECRET);
+        console.log(GOOGLE_AUTHORIZATION_URL);
+        let url = GOOGLE_AUTHORIZATION_URL;
+        url += '?client_id=' + GOOGLE_CLIENT_ID;
+        url += '&redirect_uri=' + encodeURIComponent(GOOGLE_REDIRECT_URL);
+        url += '&response_type=code';
+        url += '&scope=openid profile email';
+        window.location.href = url;
+    }
 
     return (
         <div className={`${styles.loginForm} `}>
@@ -459,13 +480,11 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
 
 
                         <div className={`pb-3  d-flex justify-content-center `}>
-                            <Space direction="vertical" style={{width: '100%'}}
-                                   className={`pb-3  d-flex justify-content-center `}>
-                                <Button className={`${styles.facebookLoginBtn}`} icon={<FacebookFilled/>} block>
-                                    <span> <small>Inscrivez-vous avec Facebook</small></span>
-                                </Button>
-                                <Button className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled/>} block>
-                                    <span><small>Inscrivez-vous avec Google</small></span>
+                            <Space direction="vertical" style={{ width: '100%' }}>
+                                <Button onClick={() => {
+                                    googleCallBackHandle();
+                                }} className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled />} block>
+                                    <span><small>Se connecter avec Google</small></span>
                                 </Button>
                             </Space>
                         </div>

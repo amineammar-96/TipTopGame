@@ -8,6 +8,7 @@ use App\Entity\Ticket;
 use App\Entity\User;
 use App\Entity\UserPersonalInfo;
 use App\Service\User\UserService;
+use DateTime;
 use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -609,7 +610,7 @@ class UserController extends AbstractController
         }
 
         $user->setPassword($this->passwordEncoder->hashPassword($user, $newPassword));
-        $user->setUpdatedAt(new \DateTime());
+        $user->setUpdatedAt(new DateTime());
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -655,7 +656,7 @@ class UserController extends AbstractController
         }
 
         $user->setEmail($newEmail);
-        $user->setUpdatedAt(new \DateTime());
+        $user->setUpdatedAt(new DateTime());
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -716,6 +717,49 @@ class UserController extends AbstractController
             'users' => $usersJson,
             'status' => 'success',
         ]);
+    }
+
+
+
+    /**
+     * @throws Exception
+     */
+    public function saveUserProfile(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $email = $data['email'];
+
+        $dateOfBirth =$data['dateOfBirth'];
+        $dateFormat = "d/m/Y";
+        $dateOfBirth = DateTime::createFromFormat($dateFormat, $dateOfBirth);
+
+        $lastname = $data['lastname'];
+        $firstname = $data['firstname'];
+        $phone = $data['phone'];
+        $gender = $data['gender'];
+
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        if(!$user){
+            throw new Exception('User not found');
+        }
+
+        $user->setEmail($email);
+        $user->setDateOfBirth($dateOfBirth);
+        $user->setLastName($lastname);
+        $user->setFirstName($firstname);
+        $user->setPhone($phone);
+        $user->setGender($gender);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 'updated',
+            'user' => $user->getUserJson()
+        ]);
+
     }
 
 }
