@@ -14,7 +14,7 @@ RUN npm install --legacy-peer-deps
 COPY . ./
 
 # Copy the environment file to the container
-COPY .env.preprod .env
+COPY .env.preproduction .env
 # Build the Next.js app
 RUN npm run build
 
@@ -23,4 +23,4 @@ ENV NODE_ENV preprod
 EXPOSE 3003
 
 # Start the app in development mode
-CMD ["npm", "run", "staging"]
+CMD ["npm", "run", "preprod"]
