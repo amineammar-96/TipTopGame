@@ -18,7 +18,7 @@ COPY .env.preproduction .env
 # Build the Next.js app
 RUN npm run build
 
-ENV NODE_ENV preprod
+ENV NODE_ENV preproduction
 # Expose the port that the app will run on
 EXPOSE 3003
 
