@@ -279,6 +279,31 @@ workflows:
           filters:
             branches:
               only: dev
+
+      - build_frontend_staging:
+            context: context
+            filters:
+              branches:
+                only: staging
+
+      - build_backend_staging:
+          context: context
+          filters:
+            branches:
+              only: staging
+
+      - build_frontend_preprod:
+            context: context
+            filters:
+              branches:
+                only: preprod
+
+      - build_backend_preprod:
+          context: context
+          filters:
+            branches:
+              only: preprod
+              
       - build_frontend:
           context: context
           filters:
