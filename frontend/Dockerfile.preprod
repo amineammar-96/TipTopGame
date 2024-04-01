@@ -22,5 +22,5 @@ ENV NODE_ENV preproduction
 # Expose the port that the app will run on
 EXPOSE 3003
 
-# Start the app in development mode
+# Start the app in preproduction mode
 CMD ["npm", "run", "preprod"]
