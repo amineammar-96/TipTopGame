@@ -251,10 +251,6 @@ body, * {
 }
 
 .gameinfo-consent-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 2147483645;
   box-sizing: border-box;
   width: 100%;
 
@@ -474,7 +470,7 @@ body, * {
 .cookiesModal {
   top: auto;
   left: 10px;
-  bottom: 80px;
+  bottom: 5px;
   right: auto;
   position: fixed;
 }

@@ -32,13 +32,13 @@ export default function RootLayout({
   return (
     <html lang="en">
     <body className={inter.className}>
-    <TopGameInfoBannerComponent></TopGameInfoBannerComponent>
+    <TopInfoBannerComponent></TopInfoBannerComponent>
+
     <Navbar></Navbar>
     {children}
     <Footer></Footer>
     <CookiesModalComponent></CookiesModalComponent>
 
-    <TopInfoBannerComponent></TopInfoBannerComponent>
 
     </body>
     <GoogleAnalytics gaId="G-XLKV7N9HQT"/>
