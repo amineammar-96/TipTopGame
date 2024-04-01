@@ -62,6 +62,8 @@ function TopNavBar() {
                 return 'Espace Gérant';
             case 'ROLE_CLIENT':
                 return 'Espace Client';
+            case 'ROLE_BAILIFF':
+                return 'Espace Huissier';
             default:
                 return 'Inconnu';
         }

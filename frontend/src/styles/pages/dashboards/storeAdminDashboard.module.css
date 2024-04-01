@@ -856,6 +856,21 @@
     opacity: 0.9 !important;
 }
 
+.greenButton {
+    background-color: #7bc558;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #7bc558;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.greenButton:hover{
+    opacity: 0.9 !important;
+    border-color: #7bc558 !important;
+    box-shadow: none !important;
+}
+
 .moreFiltersBtn {
     color: white !important;
     padding: 1rem 1.5rem !important;

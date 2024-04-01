@@ -27,6 +27,8 @@ import ActionHistoryPage from "@/app/components/dashboardComponents/ActionHistor
 import TicketsHistory from "@/app/components/dashboardComponents/TicketsHistory/TicketsHistory";
 import ConnectionHistory from "@/app/components/dashboardComponents/ConnectionHistory/ConnectionHistory";
 import EmailingHistory from "@/app/components/dashboardComponents/EmailingHistory/EmailingHistory";
+import GameSettingsTemplates from "@/app/components/dashboardComponents/GameSettingsComponent/GameSettingsTemplates";
+import TirageAuSortTemplate from "@/app/components/dashboardComponents/TirageAuSortComponent/TirageAuSortTemplate";
 
 function storeAdminDashboard() {
 
@@ -74,6 +76,9 @@ function storeAdminDashboard() {
             setLoading(false);
         }
 
+        if(userRrole == "ROLE_BAILIFF") {
+            window.location.href = '/dashboard/store_bailiff';
+        }
 
 
     }, [userRrole]);
@@ -117,6 +122,9 @@ function storeAdminDashboard() {
                                     {selectedMenuItem==="ticketsHistoryItem" && <TicketsHistory></TicketsHistory>}
                                     {selectedMenuItem==="connectionsHistory" && <ConnectionHistory></ConnectionHistory>}
                                     {selectedMenuItem==="emailsHistory" && <EmailingHistory></EmailingHistory>}
+                                    {selectedMenuItem==="datesConfigItem" && <GameSettingsTemplates></GameSettingsTemplates>}
+                                    {selectedMenuItem==="finalDrawItem" && <TirageAuSortTemplate></TirageAuSortTemplate>}
+
 
 
 

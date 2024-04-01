@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import styles from "@/styles/pages/dashboards/clientDashboard.module.css";
 import {Button} from "antd";
 import {RedoOutlined} from "@ant-design/icons";
-
+import PingImage from '../../../../../../public/images/ping.png';
+import Image from 'next/image';
 interface DynamicWheelProps {
     data: any;
     playGame: boolean;
@@ -32,9 +33,14 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
         }
     };
 
+
+    const pointerProps = {
+        src: "/images/pin.png",
+        style: { transform: "rotate(45deg)" , top: "0", right: "12%" },
+    };
+
     useEffect(() => {
 
-        console.log("WinningWinning segment:", winningSegment);
         const loadDynamicWheel = async () => {
             try {
                 const module = await import("react-custom-roulette");
@@ -42,21 +48,22 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
 
                 setWheel(
                     <Wheel
+                        startingOptionIndex={Math.floor(Math.random() * data.length)}
                         mustStartSpinning={mustSpin}
                         prizeNumber={parseInt(winningSegment)-1}
                         data={data}
-                        radiusLineColor={"#ffffff"}
-                        outerBorderColor={"#d2ca72"}
-                        innerBorderColor={"#312e2e"}
+                        outerBorderColor="#70a0ff"
+                        outerBorderWidth={15}
                         innerRadius={10}
-                        radiusLineWidth={2}
-                        textDistance={60}
-                        spinDuration={0.2}
-                        fontWeight={"500"}
+                        innerBorderColor="#70a0ff"
+                        innerBorderWidth={4}
+                        radiusLineWidth={0}
+                        radiusLineColor="#70a0ff"
+                        perpendicularText={true}
+                        pointerProps={pointerProps}
                         onStopSpinning={() => {
                             onFinishedWheel();
                         }}
-
 
 
 
@@ -73,13 +80,30 @@ const DynamicWheel = ({ data, playGame , onFinishedWheel , winningSegment }: Dyn
 
     return (
         <div className={`${styles.wheelDiv}`}>
-            {Wheel}
-            <Button
-                className={`${styles.spinButton} mt-5`}
-                type={"primary"}
-                onClick={handleSpinClick}>
-                Tourner la roue ! <RedoOutlined className={`mx-2`} />
-            </Button>
+            <div style={{position: "relative"}}>
+                {Wheel}
+                <button
+                    onClick={handleSpinClick}
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "80px",
+                        height: "80px",
+                        background: "white",
+                        borderRadius: "50%",
+                        border: "4px solid #70a0ff",
+                        zIndex: 40,
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                    }}
+                >
+                    <RedoOutlined className={`mx-2`}
+                                    style={{fontSize: "44px", color: "#70a0ff" , fontWeight: "bold"}}
+                    />
+                </button>
+            </div>
         </div>
     );
 };

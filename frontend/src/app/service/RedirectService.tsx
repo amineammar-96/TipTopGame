@@ -27,7 +27,7 @@ const RedirectService = () => {
             router.push("/dashboard/store_employee");
         } else if ((token != null || token != "") && role == "ROLE_BAILIFF") {
             console.log("redirecting to store storeBailiff dashboard");
-            router.push("/dashboard/storeBailiff");
+            router.push("/dashboard/store_bailiff");
         } else if ((token != null || token != "") && role == "ROLE_CLIENT") {
             console.log("redirecting to store client dashboard");
             router.push("/dashboard/client");

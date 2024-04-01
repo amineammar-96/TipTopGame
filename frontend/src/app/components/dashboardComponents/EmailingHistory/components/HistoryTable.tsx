@@ -108,6 +108,8 @@ export default function HistoryTable({data}: historyTableProps) {
                 return 'Manager de magasin';
             case 'ROLE_CLIENT':
                 return 'Client';
+            case 'ROLE_BAILIFF':
+                return 'Espace Huissier';
             default:
                 return 'Inconnu';
         }

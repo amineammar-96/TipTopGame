@@ -58,7 +58,7 @@ const FooterComponent = () => {
 
 
         <div className={`${styles.linksDiv} d-flex`}>
-        <p>&copy; {new Date().getFullYear()} Furious Ducks. Tous droits réservés.</p>
+        <p>&copy; {new Date().getFullYear()} Furious Ducks. Tous droits réservés. Ce site est un projet étudiant.</p>
         </div>
       
       </div>
@@ -66,11 +66,6 @@ const FooterComponent = () => {
         </Col>
         
       </Row>
-      {/* <Row className="copyright-row">
-        <Col className={`d-flex justify-content-center py-5`} span={24}>
-          <p>&copy; 2023 Your Company Name. All rights reserved.</p>
-        </Col>
-      </Row> */}
     </div>
   );
 };

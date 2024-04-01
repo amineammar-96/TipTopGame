@@ -98,4 +98,16 @@ class UserRepository extends ServiceEntityRepository
 
     }
 
+    public function findUniqueParticipants(): array
+    {
+        $roleClient = $this->_em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_CLIENT']);
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->innerJoin('u.tickets', 't')
+            ->andWhere('u.role = :role')
+            ->setParameter('role', $roleClient);
+
+        return $qb->getQuery()->getResult();
+    }
+
 }
