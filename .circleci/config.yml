@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Run SonarScanner
           command: |
-            sonar-scanner -Dsonar.projectSettings=../sonar-project.properties
+            sonar-scanner -X -Dsonar.projectSettings=../sonar-project.properties
 
   build_frontend_dev:
     docker:
