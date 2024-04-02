@@ -29,8 +29,6 @@ jobs:
           name: Run SonarScanner
           command: |
               export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
-              sonar-scanner -X
-              sonar-scanner -v
               sonar-scanner \
               -Dsonar.host.url=http://85.31.239.78:9001 \
               -Dsonar.login=sqp_01ca091aeee0a35f99d8b5641738e78651a91fca \
