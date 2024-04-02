@@ -395,3 +395,15 @@ export async function saveUserProfile(data: any) {
 
     return await fetchJson('/user/save_profile', config);
 }
+
+export async function resetPasswordRequest(data: any) {
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/reset_password_request`, config)
+}

@@ -62,21 +62,32 @@ function ClientDashboard() {
     const [userRole , setUserRole] = useState<string | null>(null);
     const [userToken , setUserToken] = useState<string | null>(null);
     useEffect(() => {
-        setUserRole(localStorage.getItem('loggedInUserRole'));
-        setUserToken(localStorage.getItem('loggedInUserToken') ?? "");
-        setLoading(true)
+
+        const storedUserRole = localStorage.getItem('loggedInUserRole');
+        const storedUserToken = localStorage.getItem('loggedInUserToken');
+
+        if(storedUserRole && storedUserToken){
+            setUserRole(storedUserRole);
+            setUserToken(storedUserToken);
+        }
+
+        setLoading(false)
     }, []);
 
     useEffect(() => {
-        if (userToken === null && userRole === null) {
-            //window.location.href = '/client_login';
+        console.log("loading", loading);
+        console.log("userToken", userToken);
+        console.log("userRole", userRole);
+        if (!loading && !userToken && !userRole) {
+            window.location.href = '/client_login';
         }
-    }, [userToken , userRole]);
+    }, [loading, userToken, userRole]);
+
 
     useEffect(() => {
         setLoading(true);
-        
-        if(userRole){
+
+        if(!loading && userRole){
             if (userRole == "ROLE_STOREMANAGER") {
                 window.location.href = '/dashboard/store_manager';
             }
@@ -94,9 +105,11 @@ function ClientDashboard() {
             if(userRole == "ROLE_BAILIFF") {
                 window.location.href = '/dashboard/store_bailiff';
             }
+        }else {
+            setLoading(false);
         }
 
-        }, [userRole]);
+        }, [loading , userRole]);
 
     return (
         <>

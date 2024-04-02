@@ -1,8 +1,12 @@
-import React,{ useEffect} from 'react'
+import React,{ useEffect , useState} from 'react'
 import {Col, Row} from "react-bootstrap";
 import styles from "@/styles/pages/auth/adminsLoginPage.module.css";
 import {checkActivationTokenValidityClient} from "@/app/api";
+import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+
 import {Modal} from "antd";
+
+
 
 interface OptionType {
     token: string;
@@ -11,10 +15,12 @@ interface OptionType {
 
 export default function index() {
 
-    const [params, setParams] = React.useState<OptionType>({
+    const [params, setParams] = useState<OptionType>({
         token: '',
         email: ''
     });
+
+    const [loading, setLoading] = useState<boolean>(true);
 
 
     useEffect(() => {
@@ -29,22 +35,25 @@ export default function index() {
 
 
     function checkTokenValidity() {
-
         checkActivationTokenValidityClient(params).then((response) => {
-                Modal.success({
-                    title: 'Account activated',
-                    content: 'Your account has been activated successfully',
-                    onOk() {
-                        //window.location.href = '/login';
-                    }
-                });
+            setLoading(false);
+            Modal.success({
+                title: 'Compte activé',
+                content: 'Votre compte a été activé avec succès',
+            });
+
+            setTimeout(() => {
+                window.location.href = '/dashboard/client';
+            });
+
         }).catch((error) => {
             Modal.error({
-                title: 'Error',
-                content: 'Something went wrong',
-                onOk() {
-                    //window.location.href = '/login';
-                }
+                title: 'Erreur est survenue',
+                content: 'Le lien d\'activation est invalide ou a expiré',
+            });
+
+            setTimeout(() => {
+                window.location.href = '/client_login';
             });
         })
     }
@@ -58,15 +67,11 @@ export default function index() {
 
     return (
         <div>
-            <Row className={`${styles.loginPageMainDiv} m-0`}>
+            {loading && (
                 <>
-                    <Col className={`${styles.loginPageMainDivRightSide} pt-3`} md={12} >
-
-
-
-                    </Col>
+                    <SpinnigLoader/>
                 </>
-            </Row>
+            )}
         </div>
     )
 }

@@ -34,6 +34,11 @@ logout:
     controller: App\Controller\Api\User\UserAuthController::logout
 
 
+reset_password_request:
+    path: /api/reset_password_request
+    controller: App\Controller\Api\User\UserAuthController::resetPasswordRequest
+    methods: POST
+
 
 #stores routes
 get_stores_admin:

@@ -108,11 +108,10 @@ class PostManMailerController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $email = $data['email'];
         $token = $data['token'];
-
-
         $linkStatus = $this->entityManager->getRepository(User::class)->checkClientActivationTokenValidity($email,$token);
 
         if ($linkStatus) {
+            $this->entityManager->getRepository(User::class)->activateUserAccount($email);
             return new JsonResponse('Token is valid' , 200);
         } else {
             return new JsonResponse('Token is not valid', 500);

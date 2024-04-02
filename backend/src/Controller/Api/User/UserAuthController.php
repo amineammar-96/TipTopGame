@@ -1,5 +1,4 @@
 <?php
-// src/Controller/ApiController.php
 
 namespace App\Controller\Api\User;
 use App\Entity\ConnectionHistory;
@@ -273,6 +272,45 @@ class UserAuthController extends AbstractController {
 
         }
 
+
+        /**
+         * @param Request $request
+         * @return JsonResponse
+         */
+        public function resetPasswordRequest( Request $request ): JsonResponse
+        {
+            try {
+                $data = json_decode( $request->getContent(), true );
+
+                $email = $data[ 'email' ];
+
+                $user = $this->entityManager->getRepository( User::class )->findOneBy( [ 'email' => $email ] );
+
+                if ( $user ) {
+                    $resetToken = bin2hex( random_bytes( 32 ) );
+                    $user->setToken( $resetToken );
+                    $user->setTokenExpiredAt( ( new \DateTime() )->modify( '+1 day' ) );
+
+                    $this->entityManager->persist( $user );
+                    $this->entityManager->flush();
+
+
+                    $this->postManMailerService->sendEmailTemplate( EmailService::EMAILSERVICE_PASSWORD_RESET_CLIENT, $user, [
+                        'token' => $resetToken,
+                        'ticket' => null,
+                        'password' => null,
+
+                    ] );
+
+
+                    return new JsonResponse( [ 'status' => 'success', 'message' => 'Reset password email sent' ], 200 );
+                } else {
+                    return new JsonResponse( [ 'status' => 'failed', 'message' => 'User not found' ], 400 );
+                }
+            } catch ( \Throwable $th ) {
+                return new JsonResponse( [ 'status' => 'failed', 'message' => $th->getMessage() ], 400 );
+            }
+        }
 
 
     }

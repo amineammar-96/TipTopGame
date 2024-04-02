@@ -226,7 +226,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
 
                         <Col span={12} md={12} sm={24} className={`m-0 py-2 d-flex justify-content-start`}>
-                            <a href="#" className={`${styles.resetPasswordLink}`} >Mot de passe oublié ? <MailOutlined className={`${styles.resetPasswordIcon}`} /></a>
+                            <a href="/reset_password" className={`${styles.resetPasswordLink}`} >Mot de passe oublié ? <MailOutlined className={`${styles.resetPasswordIcon}`} /></a>
                         </Col>
                     </Row>
 
