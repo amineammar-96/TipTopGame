@@ -31,11 +31,7 @@ jobs:
       - run:
           name: Run SonarScanner
           command: |
-              sonar-scanner \
-              -Dsonar.host.url=http://85.31.239.78:9001 \
-              -Dsonar.login=sqp_01ca091aeee0a35f99d8b5641738e78651a91fca \
-              -Dsonar.projectKey=TipTopGame \
-              -Dsonar.sources=.
+            sonar-scanner -Dsonar.projectSettings=../sonar-project.properties
 
   build_frontend_dev:
     docker:
