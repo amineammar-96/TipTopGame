@@ -26,7 +26,7 @@ jobs:
             echo 'export SONAR_SCANNER_HOME=/home/circleci/sonar-scanner-4.6.2.2472-linux' >> $BASH_ENV
             echo 'export PATH=$PATH:$SONAR_SCANNER_HOME/bin' >> $BASH_ENV
             source $BASH_ENV
-            rm sonar-scanner-4.6.2.2472-linux.zip
+            rm sonar-scanner.zip
 
       - run:
           name: Run SonarScanner
