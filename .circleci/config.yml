@@ -19,6 +19,13 @@ jobs:
             unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
             export PATH=$SONAR_SCANNER_HOME/bin:$PATH
             export SONAR_SCANNER_OPTS="-server"
+            echo $PATH
+      - run:
+          name: Add SonarScanner to PATH
+          command: |
+            export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+            sonar-scanner -v
+
       # Execute SonarQube scan
       - run:
           name: Run SonarQube scan
