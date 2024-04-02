@@ -7,8 +7,6 @@ jobs:
       - image: circleci/openjdk:11.0
     steps:
       - checkout      
-      - run: apk update
-      - run: apk add git
       # Download and install SonarScanner
       - run:
           name: Install SonarScanner
