@@ -355,6 +355,7 @@ workflows:
       - deploy_development:
           context: context
           requires:
+            - sonarqube_scan
             - build_frontend_dev
             - build_backend_dev
           filters:
