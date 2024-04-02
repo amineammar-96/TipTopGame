@@ -18,15 +18,15 @@ jobs:
       - run:
           name: Install SonarQube scanner
           command: |
-            curl -o sonar-scanner-cli-4.6.2.2472-linux.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            curl -o sonar-scanner.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
             apt-get update
             apt-get install -y unzip
-            unzip sonar-scanner-cli-4.6.2.2472-linux.zip
-            mv sonar-scanner-4.6.2.2472-linux /home/circleci/sonar-scanner
+            unzip sonar-scanner.zip
+            mv sonar-scanner /home/circleci/sonar-scanner
             echo 'export SONAR_SCANNER_HOME=/home/circleci/sonar-scanner' >> $BASH_ENV
             echo 'export PATH=$PATH:$SONAR_SCANNER_HOME/bin' >> $BASH_ENV
             source $BASH_ENV
-            rm sonar-scanner-cli-4.6.2.2472-linux.zip
+            rm sonar-scanner.zip
 
       - run:
           name: Run SonarScanner
