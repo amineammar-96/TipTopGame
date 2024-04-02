@@ -9,28 +9,19 @@ jobs:
       - checkout      
       # Download and install SonarScanner
       - run:
-          name: Install SonarScanner
+          name: Install SonarQube scanner
           command: |
-            export SONAR_SCANNER_VERSION=5.0.1.3006
-            export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
-            export SONAR_SCANNER_DOWNLOAD_URL=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
-            mkdir -p $SONAR_SCANNER_HOME
-            curl -o $HOME/.sonar/sonar-scanner.zip -L $SONAR_SCANNER_DOWNLOAD_URL
-            unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
-            export PATH=$SONAR_SCANNER_HOME/bin:$PATH
-            export SONAR_SCANNER_OPTS="-server"
-            echo $PATH
-      - run:
-          name: Add SonarScanner to PATH
-          command: |
-            export PATH=$SONAR_SCANNER_HOME/bin:$PATH
-            sonar-scanner -v
+              sudo yum install -y java-11-openjdk-devel
+              wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+              unzip sonar-scanner.zip
+              rm sonar-scanner.zip
 
-      # Execute SonarQube scan
       - run:
-          name: Run SonarQube scan
+          name: Run SonarScanner
           command: |
-            sonar-scanner \
+              export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
+              sonar-scanner -v
+              sonar-scanner \
               -Dsonar.host.url=http://85.31.239.78:9001 \
               -Dsonar.login=sqp_01ca091aeee0a35f99d8b5641738e78651a91fca \
               -Dsonar.projectKey=TipTopGame \
