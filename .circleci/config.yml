@@ -6,14 +6,18 @@ jobs:
     docker:
       - image: circleci/openjdk:11.0
     steps:
-      - checkout
+      - checkout      
+      - run: apk update
+      - run: apk add git
       # Download and install SonarScanner
       - run:
           name: Install SonarScanner
           command: |
             export SONAR_SCANNER_VERSION=5.0.1.3006
             export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
-            curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+            export SONAR_SCANNER_DOWNLOAD_URL=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+            mkdir -p $SONAR_SCANNER_HOME
+            curl -o $HOME/.sonar/sonar-scanner.zip -L $SONAR_SCANNER_DOWNLOAD_URL
             unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
             export PATH=$SONAR_SCANNER_HOME/bin:$PATH
             export SONAR_SCANNER_OPTS="-server"
