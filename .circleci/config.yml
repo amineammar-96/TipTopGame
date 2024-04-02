@@ -23,7 +23,6 @@ jobs:
             apt-get install -y unzip
             unzip sonar-scanner.zip
             ls -a
-            mv sonar-scanner-4.6.2.2472-linux /home/circleci/sonar-scanner
             echo 'export SONAR_SCANNER_HOME=/home/circleci/sonar-scanner-4.6.2.2472-linux' >> $BASH_ENV
             echo 'export PATH=$PATH:$SONAR_SCANNER_HOME/bin' >> $BASH_ENV
             source $BASH_ENV
