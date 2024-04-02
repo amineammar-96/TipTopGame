@@ -4,14 +4,22 @@ jobs:
 
   sonarqube_scan:
     docker:
-      - image: circleci/openjdk:11.0
+      - image: php:7.4-apache
+    working_directory: /tmp/workspace
+    environment:
+      ENV_FILE: /tmp/workspace/.circleenv
+      DOCKER_BUILDKIT: "1"
+      BUILDKIT_PROGRESS: plain 
     steps:
-      - checkout      
+      - checkout    
+      - attach_workspace:
+          at: /tmp/workspace      
       # Download and install SonarScanner
       - run:
           name: Install SonarQube scanner
           command: |
-              yum install -y java-11-openjdk-devel
+              apk update
+              apk add openjdk11
               wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
               unzip sonar-scanner.zip
               rm sonar-scanner.zip
