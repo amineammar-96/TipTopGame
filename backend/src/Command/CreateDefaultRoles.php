@@ -25,7 +25,7 @@ class CreateDefaultRoles extends Command
         parent::__construct();
 
         $this->entityManager = $entityManager;
-        $this->connection = $this->entityManager->getConnection();
+        $this->connection = $connection;
     }
 
     protected function configure()
