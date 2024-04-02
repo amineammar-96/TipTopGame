@@ -20,8 +20,7 @@ jobs:
           command: |
               apt-get update
               apt-get install -y openjdk-11-jdk
-              apk add wget
-              wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+              curl -o sonar-scanner.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
               unzip sonar-scanner.zip
               rm sonar-scanner.zip
 
