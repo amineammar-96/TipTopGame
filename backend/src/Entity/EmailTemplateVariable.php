@@ -127,5 +127,10 @@ class EmailTemplateVariable
         return $this;
     }
 
+    public function setId(int $int)
+    {
+        $this->id = $int;
+    }
+
 
 }
