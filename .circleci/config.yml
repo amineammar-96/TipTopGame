@@ -11,10 +11,12 @@ jobs:
       - run:
           name: Install SonarScanner
           command: |
-            curl -L -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip sonar-scanner-cli.zip
-            export PATH=$PWD/sonar-scanner-4.6.2.2472-linux/bin:$PATH
-
+            export SONAR_SCANNER_VERSION=5.0.1.3006
+            export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+            curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+            unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+            export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+            export SONAR_SCANNER_OPTS="-server"
       # Execute SonarQube scan
       - run:
           name: Run SonarQube scan
