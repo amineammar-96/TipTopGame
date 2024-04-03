@@ -191,7 +191,7 @@ jobs:
       - run:
           name: Debug chown
           command: |
-            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker exec -u root backend bash && sudo chown -R www-data:www-data /var/www/html/"
+            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker exec -u root backend bash -c ' sudo chown -R www-data:www-data /var/www/html/'"
 
   deploy_development:
       docker:
