@@ -110,16 +110,11 @@ class UserController extends AbstractController
             $accountLabel = "Employé";
         }
         $store = $user->getStores()[0] ?? null;
-        $storeName = $store->getName() ?? "";
+        $storeName = $store ? $store->getName() : "N/A";
         $details = $roleLabel. " a modifié le profil de ".$accountLabel." ".$user->getFullName()." du magasin ".$storeName;
 
 
         $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , null , $store , $details);
-
-
-
-
-
 
 
         $this->entityManager->persist($user);

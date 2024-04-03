@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Tests\Controller\Api\User;
+namespace App\Tests\Feature\Controller\Api\User;
 
 use App\Controller\Api\User\UserController;
+use App\Entity\Role;
 use App\Entity\Store;
 use App\Entity\User;
-use App\Entity\Role;
 use App\Entity\UserPersonalInfo;
-use App\Repository\UserRepository;
-use App\Repository\StoreRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -37,7 +35,82 @@ class UserControllerTest extends WebTestCase
 
     }
 
+
     public function testUpdateUserProfileById(): void
+    {
+        $email= $this->generateUniqueEmail();
+        $user = $this->createUser($email, 'password');
+
+        $store = new Store();
+        $store->setId(1);
+        $store->setName('Store');
+        $store->setAddress('Address');
+        $store->setHeadquartersAddress('Headquarters Address');
+        $store->setEmail('store@tiptop.com');
+        $store->setPostalCode('12345');
+        $store->setCity('City');
+        $store->setCountry('Country');
+        $store->setCapital(1000);
+        $store->setStatus(true);
+        $store->setSiren('123456789');
+
+
+
+        $role = new Role();
+        $role->setName('ROLE_CLIENT');
+        $role->setLabel('Client');
+        $user->setRole($role);
+
+
+
+        $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        $store->addUser($user);
+        $user->addStore($store);
+        $entityManager->persist($store);
+        $entityManager->persist($role);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $storeManager = $this->createUser($this->generateUniqueEmail(), 'password');
+        $storeManager->setRole($this->client->getContainer()->get('doctrine')->getRepository(Role::class)->findOneBy(['name' => 'ROLE_STOREMANAGER']));
+
+        $entityManager->persist($storeManager);
+        $entityManager->flush();
+
+
+
+        $this->client->loginUser($storeManager);
+
+        $this->client->request(
+            'POST',
+            '/api/user/' . $user->getId() . '/update',
+            [],
+            [],
+            [],
+            json_encode([
+                'firstname' => 'Updated firstname',
+                'lastname' => 'Updated lastname',
+                'email' => $this->generateUniqueEmail(),
+                'phone' => '987654321',
+                'status' => false,
+                'gender' => 'Homme'
+            ])
+        );
+
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $updatedUser = $entityManager->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
+        $this->assertEquals('Updated firstname', $updatedUser->getFirstName());
+        $this->assertEquals('Updated lastname', $updatedUser->getLastName());
+        $this->assertEquals('updated@updated.fr', $updatedUser->getEmail());
+        $this->assertEquals('987654321', $updatedUser->getPhone());
+        $this->assertEquals("Homme", $updatedUser->getGender());
+    }
+
+
+    public function testUpdateUserProfileByIdErrorCase1(): void
     {
         $user = new User();
         $user->setFirstName('Amine');
@@ -76,10 +149,11 @@ class UserControllerTest extends WebTestCase
                 'email' => 'updated@updated.fr',
                 'phone' => '987654321',
                 'status' => false,
+                'genre' => 'Homme'
             ])
         );
 
-        $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $updatedUser = $entityManager->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
         $this->assertEquals('Updated firstname', $updatedUser->getFirstName());
@@ -90,45 +164,7 @@ class UserControllerTest extends WebTestCase
     }
 
 
-    public function testUpdateUserProfileByIdErrorCase1(): void
-    {
-        $email= $this->generateUniqueEmail();
-        $user = $this->createUser($email, 'password');
 
-        
-
-
-
-        $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
-        $entityManager->persist($role);
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-
-        $this->client->request(
-            'POST',
-            '/api/user/' . $user->getId() . '/update',
-            [],
-            [],
-            [],
-            json_encode([
-                'firstname' => 'Updated firstname',
-                'lastname' => 'Updated lastname',
-                'email' => 'updated@updated.fr',
-                'phone' => '987654321',
-                'status' => false,
-            ])
-        );
-
-        $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
-
-        $updatedUser = $entityManager->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
-        $this->assertEquals('Updated firstname', $updatedUser->getFirstName());
-        $this->assertEquals('Updated lastname', $updatedUser->getLastName());
-        $this->assertEquals('updated@updated.fr', $updatedUser->getEmail());
-        $this->assertEquals('987654321', $updatedUser->getPhone());
-        $this->assertEquals("Homme", $updatedUser->getGender());
-    }
 
 
     public function testGetClients(): void
@@ -162,7 +198,7 @@ class UserControllerTest extends WebTestCase
             'page' => 1,
             'limit' => 10,
             'email' => 'test@test.com',
-            'genre' => 'Homme',
+            'gender' => 'Homme',
         ];
 
         $url = '/api/admin/clients?' . http_build_query($params);
@@ -691,7 +727,6 @@ class UserControllerTest extends WebTestCase
         $this->client->loginUser($client);
 
         $file = tempnam(sys_get_temp_dir(), 'avatar');
-        file_put_contents($file, 'Test file content');
 
         $this->client->request(
             'POST',
