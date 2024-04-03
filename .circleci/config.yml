@@ -1,3 +1,4 @@
+
 version: 2.1
 
 jobs:
@@ -355,6 +356,32 @@ workflows:
           filters:
             branches:
               only: main
+
+      - deploy_development:
+          context: context
+          requires:
+            - build_frontend_dev
+            - build_backend_dev
+          filters:
+            branches:
+              only: dev
+      - deploy_staging:
+          context: context
+          requires:
+            - build_frontend_staging
+            - build_backend_staging
+          filters:
+            branches:
+              only: staging
+
+      - deploy_preprod:
+          context: context
+          requires:
+            - build_frontend_preprod
+            - build_backend_preprod
+          filters:
+            branches:
+              only: preprod
 
       - deploy_development:
           context: context
