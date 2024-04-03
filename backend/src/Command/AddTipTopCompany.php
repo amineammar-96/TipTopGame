@@ -16,7 +16,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AddTipTopCompany extends Command
 {
-    protected static $defaultName = 'app:create-default-tiptop-company';
 
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordEncoder;
@@ -28,9 +27,10 @@ class AddTipTopCompany extends Command
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->connection = $connection;
+        $this->setName('app:create-default-tiptop-company');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Add the first store "Thé Tip Top" and the profile for the role ROLE_STOREMANAGER.')
@@ -38,7 +38,7 @@ class AddTipTopCompany extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
             $store=$this->addCompany();

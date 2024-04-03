@@ -2,49 +2,50 @@
 
 namespace App\Tests\Command;
 
-use App\Command\GenerateBadges;
-use App\Entity\Badge;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Command\ResetGame;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
-class GenerateBadgesTest extends TestCase
+class ResetGameTest extends TestCase
 {
     private $entityManager;
     private $connection;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
+        // Mocking EntityManagerInterface
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+
+        // Mocking Connection
         $this->connection = $this->createMock(Connection::class);
     }
 
     public function testExecute(): void
     {
-        $this->connection->expects($this->any())
-            ->method('executeQuery');
+        $process = $this->createMock(Process::class);
+        $process->expects($this->any())
+            ->method('mustRun');
 
-        $this->entityManager->expects($this->exactly(5))
-            ->method('persist')
-            ->with($this->isInstanceOf(Badge::class));
-
-        $this->entityManager->expects($this->once())
-            ->method('flush');
-
-        $command = new GenerateBadges($this->entityManager, $this->connection);
+        $command = new ResetGame($this->entityManager, $this->connection);
 
         $application = new Application();
         $application->add($command);
 
-        $command = $application->find('app:generate-badges');
+        $command = $application->find('app:reset-game');
 
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Badges generated successfully !', $output);
+
+        $this->assertStringContainsString('Game reset successfully.', $output);
     }
 }

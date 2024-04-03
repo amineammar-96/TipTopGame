@@ -23,17 +23,13 @@ class CreateDefaultRolesTest extends TestCase
 
     public function testExecute(): void
     {
-        // Create a new instance of the command
         $command = new CreateDefaultRoles($this->entityManager, $this->connection);
 
-        // Create a new application and add the command to it
         $application = new Application();
         $application->add($command);
 
-        // Create a CommandTester to execute the command
         $commandTester = new CommandTester($command);
 
-        // Expectations for the executeQuery method
         $this->connection->expects($this->exactly(6))
             ->method('executeQuery')
             ->withConsecutive(
@@ -45,7 +41,6 @@ class CreateDefaultRolesTest extends TestCase
                 ['SET SQL_SAFE_UPDATES = 1']
             );
 
-        // Expectations for persist and flush methods
         $this->entityManager->expects($this->exactly(6))
             ->method('persist')
             ->withConsecutive(
@@ -60,10 +55,8 @@ class CreateDefaultRolesTest extends TestCase
         $this->entityManager->expects($this->once())
             ->method('flush');
 
-        // Execute the command
         $commandTester->execute([]);
 
-        // Assert that the output contains the expected message
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Roles added to the role table.', $output);
     }

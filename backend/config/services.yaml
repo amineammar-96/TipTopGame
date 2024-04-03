@@ -50,9 +50,6 @@ services:
     App\Command\GenerateFakeData:
         tags: [ 'console.command' ]
 
-    App\Command\PrintRandomTickets:
-        tags: [ 'console.command' ]
-
     App\Command\GenerateEmailServices:
         tags: [ 'console.command' ]
 
