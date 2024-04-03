@@ -3,8 +3,10 @@
 namespace App\Tests\Command;
 
 use App\Command\GenerateFakeData;
+use App\Entity\GameConfig;
 use App\Entity\Role;
 use App\Entity\Store;
+use App\Entity\Ticket;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -23,16 +25,13 @@ class GenerateFakeDataTest extends TestCase
     {
         parent::setUp();
 
-        // Mocking EntityManagerInterface
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
-        // Mocking UserPasswordHasherInterface
         $this->passwordEncoder = $this->createMock(UserPasswordHasherInterface::class);
     }
 
     public function testExecute(): void
     {
-        return; // Comment this line to run the test
         $roleRepository = $this->createMock(EntityRepository::class);
         $roleRepository->expects($this->any())
             ->method('findOneBy')
@@ -58,13 +57,20 @@ class GenerateFakeDataTest extends TestCase
             ->method('createQueryBuilder')
             ->willReturn($queryBuilder);
 
+
+        $gameConfigRepository = $this->createMock(EntityRepository::class);
+        $gameConfigRepository->expects($this->any())
+            ->method('find')
+            ->willReturn(new GameConfig());
+
         $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
                 [Role::class, $roleRepository],
                 [Store::class, $storeRepository],
                 [User::class, $userRepository],
-                ['App\Entity\Ticket', $ticketRepository]
+                [Ticket::class, $ticketRepository],
+                [GameConfig::class, $gameConfigRepository]
             ]);
 
         $command = new GenerateFakeData($this->entityManager, $this->passwordEncoder);

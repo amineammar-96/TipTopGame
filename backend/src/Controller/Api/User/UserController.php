@@ -71,6 +71,7 @@ class UserController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
+
         $user->setFirstName($data['firstname']);
         $user->setLastName($data['lastname']);
 
@@ -99,6 +100,8 @@ class UserController extends AbstractController
             $roleLabel = "Le Manager";
         }
 
+
+
         $userRole=$user->getRoles()[0];
         $accountLabel="";
         if($userRole==Role::ROLE_STOREMANAGER) {
@@ -109,6 +112,7 @@ class UserController extends AbstractController
         $store = $user->getStores()[0] ?? null;
         $storeName = $store->getName() ?? "";
         $details = $roleLabel. " a modifié le profil de ".$accountLabel." ".$user->getFullName()." du magasin ".$storeName;
+
 
         $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , null , $store , $details);
 

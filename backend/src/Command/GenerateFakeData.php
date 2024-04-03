@@ -140,6 +140,10 @@ class GenerateFakeData extends Command
         $qb = $ticketRepository->createQueryBuilder('t')
             ->select('COUNT(t.id)');
 
+        if($qb === null) {
+            return [];
+        }
+
         $totalTickets = $qb
             ->where('t.status = 1')
             ->getQuery()

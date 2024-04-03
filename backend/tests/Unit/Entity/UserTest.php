@@ -726,4 +726,11 @@ class UserTest extends TestCase
         $this->assertCount(0, $user->getEmailingHistories());
     }
 
+
+    public function testSetId()
+    {
+        $user = new User();
+        $user->setId(1);
+        $this->assertSame(1, $user->getId());
+    }
 }

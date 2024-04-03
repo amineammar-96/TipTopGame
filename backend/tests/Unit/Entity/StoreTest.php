@@ -130,4 +130,10 @@ class StoreTest extends KernelTestCase
     }
 
 
+    public function testGetId(): void
+    {
+        $store = new Store();
+        $this->assertNull($store->getId());
+    }
+
 }
