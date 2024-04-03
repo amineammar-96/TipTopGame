@@ -68,16 +68,15 @@ class ConnectionHistoryController extends AbstractController
         $query->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
-        if($store){
-            $query->innerJoin('ch.user', 'u')
-                ->andWhere('u.store = :store')
-                ->setParameter('store', $store);
+        if($store || $role) {
+            $query->innerJoin('ch.user', 'u');
         }
+
 
         if($role){
             $roleEntity = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $role]);
 
-            $query->innerJoin('ch.user', 'u')
+            $query
                 ->andWhere('u.role = :role')
                 ->setParameter('role' , $roleEntity);
         }
@@ -90,14 +89,14 @@ class ConnectionHistoryController extends AbstractController
         }
 
         if ($start_date && $end_date) {
-            $query->andWhere('ch.connection_date BETWEEN :start_date AND :end_date')
+            $query->andWhere('ch.logout_time BETWEEN :start_date AND :end_date')
                 ->setParameter('start_date', $start_date)
                 ->setParameter('end_date', $end_date);
         } elseif ($start_date) {
-            $query->andWhere('ch.connection_date >= :start_date')
+            $query->andWhere('ch.logout_time >= :start_date')
                 ->setParameter('start_date', $start_date);
         } elseif ($end_date) {
-            $query->andWhere('ch.connection_date <= :end_date')
+            $query->andWhere('ch.logout_time <= :end_date')
                 ->setParameter('end_date', $end_date);
         }
 

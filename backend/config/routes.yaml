@@ -4,12 +4,6 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-#resetGame
-
-reset_game:
-    path: /api/admin/reset_game
-    controller: App\Controller\Api\Dashboard\DashboardController::resetGame
-    methods: POST
 
 #authentification routes
 api_login_check_client:
