@@ -33,7 +33,7 @@ class UserSocialMediaAuthController extends AbstractController
             $clientId = $_ENV['GOOGLE_CLIENT_ID'];
             $clientSecret = $_ENV['GOOGLE_CLIENT_SECRET'];
             $redirectUri = $_ENV['GOOGLE_REDIRECT_URI_DEV'];
-            // Create a new instance of the Google provider
+
             $provider = new Google([
                 'clientId' => $clientId,
                 'clientSecret' => $clientSecret,
@@ -112,7 +112,7 @@ class UserSocialMediaAuthController extends AbstractController
         }
     }
 
-    private function generateRandomPassword(): string
+    public function generateRandomPassword(): string
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = [];

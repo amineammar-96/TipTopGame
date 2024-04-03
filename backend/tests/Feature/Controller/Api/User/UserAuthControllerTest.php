@@ -264,6 +264,161 @@ class UserAuthControllerTest extends WebTestCase
     }
 
 
+    public function testRegisterValid(): void
+    {
+        $requestData = [
+            'email' => $this->generateUniqueEmail(),
+            'password' => 'testpassword',
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'gender' => 'Male',
+            'role' => 'ROLE_CLIENT',
+            'dateOfBirth' => '01/01/1990',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/register',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('status', $responseData);
+        $this->assertEquals('success', $responseData['status']);
+        $this->assertEquals('User registered successfully', $responseData['message']);
+    }
+
+    public function testRegisterMissingFields(): void
+    {
+        $requestData = [
+
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/register',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        // Assert that the response status code is 400
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testRegisterExistingEmail(): void
+    {
+        $email = $this->generateUniqueEmail();
+        $existingUser = $this->createUser($email, 'password');
+
+        $requestData = [
+            'email' => $email,
+            'password' => 'testpassword',
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/register',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+    }
+
+
+
+    public function testResetPasswordRequestExistingUser(): void
+    {
+        $user = new User();
+        $user->setEmail('test@example.com');
+        $user->setPassword('password');
+        $user->setIsActive(true);
+        $user->setRole($this->client->getContainer()->get('doctrine')->getRepository(Role::class)->findOneBy(['name' => 'ROLE_CLIENT']));
+        $user->setCreatedAt(new \DateTime());
+        $user->setUpdatedAt(new \DateTime());
+        $user->setDateOfBirth(new \DateTime());
+        $user->setFirstName('Test');
+        $user->setLastName('User');
+        $user->setGender('Homme');
+        $user->setPhone('123456789');
+        $user->setStatus(true);
+        $this->client->getContainer()->get('doctrine')->getManager()->persist($user);
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $requestData = [
+            'email' => 'test@example.com',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/reset_password_request',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('status', $responseData);
+        $this->assertEquals('success', $responseData['status']);
+        $this->assertEquals('Reset password email sent', $responseData['message']);
+
+    }
+
+    public function testResetPasswordRequestNonExistingUser(): void
+    {
+        $requestData = [
+            'email' => 'nonexistent@example.com',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/reset_password_request',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('status', $responseData);
+        $this->assertEquals('failed', $responseData['status']);
+        $this->assertEquals('User not found', $responseData['message']);
+    }
+
+    public function testResetPasswordRequestMissingFields(): void
+    {
+        $requestData = [
+
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/reset_password_request',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+    }
+
 
 
 
