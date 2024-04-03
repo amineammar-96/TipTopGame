@@ -343,10 +343,8 @@ class UserController extends AbstractController
 
     public function getParticipantsList(Request $request): JsonResponse
     {
-
-        $store = $request->get('store', null);
-        $employee = $request->get('employee', null);
-
+        $store = $request->get('store');
+        $employee = $request->get('employee');
 
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('u')
@@ -355,48 +353,46 @@ class UserController extends AbstractController
             ->where('ur.name = :role')
             ->setParameter('role', 'ROLE_CLIENT');
 
-        if ($store !== null && $store !== "") {
-            $qb->innerJoin('u.stores', 's')
-                ->andWhere('s.id = :store')
-                ->setParameter('store', $store);
+        if($store || $employee || $userRole === Role::ROLE_STOREMANAGER || $userRole === Role::ROLE_EMPLOYEE ){
+            $qb->innerJoin('u.stores', 'store');
         }
 
-
-        if ($employee !== null && $employee !== "") {
-            $qb->innerJoin('u.stores', 's')
-                ->innerJoin('s.users', 'su')
-                ->andWhere('su.id = :employee')
-                ->setParameter('employee', $employee);
+        if ($store !== null) {
+            $qb
+                ->andWhere('store.id = :store_id')
+                ->setParameter('store_id', $store);
         }
 
-
-
-
-
-
-
+        if ($employee !== null) {
+            $qb
+                ->innerJoin('store.users', 'employee')
+                ->andWhere('employee.id = :employee_id')
+                ->setParameter('employee_id', $employee);
+        }
 
         $userRole = $this->getUser()->getRoles()[0];
-        if ($userRole == Role::ROLE_STOREMANAGER || $userRole == Role::ROLE_EMPLOYEE) {
-            $qb->innerJoin('u.stores', 's')
-                ->andWhere('s.id = :store')
-                ->setParameter('store', $this->getUser()->getStores()[0]->getId());
+        if ($userRole === Role::ROLE_STOREMANAGER || $userRole === Role::ROLE_EMPLOYEE) {
+            $storeIds = array_map(function($store) {
+                return $store->getId();
+            }, $this->getUser()->getStores()->toArray());
+
+            $qb
+                ->andWhere('store.id IN (:store_ids)')
+                ->setParameter('store_ids', $storeIds);
         }
-
-
 
         $users = $qb->getQuery()->getResult();
 
         $usersJson = [];
         foreach ($users as $user) {
-            $usersJson[] =
-                $user->getUserJson();
+            $usersJson[] = $user->getUserJson();
         }
 
         return $this->json([
             'users' => $usersJson,
         ]);
     }
+
 
 
     public function getEmployeesList(Request $request): JsonResponse
@@ -563,7 +559,7 @@ class UserController extends AbstractController
         }
     }
 
-    private function deleteAvatarFile(string $path): void
+    public function deleteAvatarFile(string $path): void
     {
         $fullPath = $this->getParameter('avatars_upload') . $path;
         if (file_exists($fullPath)) {
@@ -646,11 +642,6 @@ class UserController extends AbstractController
             ], 400);
         }
 
-        if ($currentPassword == $newEmail) {
-            return $this->json([
-                'message' => 'Le nouveau email doit être différent du mot de passe actuel'
-            ], 400);
-        }
 
         $oldUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $newEmail]);
         if ($oldUser) {
@@ -673,8 +664,6 @@ class UserController extends AbstractController
     }
 
 
-
-    //getUsers
     public function getUsers(Request $request): JsonResponse
     {
 
@@ -690,14 +679,19 @@ class UserController extends AbstractController
         $qb->select('u')
             ->from(User::class, 'u');
 
+
+        if($loggedUserRole == Role::ROLE_STOREMANAGER || ($store != "" && $store != null)){
+            $qb->innerJoin('u.stores', 's');
+        }
+
         if($loggedUserRole == Role::ROLE_STOREMANAGER){
-            $qb->innerJoin('u.stores', 's')
+            $qb
                 ->andWhere('s.id = :store')
                 ->setParameter('store', $loggedUser->getStores()[0]->getId());
         }
 
         if ($store != "" && $store != null) {
-            $qb->innerJoin('u.stores', 's')
+            $qb
                 ->andWhere('s.id = :store')
                 ->setParameter('store', $store);
         }
@@ -742,6 +736,7 @@ class UserController extends AbstractController
         $firstname = $data['firstname'];
         $phone = $data['phone'];
         $gender = $data['gender'];
+
 
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
