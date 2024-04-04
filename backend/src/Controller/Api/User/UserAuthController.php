@@ -48,7 +48,6 @@ class UserAuthController extends AbstractController {
      */
     public function checkLoginAdmin( Request $request, JWTTokenManagerInterface $jwtManager, SerializerInterface $serializer ): JsonResponse
     {
-        try {
             $data = json_decode( $request->getContent(), true );
 
             $userFormData = [
@@ -76,9 +75,6 @@ class UserAuthController extends AbstractController {
                 return new JsonResponse( [ 'error' => 'Authentication failed' , 'message' => "user is not an admin" ], 401 );
             }
 
-        } catch ( JWTDecodeFailureException $e ) {
-            return new JsonResponse( [ 'error' => 'Invalid token' ], 401 );
-        }
 
         $token = $jwtManager->create( $user );
         $dateOfBirth = $user->getDateOfBirth();
@@ -121,7 +117,7 @@ class UserAuthController extends AbstractController {
      */
     public function checkLoginClient( Request $request, JWTTokenManagerInterface $jwtManager, SerializerInterface $serializer ): JsonResponse
     {
-        try {
+
             $data = json_decode( $request->getContent(), true );
 
             $userFormData = [
@@ -149,9 +145,7 @@ class UserAuthController extends AbstractController {
                 return new JsonResponse( [ 'error' => 'Authentication failed' , 'message' => "user is not a client" ], 401 );
             }
 
-        } catch ( JWTDecodeFailureException $e ) {
-            return new JsonResponse( [ 'error' => 'Invalid token' ], 401 );
-        }
+
 
         $token = $jwtManager->create( $user );
         $dateOfBirth = $user->getDateOfBirth();
@@ -199,6 +193,14 @@ class UserAuthController extends AbstractController {
         try {
             $data = json_decode( $request->getContent(), true );
 
+            foreach ( $data as $key => $dataIndex ) {
+                if ( $dataIndex === '' ) {
+                    return new JsonResponse( [
+                        'status' => 'failed',
+                        'error' => 'Empty field - '.$key ], 400 );
+                }
+            }
+
             $email = $data[ 'email' ];
             $password = $data[ 'password' ];
             $firstname = $data[ 'firstname' ];
@@ -206,13 +208,6 @@ class UserAuthController extends AbstractController {
             $gender = $data[ 'gender' ];
             $role = $data[ 'role' ];
 
-            foreach ( $data as $key => $dataIndex ) {
-                if ( $dataIndex === '' ) {
-                    return new JsonResponse( [
-                        'status' => 'failed',
-                        'error' => 'Empty field - '.$key ], 400 );
-                    }
-                }
 
                 $dateFormat = 'd/m/Y';
                 $dateOfBirthString = $data[ 'dateOfBirth' ];
@@ -228,7 +223,6 @@ class UserAuthController extends AbstractController {
                     'name' => $role,
                 ] );
 
-                if ( $email !== '' && $password !== '' && $lastname !== '' && $firstname !== '' && $gender !== '' && $role !== '' ) {
                     $user = new User();
                     $user->setEmail( $email );
                     $user->setFirstname( $firstname );
@@ -263,9 +257,6 @@ class UserAuthController extends AbstractController {
                     ]);
 
                     return new JsonResponse( [ 'status' => 'success', 'message' => 'User registered successfully' ], 200 );
-                } else {
-                    return new JsonResponse( [ 'status' => 'failed', 'message' => 'User register failed' ], 400 );
-                }
             } catch ( \Throwable $th ) {
                 return new JsonResponse( [ 'status' => 'failed', 'message' => $th->getMessage() ], 400 );
             }

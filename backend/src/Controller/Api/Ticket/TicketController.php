@@ -394,14 +394,14 @@ class TicketController extends AbstractController
         }
 
 
-        //$this->entityManager->persist($loyaltyPoint);
-        //$this->entityManager->persist($user);
-        //$this->entityManager->persist($ticketHistory);
-        //$this->entityManager->persist($ticket);
+        $this->entityManager->persist($loyaltyPoint);
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($ticketHistory);
+        $this->entityManager->persist($ticket);
 
-        //$this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
+        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
 
-        //$this->entityManager->flush();
+        $this->entityManager->flush();
 
         return $this->json([
             'ticket' => $ticket->getTicketJson(),

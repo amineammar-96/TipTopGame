@@ -204,7 +204,7 @@ class PostManMailerService
 
         foreach ($variablesValues as $variable => $value) {
             $placeholder = '{{ ' . $variable . ' }}';
-            $content = str_replace($placeholder, $value, $content);
+            $content = $content ? str_replace($placeholder, $value, $content) : "";
         }
 
         return $content;

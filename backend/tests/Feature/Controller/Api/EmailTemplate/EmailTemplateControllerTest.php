@@ -115,6 +115,39 @@ class EmailTemplateControllerTest extends WebTestCase
         );
     }
 
+    public function testGetEmailTemplateByIdError(): void
+    {
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
+
+        $this->client->request('GET', '/api/admin/correspondence_template/99999999');
+
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['status' => 'EmailTemplate not found']),
+            $this->client->getResponse()->getContent()
+        );
+
+    }
+
 
     public function testCreateEmailTemplate(): void
     {
