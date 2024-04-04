@@ -170,11 +170,6 @@ print_ticket_by_employee:
     controller: App\Controller\Api\Ticket\TicketController::printTicketByEmployee
     methods: POST
 
-#print random ticket
-print_random_ticket:
-    path: /api/print_random_ticket
-    controller: App\Controller\Api\Ticket\TicketController::printRandomTicket
-    methods: GET
 
 #get_store_clients
 get_store_clients:
