@@ -75,6 +75,30 @@ class PostManMailerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
+    public function testSendActivationEmailError(): void
+    {
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_CLIENT']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+
+
+        $this->client->request('POST', '/api/user/999999999/send_activation_email', []);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
 
     public function testCheckClientActivationTokenValidity(): void
     {
