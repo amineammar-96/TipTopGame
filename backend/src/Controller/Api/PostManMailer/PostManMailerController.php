@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Service\Mailer\PostManMailerService;
 use DateTime;
 use PHPUnit\Exception;
+use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,32 +38,12 @@ class PostManMailerController extends AbstractController
 
     }
 
-
-
-    public function sendEmail(Request $request): JsonResponse
-    {
-            $randomId = rand(20, 150);
-            $receiver = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $randomId]);
-
-            $emailServices = $this->entityManager->getRepository(EmailService::class)->findAll();
-
-            $randomEmailService = $emailServices[array_rand($emailServices)];
-
-            try {
-                if ($this->postManMailerService->sendEmailTemplate($randomEmailService->getName() , $receiver , [])) {
-                    return new jsonResponse('Email sent successfully!');
-                } else {
-                    return new jsonResponse('Email could not be sent.', 500);
-                }
-            } catch (Exception|LoaderError|RuntimeError|SyntaxError $e) {
-                return new JsonResponse('Email could not be sent.', 500);
-            }
-    }
-
-
-
-
-
+    /**
+     * @throws SyntaxError
+     * @throws RandomException
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function sendActivationEmail(int $id , Request $request): JsonResponse
     {
         $receiver = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
@@ -86,7 +67,6 @@ class PostManMailerController extends AbstractController
         $this->entityManager->flush();
 
 
-        try {
             if ($this->postManMailerService->sendEmailTemplate($finalService , $receiver , [
                 'token' => $activationToken,
                 'ticket' => null,
@@ -96,9 +76,6 @@ class PostManMailerController extends AbstractController
             } else {
                 return new jsonResponse('Email could not be sent.', 500);
             }
-        } catch (Exception|LoaderError|RuntimeError|SyntaxError $e) {
-            return new JsonResponse('Email could not be sent.', 500);
-        }
 
     }
 

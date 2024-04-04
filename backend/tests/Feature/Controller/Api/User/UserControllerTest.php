@@ -82,6 +82,8 @@ class UserControllerTest extends WebTestCase
 
         $this->client->loginUser($storeManager);
 
+        $email= $this->generateUniqueEmail();
+
         $this->client->request(
             'POST',
             '/api/user/' . $user->getId() . '/update',
@@ -91,7 +93,7 @@ class UserControllerTest extends WebTestCase
             json_encode([
                 'firstname' => 'Updated firstname',
                 'lastname' => 'Updated lastname',
-                'email' => $this->generateUniqueEmail(),
+                'email' => $email,
                 'phone' => '987654321',
                 'status' => false,
                 'gender' => 'Homme'
@@ -104,7 +106,7 @@ class UserControllerTest extends WebTestCase
         $updatedUser = $entityManager->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
         $this->assertEquals('Updated firstname', $updatedUser->getFirstName());
         $this->assertEquals('Updated lastname', $updatedUser->getLastName());
-        $this->assertEquals('updated@updated.fr', $updatedUser->getEmail());
+        $this->assertEquals($email, $updatedUser->getEmail());
         $this->assertEquals('987654321', $updatedUser->getPhone());
         $this->assertEquals("Homme", $updatedUser->getGender());
     }
@@ -129,14 +131,34 @@ class UserControllerTest extends WebTestCase
         $role->setLabel('Client');
         $user->setRole($role);
 
+        $store = new Store();
+        $store->setId(1);
+        $store->setName('Store');
+        $store->setAddress('Address');
+        $store->setHeadquartersAddress('Headquarters Address');
+        $store->setEmail('store@tiptop.com');
+        $store->setPostalCode('12345');
+        $store->setCity('City');
+        $store->setCountry('Country');
+        $store->setCapital(1000);
+        $store->setStatus(true);
+        $store->setSiren('123456789');
+
+        $user->addStore($store);
+        $store->addUser($user);
+
+
+
 
 
         $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
         $entityManager->persist($role);
         $entityManager->persist($user);
+        $entityManager->persist($store);
         $entityManager->flush();
 
-
+        $email= $this->generateUniqueEmail();
+        $this->client->loginUser($user);
         $this->client->request(
             'POST',
             '/api/user/' . $user->getId() . '/update',
@@ -146,10 +168,10 @@ class UserControllerTest extends WebTestCase
             json_encode([
                 'firstname' => 'Updated firstname',
                 'lastname' => 'Updated lastname',
-                'email' => 'updated@updated.fr',
+                'email' => $email,
                 'phone' => '987654321',
                 'status' => false,
-                'genre' => 'Homme'
+                'gender' => 'Homme'
             ])
         );
 
@@ -158,7 +180,7 @@ class UserControllerTest extends WebTestCase
         $updatedUser = $entityManager->getRepository(User::class)->findOneBy(['id' => $user->getId()]);
         $this->assertEquals('Updated firstname', $updatedUser->getFirstName());
         $this->assertEquals('Updated lastname', $updatedUser->getLastName());
-        $this->assertEquals('updated@updated.fr', $updatedUser->getEmail());
+        $this->assertEquals($email, $updatedUser->getEmail());
         $this->assertEquals('987654321', $updatedUser->getPhone());
         $this->assertEquals("Homme", $updatedUser->getGender());
     }

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Feature\Controller\Api\EmailTemplate;
 
+use App\Entity\EmailService;
 use App\Entity\EmailTemplate;
 use App\Entity\Role;
 use App\Entity\User;
@@ -117,10 +118,27 @@ class EmailTemplateControllerTest extends WebTestCase
 
     public function testCreateEmailTemplate(): void
     {
-        // Make a request to create a new email template
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
         $this->client->request(
             'POST',
-            '/api/email_templates',
+            '/api/admin/correspondence_template/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -129,7 +147,7 @@ class EmailTemplateControllerTest extends WebTestCase
                 'name' => 'Test Name',
                 'description' => 'Test Description',
                 'type' => 'Test Type',
-                'service' => $this->entityManager->
+                'service' => $this->entityManager->getRepository(EmailService::class)->findOneBy([])->getId(),
             ])
         );
 
@@ -141,16 +159,33 @@ class EmailTemplateControllerTest extends WebTestCase
         );
     }
 
-    /*
+
     public function testUpdateEmailTemplateById(): void
     {
-        // Get an email template from the database
-        $emailTemplate = $this->entityManager->getRepository(\App\Entity\EmailTemplate::class)->findOneBy([]);
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
 
-        // Make a request to update the email template
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
+
+        $emailTemplate = $this->entityManager->getRepository(EmailTemplate::class)->findOneBy([]);
+
         $this->client->request(
-            'PUT',
-            '/api/email_templates/' . $emailTemplate->getId(),
+            'POST',
+            '/api/admin/correspondence_template/' . $emailTemplate->getId() . '/update',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -159,33 +194,163 @@ class EmailTemplateControllerTest extends WebTestCase
                 'name' => 'Updated Test Name',
                 'description' => 'Updated Test Description',
                 'type' => 'Updated Test Type',
-                'service' => 1, // Assuming service ID exists in the database
+                'service' => $this->entityManager->getRepository(EmailService::class)->findOneBy([])->getId(),
                 'subject' => 'Updated Test Subject',
                 'content' => 'Updated Test Content',
                 'required' => false,
             ])
         );
 
-        // Assert that the response is successful
         $this->assertResponseIsSuccessful();
 
-        // Assert that the response contains the expected message
-        $this->assertJsonStringEqualsJsonString(
-            json_encode(['message' => 'Template a été mis à jour avec succès', 'statusCode' => 200]),
-            $this->client->getResponse()->getContent()
-        );
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertContains($responseContent['message'], [
+            "Template a été mis à jour avec succès",
+            "Template a été mis à jour avec succès. Il y a d'autres templates avec ce service, ils ont été mis à jour pour être non requis"
+        ]);
+
+        if ($responseContent['message'] === "Template a été mis à jour avec succès") {
+            $this->assertSame($responseContent['statusCode'], 200);
+        } else {
+            $this->assertSame($responseContent['statusCode'], 201);
+        }
+
+
     }
+
+
+    public function testUpdateEmailTemplateById2(): void
+    {
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
+
+
+
+        $this->client->request(
+            'POST',
+            '/api/admin/correspondence_template/99999999/update',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'title' => 'Updated Test Template',
+                'name' => 'Updated Test Name',
+                'description' => 'Updated Test Description',
+                'type' => 'Updated Test Type',
+                'service' => $this->entityManager->getRepository(EmailService::class)->findOneBy([])->getId(),
+                'subject' => 'Updated Test Subject',
+                'content' => 'Updated Test Content',
+                'required' => false,
+            ])
+        );
+
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertSame($responseContent['status'], 'Template not found');
+
+    }
+
+
 
     public function testDeleteTemplate(): void
     {
-        // Get an email template from the database
-        $emailTemplate = $this->entityManager->getRepository(\App\Entity\EmailTemplate::class)->findOneBy([]);
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
 
-        // Make a request to delete the email template
-        $this->client->request('DELETE', '/api/email_templates/' . $emailTemplate->getId());
+        $this->entityManager->flush();
 
-        // Assert that the response is successful
+        $this->client->loginUser($admin);
+
+
+        $emailTemplate = new EmailTemplate();
+        $emailTemplate->setContent('Test Content');
+        $emailTemplate->setSubject('Test Subject');
+        $emailTemplate->setTitle('Test Title');
+        $emailTemplate->setType('Test Type');
+        $emailTemplate->setName('Test Name');
+        $emailTemplate->setDescription('Test Description');
+        $emailTemplate->setRequired(false);
+        $emailTemplate->setService($this->entityManager->getRepository(EmailService::class)->findOneBy([]));
+
+
+
+        $this->entityManager->persist($emailTemplate);
+        $this->entityManager->flush();
+
+        $emailTemplateId = $emailTemplate->getId();
+
+
+
+        $this->client->request(
+            'DELETE',
+            '/api/admin/correspondence_template/delete/' . $emailTemplateId
+        );
+
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
+
+        $deletedTemplate = $this->entityManager->getRepository(EmailTemplate::class)->find($emailTemplateId);
+        $this->assertNull($deletedTemplate);
     }
-    */
+
+    public function testDeleteTemplate2(): void
+    {
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
+
+
+
+        $this->client->request(
+            'DELETE',
+            '/api/admin/correspondence_template/delete/' . 99999999
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $deletedTemplate = $this->entityManager->getRepository(EmailTemplate::class)->find(99999999);
+        $this->assertNull($deletedTemplate);
+    }
 }

@@ -245,6 +245,14 @@ get_email_templates:
     controller: App\Controller\Api\EmailTemplate\EmailTemplateController::getEmailTemplates
     methods: GET
 
+#delete
+delete_email_template_by_id:
+    path: /api/admin/correspondence_template/delete/{id}
+    controller: App\Controller\Api\EmailTemplate\EmailTemplateController::deleteTemplate
+    methods: DELETE
+    requirements:
+        id: \d+
+
 create_email_template:
     path: /api/admin/correspondence_template/create
     controller: App\Controller\Api\EmailTemplate\EmailTemplateController::createEmailTemplate
