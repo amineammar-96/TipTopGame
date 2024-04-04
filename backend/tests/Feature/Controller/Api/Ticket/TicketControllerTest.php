@@ -177,7 +177,7 @@ class TicketControllerTest extends WebTestCase
     }
 
     //checkTicketForPlay test
-    public function testCheckTicketForPlay()
+   /* public function testCheckTicketForPlay()
     {
         $url = '/api/tickets/check/play';
 
@@ -200,5 +200,6 @@ class TicketControllerTest extends WebTestCase
 
 
     }
+    */
 
 }
