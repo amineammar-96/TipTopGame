@@ -199,7 +199,7 @@ function LandingPageTopSection() {
             <Row className="">
                 <Col className={`${styles.topSectionLeftSide}`} md={12}>
                     <div className={`${styles.topSectionTextDiv}`}>
-                        <h1>Bienvenue <span>  Thé Tip Top ! </span></h1>
+                        <h1>Bienvenue au Grand Jeu-Concours <span>  Thé Tip Top ! </span></h1>
                         <p>
                             Participez à notre extraordinaire Jeu-Concours et tentez votre chance de gagner des cadeaux
                             exclusifs tout en découvrant nos délicieux thés bios et faits à la main. Scannez simplement
