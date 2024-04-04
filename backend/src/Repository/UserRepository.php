@@ -94,8 +94,6 @@ class UserRepository extends ServiceEntityRepository
         } else {
             return false;
         }
-
-
     }
 
     public function findUniqueParticipants(): array
