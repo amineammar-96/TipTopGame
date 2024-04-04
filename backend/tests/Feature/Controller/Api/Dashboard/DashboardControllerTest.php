@@ -3,8 +3,11 @@
 namespace App\Tests\Feature\Controller\Api\Dashboard;
 
 use App\Entity\LoyaltyPoints;
+use App\Entity\Prize;
 use App\Entity\Role;
+use App\Entity\Store;
 use App\Entity\Ticket;
+use App\Entity\TicketHistory;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,6 +62,8 @@ class DashboardControllerTest extends WebTestCase
 
         $this->generateRandomTickets(10, $user);
 
+
+
         $this->entityManager->flush();
 
         $this->client->loginUser($user);
@@ -70,7 +75,7 @@ class DashboardControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
     }
 
-    private function generateRandomTickets(int $int, User $user)
+    private function generateRandomTickets(int $int, User $user): void
     {
         $tickets = [];
         $status = [
@@ -80,56 +85,198 @@ class DashboardControllerTest extends WebTestCase
             Ticket::STATUS_WINNER,
         ];
 
+        $prizes = $this->entityManager->getRepository(Prize::class)->findAll();
+
+        if(count($prizes) > 0){
+            $prize = $prizes[array_rand($prizes)];
+        }else {
+            $prize = new Prize();
+            $prize->setName('Prize');
+            $prize->setLabel('Prize');
+            $prize->setPrizeValue('Prize');
+            $prize->setType('Prize');
+            $prize->setWinningRate('20');
+            $this->entityManager->persist($prize);
+        }
+
         for ($i = 0; $i < $int; $i++) {
+            $randomStatus = $status[array_rand($status)];
             $ticket = new Ticket();
             $ticket->setTicketCode('TICKETCODE' . $i. rand(1, 1000));
             $winDate = new \DateTime();
             $ticket->setWinDate($winDate);
-            $ticket->setStatus($status[array_rand($status)]);
+            $ticket->setStatus($randomStatus);
+            $ticket->setTicketGeneratedAt(new \DateTime());
             $ticket->setTicketPrintedAt(new \DateTime());
             $ticket->setTicketGeneratedAt(new \DateTime());
             $ticket->setUpdatedAt(new \DateTime());
             $ticket->setUser($user);
             $user->addTicket($ticket);
-            $ticket->setPrize(null);
-            $ticket->setPrize(null);
+
+
+            $store = $user->getStores()[0];
+            if($store){
+                $ticket->setStore($store);
+                $store->addTicket($ticket);
+            }
+
+            $ticket->setPrize($prize);
             $this->entityManager->persist($user);
             $this->entityManager->persist($ticket);
-            $tickets[] = $ticket;
+
+            $ticketHistory = new TicketHistory();
+            $ticket->addTicketHistory($ticketHistory);
+            $ticketHistory->setTicket($ticket);
+            $ticketHistory->setUser($user);
+            $ticketHistory->setEmployee(null);
+            $ticketHistory->setStatus($randomStatus);
+            $ticketHistory->setUpdatedAt(new \DateTime());
+            $this->entityManager->persist($ticket);
+            $this->entityManager->persist($ticketHistory);
         }
-        return $tickets;
     }
 
     public function testGetAdminDashboardCounters(): void
     {
-        // Make a request to fetch admin dashboard counters
-        $this->client->request('POST', '/api/dashboard/admin', [], [], [], json_encode([
-            'startDate' => '2024-01-01',
-            'endDate' => '2024-12-31',
-            'storeId' => 1,
+
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_STOREMANAGER']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+        $store = new Store();
+        $store->setName('Store');
+        $store->setAddress('Address');
+        $store->setHeadquartersAddress('Headquarters Address');
+        $store->setEmail('store@tiptop.com');
+        $store->setPostalCode('12345');
+        $store->setCity('City');
+        $store->setCountry('Country');
+        $store->setCapital(1000);
+        $store->setStatus(true);
+        $store->setSiren('123456789');
+
+        $store->addUser($admin);
+        $admin->addStore($store);
+
+        $this->generateRandomTickets(10, $admin);
+
+        $this->entityManager->persist($store);
+        $this->entityManager->persist($admin);
+
+        $this->entityManager->flush();
+
+
+        $this->client->loginUser($admin);
+
+
+        $this->client->request('POST', '/api/admin/dashboard/counters', [], [], [], json_encode([
+            'startDate' => '01/01/2024',
+            'endDate' => '31/12/2024',
+            'storeId' => $store->getId()
         ]));
 
-        // Assert that the response is successful
+
         $this->assertResponseIsSuccessful();
 
-        // Assert that the response contains JSON content type
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
     }
 
-    /*
+    public function testGetDashboardStats(): void
+    {
 
-public function testGetDashboardStats(): void
-{
-    // Make a request to fetch dashboard stats
-    $this->client->request('GET', '/api/dashboard/stats?startDate=2024-01-01&endDate=2024-12-31&storeId=1');
+        $admin = new User();
+        $admin->setEmail('admin@tiptop.com');
+        $admin->setPassword($this->passwordEncoder->hashPassword($admin, 'password'));
+        $admin->setIsActive(true);
+        $admin->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_STOREMANAGER']));
+        $admin->setCreatedAt(new \DateTime());
+        $admin->setUpdatedAt(new \DateTime());
+        $admin->setDateOfBirth(new \DateTime());
+        $admin->setFirstName('Test');
+        $admin->setLastName('User');
+        $admin->setGender('Homme');
+        $admin->setPhone('123456789');
+        $admin->setStatus(true);
+        $this->entityManager->persist($admin);
 
-    // Assert that the response is successful
-    $this->assertResponseIsSuccessful();
 
-    // Assert that the response contains JSON content type
-    $this->assertResponseHeaderSame('Content-Type', 'application/json');
-}
+        $store = new Store();
+        $store->setName('Store');
+        $store->setAddress('Address');
+        $store->setHeadquartersAddress('Headquarters Address');
+        $store->setEmail('store@email.com');
+        $store->setPostalCode('12345');
+        $store->setCity('City');
+        $store->setCountry('Country');
+        $store->setCapital(1000);
+        $store->setStatus(true);
+        $store->setSiren('123456789');
 
-*/
+        $store->addUser($admin);
+        $admin->addStore($store);
+
+        $this->entityManager->persist($store);
+
+
+        $client = new User();
+        $client->setEmail('client@tiptop');
+        $client->setPassword($this->passwordEncoder->hashPassword($client, 'password'));
+        $client->setIsActive(true);
+        $client->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_CLIENT']));
+        $client->setCreatedAt(new \DateTime());
+        $client->setUpdatedAt(new \DateTime());
+        $client->setDateOfBirth(new \DateTime());
+        $client->setFirstName('Test');
+        $client->setLastName('User');
+        $client->setGender('Homme');
+        $client->setPhone('123456789');
+        $client->setStatus(true);
+        $this->entityManager->persist($client);
+
+        $store->addUser($client);
+        $client->addStore($store);
+
+        $this->entityManager->persist($client);
+
+        $this->generateRandomTickets(50, $client);
+
+
+        $this->entityManager->flush();
+
+        $this->client->loginUser($admin);
+
+        $this->client->request('GET', '/api/dashboard/stats' , [
+            'startDate' => '01/01/2024',
+            'endDate' => '31/12/2024',
+            'storeId' => 1
+        ]);
+
+        $this->assertNotNull(json_decode($this->client->getResponse()->getContent(), true));
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertArrayHasKey('stats', json_decode($this->client->getResponse()->getContent(), true));
+        $this->assertArrayHasKey('totalGainAmount', json_decode($this->client->getResponse()->getContent(), true));
+        $this->assertArrayHasKey('gameCount', json_decode($this->client->getResponse()->getContent(), true));
+        $this->assertArrayHasKey('topGain', json_decode($this->client->getResponse()->getContent(), true));
+
+
+
+
+
+    }
 
 }

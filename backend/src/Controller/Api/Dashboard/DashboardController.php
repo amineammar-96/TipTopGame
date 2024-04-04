@@ -152,6 +152,11 @@ class DashboardController extends AbstractController
         foreach ($tickets as $ticket) {
             $ticketHistory = $ticket->getTicketHistories();
             $lastHistory = $ticketHistory[count($ticketHistory) - 1];
+
+            if(!$lastHistory){
+                continue;
+            }
+
             if ($lastHistory->getStatus() == Ticket::STATUS_PENDING_VERIFICATION || $lastHistory->getStatus() == Ticket::STATUS_WINNER) {
                 $counters['playedTickets']++;
             }
