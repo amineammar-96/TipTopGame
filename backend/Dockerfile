@@ -50,7 +50,7 @@ COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public /var/www/html/config /var/www/html/templates /var/www/html/src /var/www/html/bin
 
 # Make sure directories are writable
-RUN chmod -R 777 /var/www/html/var
+RUN chmod -R 777 /var/www/html/
 
 
 # Copy Xdebug configuration
