@@ -14,7 +14,6 @@ use Doctrine\DBAL\Connection;
 
 class GenerateEmailServices extends Command
 {
-    protected static $defaultName = 'app:generate-email-services';
 
     private EntityManagerInterface $entityManager;
 
@@ -25,17 +24,18 @@ class GenerateEmailServices extends Command
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->setName('app:generate-email-services');
 
 
     }
 
-    protected function configure()
+    protected function configure():void
     {
         $this->setDescription('Generate Email Services');
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');

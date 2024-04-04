@@ -41,7 +41,7 @@ class ActionHistory
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user_action_related_to = null;
 
-    #[ORM\ManyToOne(inversedBy: 'actionHistories')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'actionHistories')]
     private ?Store $store = null;
 
     public function getId(): ?int

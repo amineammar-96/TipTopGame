@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class initializeGameConfigCommand extends Command
 {
-    protected static $defaultName = 'app:game-config-init';
 
     private EntityManagerInterface $entityManager;
 
@@ -19,16 +18,18 @@ class initializeGameConfigCommand extends Command
     {
         parent::__construct();
         $this->entityManager = $entityManager;
+        $this->setName('app:game-config-init');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Initialize game configuration Date');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $existingGameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
+
+        $existingGameConfig = $this->entityManager->getRepository(GameConfig::class)->findAll();
 
 
         if(empty($existingGameConfig)){

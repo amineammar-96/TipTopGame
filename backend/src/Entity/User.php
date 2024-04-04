@@ -800,6 +800,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function setId(int $int): void
+    {
+        $this->id = $int;
+    }
 
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
+    }
 
 }

@@ -105,23 +105,19 @@ class TicketController extends AbstractController
                 ->setParameter('store', $store);
         }
 
+
         if ($employee != "" && $employee != null) {
             $qb->innerJoin('t.employee', 'e')
                 ->andWhere('e.firstname LIKE :employee or e.lastname LIKE :employee')
                 ->setParameter('employee', '%' . $employee . '%');
         }
 
-        if ($client != "" && $client != null && !intval($client)) {
+        if ($client != "" && $client != null) {
             $qb->innerJoin('t.user', 'u')
                 ->andWhere('u.firstname LIKE :employee or u.lastname LIKE :employee')
                 ->setParameter('employee', '%' . $client . '%');
         }
 
-        if ($client != "" && $client != null && intval($client)) {
-            $qb->innerJoin('t.user', 'u')
-                ->andWhere('u.id = :id')
-                ->setParameter('id', $client);
-        }
 
         if ($prize != "" && $prize != null) {
             $qb->innerJoin('t.prize', 'p')
@@ -174,8 +170,6 @@ class TicketController extends AbstractController
 
         ], 200);
     }
-
-
 
     public function checkTicketForPlay(Request $request): JsonResponse
     {

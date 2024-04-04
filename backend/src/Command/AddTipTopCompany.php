@@ -6,7 +6,6 @@ namespace App\Command;
 use App\Entity\Role;
 use App\Entity\Store;
 use App\Entity\UserPersonalInfo;
-use App\Entity\UserStore;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +16,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AddTipTopCompany extends Command
 {
-    protected static $defaultName = 'app:create-default-tiptop-company';
 
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordEncoder;
@@ -29,9 +27,10 @@ class AddTipTopCompany extends Command
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->connection = $connection;
+        $this->setName('app:create-default-tiptop-company');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Add the first store "Thé Tip Top" and the profile for the role ROLE_STOREMANAGER.')
@@ -39,36 +38,39 @@ class AddTipTopCompany extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+            $store=$this->addCompany();
+            $this->generateAnonymousProfile($this->entityManager , $output );
+            $userManager=$this->addStoreManagerProfile();
+            $this->generateBailiffProfile($this->entityManager , $output );
 
+            $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $userManager, $store);
 
-        $store=$this->addCompany();
-        $this->generateAnonymousProfile($this->entityManager , $output);
-        $userManager=$this->addStoreManagerProfile();
-        $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $userManager, $store);
-        $this->generateBailiffProfile($this->entityManager , $output);
+            $this->entityManager->flush();
 
+            $output->writeln('Default company and profiles added  to the role table.');
 
-        $output->writeln('Company and manager profile added  to the role table. (relationship too)');
 
         return Command::SUCCESS;
     }
 
-    private function addStoreManagerRelationShipWithAllStores(EntityManagerInterface $entityManager, User $userManager, Store $store): void
+    public function addStoreManagerRelationShipWithAllStores(EntityManagerInterface $entityManager, User $userManager, Store $store): void
     {
         $storeRepository = $entityManager->getRepository(Store::class);
         $stores = $storeRepository->findAll();
+
+        if(!$stores) {
+            return;
+        }
+
         foreach ($stores as $store) {
             $userManager->addStore($store);
             $store->addUser($userManager);
             $this->entityManager->persist($userManager);
             $this->entityManager->persist($store);
         }
-        $this->entityManager->flush();
-
-
     }
 
     private function addCompany():Store
@@ -91,14 +93,13 @@ class AddTipTopCompany extends Command
         $store->setOpeningDate(new \DateTime());
 
         $this->entityManager->persist($store);
-        $this->entityManager->flush();
+
         return $store;
     }
 
     private function addStoreManagerProfile():User
     {
-        $roleRepository = $this->entityManager->getRepository(Role::class);
-        $storesAdminRole = $roleRepository->findOneBy(['name' => Role::ROLE_ADMIN]);
+        $storesAdminRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_STOREMANAGER]);
         $userManager = new User();
         $userManager->setLastname('Bourdon');
         $userManager->setFirstname('Eric');
@@ -110,7 +111,7 @@ class AddTipTopCompany extends Command
         $userManager->setIsActive(true);
         $userManager->setActivitedAt(new \DateTime());
         $userManager->setDateOfBirth(new \DateTime('1980-01-06'));
-        $plainPassword = 'azerty123456'; 
+        $plainPassword = 'azerty123456';
         $hashedPassword = $this->passwordEncoder->hashPassword($userManager, $plainPassword);
         $userManager->setPassword($hashedPassword);
 
@@ -124,16 +125,14 @@ class AddTipTopCompany extends Command
         $this->entityManager->persist($userPersonalInfo);
 
         $this->entityManager->persist($userManager);
-        $this->entityManager->flush();
 
         return $userManager;
 
     }
 
-    private function generateAnonymousProfile(EntityManagerInterface $entityManager, OutputInterface $output): void
+    private function generateAnonymousProfile(EntityManagerInterface $entityManager):void
     {
-        $roleRepository = $entityManager->getRepository(Role::class);
-        $anonymousRole = $roleRepository->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
+        $anonymousRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS]);
         $anonymousUser = new User();
         $anonymousUser->setLastname('Anonymous');
         $anonymousUser->setFirstname('Anonymous');
@@ -163,15 +162,12 @@ class AddTipTopCompany extends Command
         $entityManager->persist($userPersonalInfo);
 
         $entityManager->persist($anonymousUser);
-        $entityManager->flush();
-        $output->writeln('Anonymous profile added to the role table.');
 
     }
 
-    private function generateBailiffProfile(EntityManagerInterface $entityManager, OutputInterface $output)
+    private function generateBailiffProfile(EntityManagerInterface $entityManager):void
     {
-$roleRepository = $entityManager->getRepository(Role::class);
-        $bailiffRole = $roleRepository->findOneBy(['name' => Role::ROLE_BAILIFF]);
+        $bailiffRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_BAILIFF]);
         $bailiffUser = new User();
         $bailiffUser->setLastname('Rick');
         $bailiffUser->setFirstname('Arnaud');
@@ -198,8 +194,6 @@ $roleRepository = $entityManager->getRepository(Role::class);
         $entityManager->persist($userPersonalInfo);
 
         $entityManager->persist($bailiffUser);
-        $entityManager->flush();
-        $output->writeln('Bailiff profile added to the role table.');
 
     }
 }

@@ -57,9 +57,6 @@ export default function TopGameInfoBannerComponent() {
 
         setLoading(true);
 
-        if(localStorage.getItem('topGameInfoBannerOpen') === 'true'){
-            return;
-        }
 
         getGameConfig().then((response) => {
             if (response) {
@@ -108,14 +105,12 @@ export default function TopGameInfoBannerComponent() {
         setLoading(false);
     }
 
-    function closeTopBanner() {
-        localStorage.setItem('topGameInfoBannerOpen', 'true');
-        setTopBannerOpen(false);
-    }
+
+
 
     function checkVisibility() {
         if (localStorage.getItem('topGameInfoBannerOpen') === 'true') {
-            setTopBannerOpen(false);
+            setTopBannerOpen(true);
         }else {
             setTopBannerOpen(true);
 
@@ -231,11 +226,9 @@ export default function TopGameInfoBannerComponent() {
                               </section>
                           </Col>
 
-                          <div className="cookie-consent-banner__actions">
-                              <button className="cookie-consent-banner__button" onClick={() => closeTopBanner()}>
-                                  <CloseOutlined/>
-                              </button>
-                          </div>
+
+
+
 
                       </div>
                   </div>

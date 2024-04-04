@@ -4,15 +4,10 @@ namespace App\Service\Mailer;
 
 use App\Entity\EmailingHistory;
 use App\Entity\EmailService;
-use App\Entity\EmailTemplateVariable;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\RawMessage;
-use Symfony\Component\Mime\Part\AbstractPart;
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -21,6 +16,7 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PostManMailerService
 {
@@ -44,8 +40,14 @@ class PostManMailerService
      */
     private $twig;
 
+
+    /**
+     * @var ParameterBagInterface
+     */
+    private $params;
+
     public function __construct(MailerInterface $mailer, string $mailtrapHost, string $mailtrapUser, string $mailtrapPassword, string $mailtrapPort, EntityManagerInterface $entityManager
-    , Environment $twig)
+    , Environment $twig , ParameterBagInterface $params)
     {
         $this->mailer = $mailer;
         $this->mailtrapHost = $mailtrapHost;
@@ -54,6 +56,7 @@ class PostManMailerService
         $this->mailtrapPort = $mailtrapPort;
         $this->entityManager = $entityManager;
         $this->twig = $twig;
+        $this->params = $params;
 
 
     }
@@ -111,7 +114,7 @@ class PostManMailerService
                 return '';
         };
 
-        $activateAccountLinkClient = function ($receiver , $emailServiceEntity)  {
+            $activateAccountLinkClient = function ($receiver , $emailServiceEntity)  {
             if ($emailServiceEntity->getName() != EmailService::EMAILSERVICE_ACCOUNT_ACTIVATION_CLIENT) {
                 return '';
             }
@@ -121,14 +124,20 @@ class PostManMailerService
             $token = $receiver->getToken();
 
 
+            $baseUrl = $this->params->get('app_base_url');
+            $link = $baseUrl . '/dashboard/client/activate_account/?email=' . $receiver_email . '&token=' . $token;
 
-            $link= 'http://localhost:3000/client/activate_account/?email='.$receiver_email.'&token='.$token;
-
-            $wrapperBody = '<a href="' . $link . '" class="activateBtn">Vérifier mon compte</a>';
-
-
-            return $wrapperBody;
+            return '<a href="' . $link . '" class="activateBtn">Vérifier mon compte</a>';
         };
+
+        $getResetPasswordLink = function ($receiver) {
+            $token = $receiver->getToken();
+            $email = $receiver->getEmail();
+            $baseUrl = $this->params->get('app_base_url');
+            $url = $baseUrl . '/reset_password_process/?email=' . $email . '&token=' . $token;
+            return '<a href="' . $url . '" class="activateBtn">Réinitialiser mon mot de passe</a>';
+        };
+
 
         $variableMappings = [
             'client_lastname' => $receiver->getLastname(),
@@ -153,7 +162,8 @@ class PostManMailerService
             'ticket_created_at' => $options && $options['ticket'] ? ($options['ticket']->getTicketGeneratedAt() ? $options['ticket']->getTicketGeneratedAt()->format('d/m/Y') : '') : '',
             'ticket_printed_at' => $options && $options['ticket'] ? ($options['ticket']->getTicketPrintedAt() ? $options['ticket']->getTicketPrintedAt()->format('d/m/Y') : '') : '',
             'ticket_confirmed_at' => $options && $options['ticket'] ? ($options['ticket']->getUpdatedAt() ? $options['ticket']->getUpdatedAt()->format('d/m/Y') : '') : '',
-            'reset_password_link' => 'getResetPasswordLink',
+            'reset_password_link' => $getResetPasswordLink($receiver),
+            'password_reset_link_employee' => $getResetPasswordLink($receiver),
             'activate_account_link_client' => $activateAccountLinkClient($receiver , $emailServiceEntity),
             'activate_account_link_employee' => 'getActivateAccountLinkEmployee',
             'token_expiration_date' => $getTokenExpirationDate($receiver),

@@ -12,9 +12,6 @@ use Doctrine\DBAL\Connection;
 
 class CreateDefaultRoles extends Command
 {
-    protected static $defaultName = 'app:create-default-role';
-
-    protected static $defaultDescription = 'Fills the role table with predefined roles';
 
     private $entityManager;
 
@@ -25,13 +22,11 @@ class CreateDefaultRoles extends Command
         parent::__construct();
 
         $this->entityManager = $entityManager;
-        $this->connection = $this->entityManager->getConnection();
+        $this->connection = $connection;
+        $this->setName('app:create-default-role');
+        $this->setDescription('Generate default roles');
     }
 
-    protected function configure()
-    {
-
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -152,6 +152,11 @@ class DashboardController extends AbstractController
         foreach ($tickets as $ticket) {
             $ticketHistory = $ticket->getTicketHistories();
             $lastHistory = $ticketHistory[count($ticketHistory) - 1];
+
+            if(!$lastHistory){
+                continue;
+            }
+
             if ($lastHistory->getStatus() == Ticket::STATUS_PENDING_VERIFICATION || $lastHistory->getStatus() == Ticket::STATUS_WINNER) {
                 $counters['playedTickets']++;
             }
@@ -754,51 +759,5 @@ class DashboardController extends AbstractController
 
 
 
-
-
-
-
-
-
-
-    public function resetGame(Request $request): JsonResponse
-    {
-
-
-
-
-
-        chdir('/Users/amineammar/Desktop/tittopProjet fin d\'année/projet/code source/backend');
-
-        $process = new Process(['php', 'bin/console', 'doctrine:schema:drop --force']);
-
-        $process->mustRun();
-
-
-        $process = new Process(['rm', './migrations/*.php', '--force']);
-        $process->mustRun();
-
-
-
-
-        $process = new Process(['php', 'bin/console', 'cache:clear']);
-        $process->mustRun();
-
-
-        $process = new Process(['php', 'bin/console', 'make:migration']);
-        $process->mustRun();
-
-
-        $process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate']);
-        $process->mustRun();
-
-
-
-
-
-
-
-        return new JsonResponse(['message' => 'Game reset successfully']);
-    }
 
 }

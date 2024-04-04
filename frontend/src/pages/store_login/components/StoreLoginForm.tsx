@@ -229,7 +229,7 @@ export default function StoreLoginForm() {
                                             </Form.Item>
                                         </Col>
                                         <Col className={`m-0 py-2 d-flex w-100 justify-content-start  align-items-start flex-column`}>
-                                            <a href="#" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
+                                            <a href="/reset_password" className={`${styles.resetPasswordLink}`}>Mot de passe oublié
                                                 ? <MailOutlined className={`${styles.resetPasswordIcon}`}/></a>
                                         </Col>
 
