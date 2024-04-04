@@ -1,5 +1,4 @@
 <?php
-// src/Command/AddCompanyCommand.php
 
 namespace App\Command;
 
@@ -99,7 +98,7 @@ class AddTipTopCompany extends Command
 
     private function addStoreManagerProfile():User
     {
-        $storesAdminRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_STOREMANAGER]);
+        $storesAdminRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ADMIN]);
         $userManager = new User();
         $userManager->setLastname('Bourdon');
         $userManager->setFirstname('Eric');
