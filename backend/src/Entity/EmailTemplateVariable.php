@@ -47,6 +47,19 @@ class EmailTemplateVariable
         return $this;
     }
 
+
+
+
+    public function getServiceAsJson(): array
+    {
+        $services = [];
+        foreach ($this->services as $service) {
+            $services[] = $service->getEmailServiceJson();
+        }
+        return $services;
+    }
+
+
     /**
      * @return Collection<int, EmailService>
      */
@@ -54,6 +67,8 @@ class EmailTemplateVariable
     {
         return $this->services;
     }
+
+
 
     /**
      * @return Collection<int, EmailService>
@@ -125,6 +140,11 @@ class EmailTemplateVariable
         $this->label = $label;
 
         return $this;
+    }
+
+    public function setId(int $int)
+    {
+        $this->id = $int;
     }
 
 

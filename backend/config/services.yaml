@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     avatars_upload: '%kernel.project_dir%/public/avatars'
+    app_base_url: '%env(APP_BASE_URL)%'
 
 services:
     League\OAuth2\Client\Provider\Facebook:
@@ -47,9 +48,6 @@ services:
 
 
     App\Command\GenerateFakeData:
-        tags: [ 'console.command' ]
-
-    App\Command\PrintRandomTickets:
         tags: [ 'console.command' ]
 
     App\Command\GenerateEmailServices:

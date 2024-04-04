@@ -110,4 +110,17 @@ class UserRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+
+
+    public function activateUserAccount($email): void
+    {
+        $user = $this->findOneBy(['email' => $email]);
+        $user->setIsActive(true);
+        $user->setActivitedAt(new \DateTime());
+        $user->setToken(null);
+        $user->setTokenExpiredAt(null);
+        $this->_em->persist($user);
+        $this->_em->flush();
+    }
+
 }

@@ -203,7 +203,7 @@ export default function HistoryTable({data}: historyTableProps) {
             dataIndex: 'receiver',
             render: (receiver: any) => (
                 <>
-                    {receiver.store.name}
+                    {receiver.store?.name ?? <StopOutlined />}
                 </>
             ),
         }

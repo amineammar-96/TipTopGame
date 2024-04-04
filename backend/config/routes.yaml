@@ -4,12 +4,6 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-#resetGame
-
-reset_game:
-    path: /api/admin/reset_game
-    controller: App\Controller\Api\Dashboard\DashboardController::resetGame
-    methods: POST
 
 #authentification routes
 api_login_check_client:
@@ -24,10 +18,6 @@ oauth_google_callback:
     path: /api/oauth/google/callback
     controller: App\Controller\Api\User\UserSocialMediaAuthController::googleCallback
 
-oauth_facebook_callback:
-    path: /api/oauth/facebook/callback
-    controller: App\Controller\Api\User\UserSocialMediaAuthController::facebookCallback
-
 
 api_register:
     path: /api/register
@@ -37,6 +27,11 @@ logout:
     path: /api/logout
     controller: App\Controller\Api\User\UserAuthController::logout
 
+
+reset_password_request:
+    path: /api/reset_password_request
+    controller: App\Controller\Api\User\UserAuthController::resetPasswordRequest
+    methods: POST
 
 
 #stores routes
@@ -250,6 +245,14 @@ get_email_templates:
     controller: App\Controller\Api\EmailTemplate\EmailTemplateController::getEmailTemplates
     methods: GET
 
+#delete
+delete_email_template_by_id:
+    path: /api/admin/correspondence_template/delete/{id}
+    controller: App\Controller\Api\EmailTemplate\EmailTemplateController::deleteTemplate
+    methods: DELETE
+    requirements:
+        id: \d+
+
 create_email_template:
     path: /api/admin/correspondence_template/create
     controller: App\Controller\Api\EmailTemplate\EmailTemplateController::createEmailTemplate
@@ -410,4 +413,10 @@ get_game_config:
 update_game_config:
     path: /api/game_config/update
     controller: App\Controller\Api\GameConfig\GameConfigController::updateGameConfig
+    methods: POST
+
+
+save_user_profile:
+    path: /api/user/save_profile
+    controller: App\Controller\Api\User\UserController::saveUserProfile
     methods: POST

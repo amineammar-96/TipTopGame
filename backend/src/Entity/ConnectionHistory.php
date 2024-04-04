@@ -30,6 +30,13 @@ class ConnectionHistory
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $duration = null;
 
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -115,7 +122,7 @@ class ConnectionHistory
         ];
     }
 
-    private function getLogoutTimeJson() : array
+    public function getLogoutTimeJson() : array
     {
         if($this->getLogoutTime()){
             return [
@@ -125,4 +132,6 @@ class ConnectionHistory
         }
         return [];
     }
+
+
 }
