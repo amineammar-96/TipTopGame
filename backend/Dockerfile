@@ -29,6 +29,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN set -eux; \
     mkdir -p var/cache var/log; \
     if [ -f composer.json ]; then \
+        composer install; \
         composer dump-autoload; \
         composer dump-env dev; \
         composer run-script post-install-cmd; \
