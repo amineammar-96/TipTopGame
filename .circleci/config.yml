@@ -216,7 +216,7 @@ jobs:
             name: deploy
             command: |
               # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-dev && docker-compose pull backend-dev && docker-compose up --force-recreate --no-deps -d frontend-dev backend-dev  && docker exec -u root backend-dev bash -c 'chown -R www-data:www-data /var/www/html/'"  
+              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-dev && docker-compose pull backend-dev && docker-compose up --force-recreate --no-deps -d frontend-dev backend-dev "  
 
 
   deploy_staging:
@@ -242,7 +242,7 @@ jobs:
             name: deploy
             command: |
               # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-staging && docker-compose pull backend-staging && docker-compose up --force-recreate --no-deps -d frontend-staging backend-staging  && docker exec -u root backend-staging bash -c 'chown -R www-data:www-data /var/www/html/'"  
+              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-staging && docker-compose pull backend-staging && docker-compose up --force-recreate --no-deps -d frontend-staging backend-staging "  
 
   deploy_preprod:
       docker:
@@ -267,7 +267,7 @@ jobs:
             name: deploy
             command: |
               # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-preprod && docker-compose pull backend-preprod && docker-compose up --force-recreate --no-deps -d frontend-preprod backend-preprod  && docker exec -u root backend-preprod bash -c 'chown -R www-data:www-data /var/www/html/'"  
+              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-preprod && docker-compose pull backend-preprod && docker-compose up --force-recreate --no-deps -d frontend-preprod backend-preprod "  
 
 
 workflows:
