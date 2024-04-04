@@ -176,6 +176,7 @@ class TicketController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $ticketCode = $data['ticketCode'] ?? null;
 
+
         $ticket = $this->entityManager->getRepository(Ticket::class)->findOneBy(
             ['ticket_code' => $ticketCode ,
                 'status' => Ticket::STATUS_PRINTED,
@@ -279,62 +280,6 @@ class TicketController extends AbstractController
     }
 
 
-    /**
-     * @IsGranted("ROLE_EMPLOYEE")
-     * @param Request $request
-     * @return JsonResponse
-     * @throws NonUniqueResultException
-     */
-
-    public function printRandomTicket(Request $request): JsonResponse
-    {
-        $generatedTickets = $this->entityManager
-            ->getRepository(Ticket::class)
-            ->createQueryBuilder('t')
-            ->where('t.status = :status')
-            ->setParameter('status', Ticket::STATUS_GENERATED)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        $loggedEmployee = $this->getUser();
-
-        if (!$generatedTickets) {
-            return $this->json([
-                'status' => "error",
-                'message' => "No ticket to print",
-            ], 404);
-        }
-
-        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS])]);
-
-
-        $generatedTickets->setTicketPrintedAt(new \DateTime());
-        $generatedTickets->setStatus(Ticket::STATUS_PRINTED);
-        $generatedTickets->setEmployee($loggedEmployee);
-        $generatedTickets->setStore($loggedEmployee->getStores()[0]);
-        $generatedTickets->setUpdatedAt(new \DateTime());
-
-        $ticketHistory = new TicketHistory();
-        $ticketHistory->setTicket($generatedTickets);
-        $ticketHistory->setEmployee($loggedEmployee);
-        $ticketHistory->setUser($anonymousUser);
-        $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
-        $ticketHistory->setUpdatedAt(new \DateTime());
-
-
-        $this->entityManager->persist($ticketHistory);
-        $this->entityManager->persist($generatedTickets);
-        $this->entityManager->flush();
-
-
-
-
-        return $this->json([
-            'ticket' => $generatedTickets->getTicketJson(),
-        ], 200);
-
-    }
 
     public function confirmTicketPlay(Request $request): JsonResponse
     {
@@ -449,14 +394,14 @@ class TicketController extends AbstractController
         }
 
 
-        //$this->entityManager->persist($loyaltyPoint);
-        //$this->entityManager->persist($user);
-        //$this->entityManager->persist($ticketHistory);
-        //$this->entityManager->persist($ticket);
+        $this->entityManager->persist($loyaltyPoint);
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($ticketHistory);
+        $this->entityManager->persist($ticket);
 
-        //$this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
+        $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_WHEEL_OF_FORTUNE_PARTICIPATION , $this->getUser() , ['ticket' => $ticket]);
 
-        //$this->entityManager->flush();
+        $this->entityManager->flush();
 
         return $this->json([
             'ticket' => $ticket->getTicketJson(),
@@ -601,20 +546,28 @@ class TicketController extends AbstractController
                 ->setParameter('store', $store);
         }
 
+        if(($employeeId != "" && $employeeId != null) || ($employee != "" && $employee != null)) {
+            $qb->innerJoin('t.employee', 'e');
+        }
+
         if ($employee != "" && $employee != null) {
-            $qb->innerJoin('t.employee', 'e')
+            $qb
                 ->andWhere('e.firstname LIKE :employee or e.lastname LIKE :employee')
                 ->setParameter('employee', '%' . $employee . '%');
         }
 
+        if(($client != "" && $client != null && !intval($client)) || ($client != "" && $client != null && intval($client)) ){
+            $qb->innerJoin('t.user', 'u');
+        }
+
         if ($client != "" && $client != null && !intval($client)) {
-            $qb->innerJoin('t.user', 'u')
+            $qb
                 ->andWhere('u.firstname LIKE :employee or u.lastname LIKE :employee')
                 ->setParameter('employee', '%' . $client . '%');
         }
 
         if ($client != "" && $client != null && intval($client)) {
-            $qb->innerJoin('t.user', 'u')
+            $qb
                 ->andWhere('u.id = :id')
                 ->setParameter('id', $client);
         }
@@ -626,7 +579,7 @@ class TicketController extends AbstractController
         }
 
         if ($employeeId != "" && $employeeId != null) {
-            $qb->innerJoin('t.employee', 'e')
+            $qb
                 ->andWhere('e.id = :employeeId')
                 ->setParameter('employeeId', $employeeId);
         }
@@ -674,7 +627,6 @@ class TicketController extends AbstractController
     }
 
 
-    //getTicketsHistory
     public function getTicketsHistory(Request $request): JsonResponse
     {
         $userRole = $this->getUser()->getRoles()[0];
@@ -783,7 +735,7 @@ class TicketController extends AbstractController
         }
 
         if ($userRole == Role::ROLE_CLIENT) {
-            $qb->innerJoin('th.ticket', 'tk')
+            $qb
                 ->andWhere('tk.user = :user')
                 ->setParameter('user', $this->getUser());
         }

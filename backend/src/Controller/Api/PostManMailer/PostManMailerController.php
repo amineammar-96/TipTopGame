@@ -51,7 +51,7 @@ class PostManMailerController extends AbstractController
         $activationEmailServiceClient =EmailService::EMAILSERVICE_ACCOUNT_ACTIVATION_CLIENT ;
         $activationEmailServiceEmployee = EmailService::EMAILSERVICE_ACCOUNT_ACTIVATION_EMPLOYEE ;
 
-        $receiverRole = $receiver->getRoles()[0];
+        $receiverRole = $receiver ? $receiver->getRoles()[0] : null;
 
         if ($receiverRole == Role::ROLE_CLIENT) {
             $finalService = $activationEmailServiceClient;
@@ -59,23 +59,27 @@ class PostManMailerController extends AbstractController
             $finalService = $activationEmailServiceEmployee;
         }
 
-        $activationToken = bin2hex(random_bytes(32));
-        $receiver->setToken($activationToken);
-        $receiver->setTokenExpiredAt((new \DateTime())->modify('+1 day'));
+        $activationToken = null;
+        if($receiver){
+            $activationToken = bin2hex(random_bytes(32));
+            $receiver->setToken($activationToken);
+            $receiver->setTokenExpiredAt((new \DateTime())->modify('+1 day'));
 
-        $this->entityManager->persist($receiver);
-        $this->entityManager->flush();
+            $this->entityManager->persist($receiver);
+            $this->entityManager->flush();
+        }
 
 
-            if ($this->postManMailerService->sendEmailTemplate($finalService , $receiver , [
-                'token' => $activationToken,
-                'ticket' => null,
+       if( $this->postManMailerService->sendEmailTemplate($finalService , $receiver , [
+           'token' => $activationToken,
+           'ticket' => null,
 
-            ])) {
-                return new jsonResponse('Activation Email sent successfully!');
-            } else {
-                return new jsonResponse('Email could not be sent.', 500);
-            }
+       ])) {
+              return new JsonResponse('Activation Email sent successfully!' , 200);
+         } else {
+              return new JsonResponse('Activation Email not sent!' , 500);
+       }
+
 
     }
 

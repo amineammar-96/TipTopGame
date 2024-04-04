@@ -287,7 +287,7 @@ class DashboardController extends AbstractController
         $prizes = $this->entityManager->getRepository(Prize::class)->findAll();
         $gainByPrize = [];
         foreach ($prizes as $prize) {
-            $newKey = str_replace(['"', "'"], '', $prize->getLabel());
+            $newKey = $prize->getLabel() ? str_replace(['"', "'"], '', $prize->getLabel()) : "";
             $gainByPrize[$newKey] = 0;
 
         }
@@ -295,7 +295,7 @@ class DashboardController extends AbstractController
         foreach ($tickets as $ticket) {
             $prize = $ticket->getPrize();
             if ($prize && $ticket->getStatus() == Ticket::STATUS_WINNER) {
-                $newKey = str_replace(['"', "'"], '', $prize->getLabel());
+                $newKey = $prize->getLabel() ? str_replace(['"', "'"], '', $prize->getLabel()) : "";
                 $gainByPrize[$newKey]++;
             }
         }

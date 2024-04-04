@@ -138,6 +138,9 @@ class PostManMailerService
             return '<a href="' . $url . '" class="activateBtn">Réinitialiser mon mot de passe</a>';
         };
 
+        if(!$receiver){
+            return false;
+        }
 
         $variableMappings = [
             'client_lastname' => $receiver->getLastname(),
@@ -201,7 +204,7 @@ class PostManMailerService
 
         foreach ($variablesValues as $variable => $value) {
             $placeholder = '{{ ' . $variable . ' }}';
-            $content = str_replace($placeholder, $value, $content);
+            $content = $content ? str_replace($placeholder, $value, $content) : "";
         }
 
         return $content;

@@ -46,19 +46,14 @@ class GameConfigControllerTest extends WebTestCase
 
         $this->client->loginUser($user);
 
-        // Make a request to fetch game configuration
         $this->client->request('GET', '/api/game_config');
 
-        // Assert that the response is successful
         $this->assertResponseIsSuccessful();
 
-        // Assert that the response contains JSON content type
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
 
-        // Decode the response content to an associative array
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        // Assert that the required keys exist in the response
         $this->assertArrayHasKey('gameConfig', $responseData);
         $this->assertArrayHasKey('principalPeriodFinishAt', $responseData);
         $this->assertArrayHasKey('validationPeriodFinishAt', $responseData);
@@ -67,6 +62,164 @@ class GameConfigControllerTest extends WebTestCase
         $this->assertArrayHasKey('time', $responseData);
         $this->assertArrayHasKey('participantsCount', $responseData);
     }
+
+    public function testGetGameConfigAux(): void
+    {
+        $user = new User();
+        $user->setEmail('admin_'.rand(1, 1000).'@tiptop.com');
+        $user->setPassword($this->passwordEncoder->hashPassword($user, 'password'));
+        $user->setIsActive(true);
+        $user->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $user->setCreatedAt(new \DateTime());
+        $user->setUpdatedAt(new \DateTime());
+        $user->setDateOfBirth(new \DateTime());
+        $user->setFirstName('Test');
+        $user->setLastName('User');
+        $user->setGender('Homme');
+        $user->setPhone('123456789');
+        $user->setStatus(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $gameConfigs = $this->entityManager->getRepository(GameConfig::class)->findAll();
+        foreach ($gameConfigs as $gameConfig) {
+            $this->entityManager->remove($gameConfig);
+        }
+
+
+        $gameConfig = new GameConfig();
+        $now = new DateTime();
+        $now->modify('-1 day');
+        $gameConfig->setStartDate($now->format('d/m/Y'));
+        $gameConfig->setTime('12:00');
+
+        $this->entityManager->persist($gameConfig);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/api/game_config');
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('gameConfig', $responseData);
+        $this->assertArrayHasKey('principalPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('validationPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('timeRemainingToStart', $responseData);
+        $this->assertArrayHasKey('gameStatus', $responseData);
+        $this->assertArrayHasKey('time', $responseData);
+        $this->assertArrayHasKey('participantsCount', $responseData);
+    }
+
+    public function testGetGameConfigAux2(): void
+    {
+        $user = new User();
+        $user->setEmail('admin_'.rand(1, 1000).'@tiptop.com');
+        $user->setPassword($this->passwordEncoder->hashPassword($user, 'password'));
+        $user->setIsActive(true);
+        $user->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $user->setCreatedAt(new \DateTime());
+        $user->setUpdatedAt(new \DateTime());
+        $user->setDateOfBirth(new \DateTime());
+        $user->setFirstName('Test');
+        $user->setLastName('User');
+        $user->setGender('Homme');
+        $user->setPhone('123456789');
+        $user->setStatus(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $gameConfigs = $this->entityManager->getRepository(GameConfig::class)->findAll();
+        foreach ($gameConfigs as $gameConfig) {
+            $this->entityManager->remove($gameConfig);
+        }
+
+
+        $gameConfig = new GameConfig();
+        $now = new DateTime();
+        $now->modify('-32 day');
+        $gameConfig->setStartDate($now->format('d/m/Y'));
+        $gameConfig->setTime('12:00');
+
+        $this->entityManager->persist($gameConfig);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/api/game_config');
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('gameConfig', $responseData);
+        $this->assertArrayHasKey('principalPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('validationPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('timeRemainingToStart', $responseData);
+        $this->assertArrayHasKey('gameStatus', $responseData);
+        $this->assertArrayHasKey('time', $responseData);
+        $this->assertArrayHasKey('participantsCount', $responseData);
+    }
+
+    public function testGetGameConfigAux3(): void
+    {
+        $user = new User();
+        $user->setEmail('admin_'.rand(1, 1000).'@tiptop.com');
+        $user->setPassword($this->passwordEncoder->hashPassword($user, 'password'));
+        $user->setIsActive(true);
+        $user->setRole($this->entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $user->setCreatedAt(new \DateTime());
+        $user->setUpdatedAt(new \DateTime());
+        $user->setDateOfBirth(new \DateTime());
+        $user->setFirstName('Test');
+        $user->setLastName('User');
+        $user->setGender('Homme');
+        $user->setPhone('123456789');
+        $user->setStatus(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $gameConfigs = $this->entityManager->getRepository(GameConfig::class)->findAll();
+        foreach ($gameConfigs as $gameConfig) {
+            $this->entityManager->remove($gameConfig);
+        }
+
+
+        $gameConfig = new GameConfig();
+        $now = new DateTime();
+        $now->modify('+3 day');
+        $gameConfig->setStartDate($now->format('d/m/Y'));
+        $gameConfig->setTime('12:00');
+
+        $this->entityManager->persist($gameConfig);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/api/game_config');
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('gameConfig', $responseData);
+        $this->assertArrayHasKey('principalPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('validationPeriodFinishAt', $responseData);
+        $this->assertArrayHasKey('timeRemainingToStart', $responseData);
+        $this->assertArrayHasKey('gameStatus', $responseData);
+        $this->assertArrayHasKey('time', $responseData);
+        $this->assertArrayHasKey('participantsCount', $responseData);
+    }
+
+
 
     public function testUpdateGameConfig(): void
     {

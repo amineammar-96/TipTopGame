@@ -98,6 +98,43 @@ class UserAuthControllerTest extends WebTestCase
     }
 
 
+    public function testCheckLoginAdminAsClient(): void
+    {
+        $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        $email = $this->generateUniqueEmail();
+        $admin = $this->createUser($email, 'password');
+
+        $admin->setRole($entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_CLIENT']));
+        $entityManager->persist($admin);
+        $entityManager->flush();
+
+
+
+        $requestData = [
+            'email' => $email,
+            'password' => 'password',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/login_check_admin',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('error', $responseData);
+        $this->assertArrayHasKey('message', $responseData);
+
+        $this->assertEquals('Authentication failed', $responseData['error']);
+        $this->assertEquals('user is not an admin', $responseData['message']);
+    }
+
     public function testCheckLoginAdminError(): void
     {
         $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
@@ -203,6 +240,44 @@ class UserAuthControllerTest extends WebTestCase
 
     }
 
+    public function testCheckLoginClientAsAdmin(): void
+    {
+        $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        $email = $this->generateUniqueEmail();
+        $client = $this->createUser($email, 'password');
+
+        $client->setRole($entityManager->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']));
+        $entityManager->persist($client);
+        $entityManager->flush();
+
+        $requestData = [
+            'email' => $email,
+            'password' => 'password',
+        ];
+
+        $this->client->request(
+            'POST',
+            '/api/login_check_client',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('error', $responseData);
+        $this->assertArrayHasKey('message', $responseData);
+
+        $this->assertEquals('Authentication failed', $responseData['error']);
+        $this->assertEquals('user is not a client', $responseData['message']);
+
+
+
+    }
+
     public function testCheckLoginClientError(): void
     {
         $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
@@ -293,10 +368,48 @@ class UserAuthControllerTest extends WebTestCase
         $this->assertEquals('User registered successfully', $responseData['message']);
     }
 
+    public function testRegisterSameEmailError(): void
+    {
+        $email = $this->generateUniqueEmail();
+        $this->createUser($email, 'password');
+
+        $requestData = [
+            'email' => $email,
+            'password' => 'testpassword',
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'gender'=> 'Homme',
+            'role' => 'ROLE_CLIENT',
+            'dateOfBirth' => '01/01/1990',
+            'phone' => '123456789',
+            'status' => '1',
+            ];
+
+        $this->client->request(
+            'POST',
+            '/api/register',
+            [],
+            [],
+            [],
+            json_encode($requestData)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('error', $responseData);
+        $this->assertEquals('Email already registered', $responseData['error']);
+
+
+    }
+
     public function testRegisterMissingFields(): void
     {
         $requestData = [
-
+            'email' => $this->generateUniqueEmail(),
+            'password' => '',
+            'firstname' => '',
+            'lastname' => '',
+            'gender' => '',
         ];
 
         $this->client->request(
@@ -308,7 +421,6 @@ class UserAuthControllerTest extends WebTestCase
             json_encode($requestData)
         );
 
-        // Assert that the response status code is 400
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
