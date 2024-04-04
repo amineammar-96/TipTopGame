@@ -357,14 +357,6 @@ workflows:
             branches:
               only: main
 
-      - deploy_development:
-          context: context
-          requires:
-            - build_frontend_dev
-            - build_backend_dev
-          filters:
-            branches:
-              only: dev
       - deploy_staging:
           context: context
           requires:
