@@ -195,7 +195,7 @@ function LandingPageTopSection() {
 
 
     return (
-        <div className={`mx-2 px-1 ${styles.topSection} mt-1`}>
+        <div className={`mx-2 px-1 ${styles.topSection} mt-1`} data-testid={"landing-page-top-section"}>
             <Row className="">
                 <Col className={`${styles.topSectionLeftSide}`} md={12}>
                     <div className={`${styles.topSectionTextDiv}`}>

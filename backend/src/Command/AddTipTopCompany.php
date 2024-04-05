@@ -179,7 +179,7 @@ class AddTipTopCompany extends Command
         $bailiffUser->setIsActive(true);
         $bailiffUser->setActivitedAt(new \DateTime());
         $bailiffUser->setDateOfBirth(new \DateTime('1980-01-06'));
-        $plainedPassword = 'azerty123456';
+        $plainedPassword = 'Tiptop_huisser@123';
         $hashedPassword = $this->passwordEncoder->hashPassword($bailiffUser, $plainedPassword);
         $bailiffUser->setPassword($hashedPassword);
 

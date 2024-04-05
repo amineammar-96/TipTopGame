@@ -3,6 +3,7 @@
 namespace App\Controller\Api\Ticket;
 
 use App\Entity\Badge;
+use App\Entity\ClientFinalDraw;
 use App\Entity\EmailService;
 use App\Entity\LoyaltyPoints;
 use App\Entity\TicketHistory;
@@ -171,6 +172,103 @@ class TicketController extends AbstractController
         ], 200);
     }
 
+
+    public function getPendingTickets(Request $request): JsonResponse
+    {
+
+        $ticket_code =  $request->get('ticket_code' , null);
+        $status =  $request->get('status' , null);
+        $store =  $request->get('store' , null);
+        $employee =  $request->get('caissier' , null);
+        $client =  $request->get('client' , null);
+        $prize =  $request->get('prize' , null);
+        $keyword =  $request->get('keyword' , null);
+
+
+
+        $page = $request->get('page' , 1);
+        $limit = $request->get('limit' , 9);
+
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('t')
+            ->from(Ticket::class, 't');
+
+
+        if ($ticket_code != "" && $ticket_code != null) {
+            $qb->andWhere('t.ticket_code LIKE :ticket_code')
+                ->setParameter('ticket_code', '%' . $ticket_code . '%');
+        }
+
+        if ($status != "" && $status != null) {
+            $qb->andWhere('t.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        if ($store != "" && $store != null) {
+            $qb->andWhere('t.store = :store')
+                ->setParameter('store', $store);
+        }
+
+
+        if ($employee != "" && $employee != null) {
+            $qb->innerJoin('t.employee', 'e')
+                ->andWhere('e.firstname LIKE :employee or e.lastname LIKE :employee')
+                ->setParameter('employee', '%' . $employee . '%');
+        }
+
+        if(($client != "" && $client != null) || ($keyword != "" && $keyword != null)){
+            $qb->innerJoin('t.user', 'u');
+        }
+
+        if ($client != "" && $client != null) {
+            $qb->andWhere('u.firstname LIKE :employee or u.lastname LIKE :employee')
+                ->setParameter('employee', '%' . $client . '%');
+        }
+
+
+        if ($prize != "" && $prize != null) {
+            $qb->innerJoin('t.prize', 'p')
+                ->andWhere('p.id = :prize')
+                ->setParameter('prize', $prize);
+
+        }
+
+
+        if ($keyword != "" && $keyword != null) {
+            $qb->andWhere('u.firstname LIKE :keyword or u.lastname LIKE :keyword or u.email LIKE :keyword or u.phone LIKE :keyword')
+                ->setParameter('keyword', '%' . $keyword . '%');
+        }
+
+
+        $totalCount = count($qb->getQuery()->getResult());
+
+
+
+
+        $currentPage = $page ?? 1;
+        $pageSize = $limit ?? 9;
+        $qb->setFirstResult(($currentPage - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+        $results = $qb->getQuery()->getResult();
+
+
+        $jsonTickets= [];
+        foreach ($results as $ticket) {
+            $jsonTickets[] =
+                $ticket->getTicketJson();
+        }
+
+
+
+        return $this->json([
+            'tickets' => $jsonTickets,
+            'totalCount' => $totalCount
+
+        ], 200);
+    }
+
     public function checkTicketForPlay(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -279,6 +377,62 @@ class TicketController extends AbstractController
 
     }
 
+    /**
+     * @IsGranted("ROLE_EMPLOYEE")
+     * @param Request $request
+     * @return JsonResponse
+     * @throws NonUniqueResultException
+     */
+
+    public function printRandomTicket(Request $request): JsonResponse
+    {
+        $generatedTickets = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->createQueryBuilder('t')
+            ->where('t.status = :status')
+            ->setParameter('status', Ticket::STATUS_GENERATED)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $loggedEmployee = $this->getUser();
+
+        if (!$generatedTickets) {
+            return $this->json([
+                'status' => "error",
+                'message' => "No ticket to print",
+            ], 404);
+        }
+
+        $anonymousUser = $this->entityManager->getRepository(User::class)->findOneBy(['role' => $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_ANONYMOUS])]);
+
+
+        $generatedTickets->setTicketPrintedAt(new \DateTime());
+        $generatedTickets->setStatus(Ticket::STATUS_PRINTED);
+        $generatedTickets->setEmployee($loggedEmployee);
+        $generatedTickets->setStore($loggedEmployee->getStores()[0]);
+        $generatedTickets->setUpdatedAt(new \DateTime());
+
+        $ticketHistory = new TicketHistory();
+        $ticketHistory->setTicket($generatedTickets);
+        $ticketHistory->setEmployee($loggedEmployee);
+        $ticketHistory->setUser($anonymousUser);
+        $ticketHistory->setStatus(Ticket::STATUS_PRINTED);
+        $ticketHistory->setUpdatedAt(new \DateTime());
+
+
+        $this->entityManager->persist($ticketHistory);
+        $this->entityManager->persist($generatedTickets);
+        $this->entityManager->flush();
+
+
+
+
+        return $this->json([
+            'ticket' => $generatedTickets->getTicketJson(),
+        ], 200);
+
+    }
 
 
     public function confirmTicketPlay(Request $request): JsonResponse
@@ -474,6 +628,8 @@ class TicketController extends AbstractController
 
 
 
+
+
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 9);
 
@@ -487,7 +643,7 @@ class TicketController extends AbstractController
 
 
 
-        $qb->orderBy('t.updated_at', 'DESC');
+        $qb->orderBy('t.id', 'DESC');
 
 
         $totalCount = count($qb->getQuery()->getResult());
@@ -521,6 +677,9 @@ class TicketController extends AbstractController
         $client = $request->get('client', null);
         $prize = $request->get('prize', null);
         $employeeId = $request->get('employee', null);
+
+        $start_date = $request->get('start_date', null);
+        $end_date = $request->get('end_date', null);
 
 
 
@@ -598,6 +757,18 @@ class TicketController extends AbstractController
         if ($userRole == Role::ROLE_CLIENT) {
             $qb->andWhere('t.user = :user')
                 ->setParameter('user', $this->getUser());
+        }
+
+        if ($start_date && $end_date) {
+            $qb->andWhere('t.updated_at BETWEEN :start_date AND :end_date')
+                ->setParameter('start_date', $start_date)
+                ->setParameter('end_date', $end_date);
+        } elseif ($start_date) {
+            $qb->andWhere('t.updated_at >= :start_date')
+                ->setParameter('start_date', $start_date);
+        } elseif ($end_date) {
+            $qb->andWhere('t.updated_at <= :end_date')
+                ->setParameter('end_date', $end_date);
         }
 
         $qb->orderBy('t.updated_at', 'DESC');
@@ -769,5 +940,84 @@ class TicketController extends AbstractController
 
 
     }
+
+    public function testFinalDraw(Request $request): JsonResponse
+    {
+        $participants = $this->entityManager->getRepository(User::class)->createQueryBuilder('u')
+            ->innerJoin('u.tickets', 't')
+            ->getQuery()
+            ->getResult();
+
+        if(count($participants) < 1){
+            return $this->json([
+                'status' => "error",
+                'message' => "Not enough participants",
+            ], 404);
+        }
+
+        $winner = $participants[array_rand($participants)];
+
+
+        return $this->json([
+            'status' => "success",
+            'message' => "Final draw",
+            'winner' => $winner->getFullName(),
+            'user' => $winner->getUserJson(),
+        ], 200);
+    }
+
+
+    public function realFinalDraw(Request $request): JsonResponse
+    {
+        $participants = $this->entityManager->getRepository(User::class)->createQueryBuilder('u')
+            ->innerJoin('u.tickets', 't')
+            ->getQuery()
+            ->getResult();
+
+        if(count($participants) < 1){
+            return $this->json([
+                'status' => "error",
+                'message' => "Not enough participants",
+            ], 404);
+        }
+
+        $winner = $participants[array_rand($participants)];
+
+
+        return $this->json([
+            'status' => "success",
+            'message' => "Final draw",
+            'winner' => $winner->getFullName(),
+            'user' => $winner->getUserJson(),
+        ], 200);
+    }
+
+    public function finalDrawHistory(Request $request): JsonResponse
+    {
+        $clientFinalDraw = $this->entityManager->getRepository(ClientFinalDraw::class)->createQueryBuilder('cfd')
+            ->orderBy('cfd.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if(!$clientFinalDraw){
+            return $this->json([
+                'status' => "error",
+                'message' => "No final draw history",
+            ], 404);
+        }
+
+        return $this->json([
+            'status' => "success",
+            'message' => "Final draw history",
+            'clientFinalDraw' => $clientFinalDraw->getClientFinalDrawAsJson(),
+        ], 200);
+
+
+
+
+    }
+
+
 
 }

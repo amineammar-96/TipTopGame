@@ -29,7 +29,7 @@ import ConnectionHistory from "@/app/components/dashboardComponents/ConnectionHi
 import EmailingHistory from "@/app/components/dashboardComponents/EmailingHistory/EmailingHistory";
 import GameSettingsTemplates from "@/app/components/dashboardComponents/GameSettingsComponent/GameSettingsTemplates";
 import TirageAuSortTemplate from "@/app/components/dashboardComponents/TirageAuSortComponent/TirageAuSortTemplate";
-
+import Head from 'next/head';
 function storeAdminDashboard() {
 
 
@@ -92,6 +92,10 @@ function storeAdminDashboard() {
 
         return (
             <>
+                <Head>
+                    <title>TipTop - Tableau de bord - Administrateur</title>
+                </Head>
+
                 {loading && (
                     <SpinnigLoader></SpinnigLoader>
                 )}

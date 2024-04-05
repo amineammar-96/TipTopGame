@@ -16,6 +16,7 @@ import Image from 'next/image';
 import loginFormImg from "@/assets/images/loginForm.jpg";
 import registerFormImg from "@/assets/images/registerForm.jpg";
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
+import Head from "next/head";
 
 export default function userLogin() {
 
@@ -45,6 +46,9 @@ export default function userLogin() {
 
   return (
       <>
+          <Head>
+              <title>TipTop - Se connecter</title>
+          </Head>
       {loading && (
           <>
           <SpinnigLoader></SpinnigLoader>

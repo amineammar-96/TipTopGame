@@ -348,9 +348,17 @@ class UserController extends AbstractController
             ->where('ur.name = :role')
             ->setParameter('role', 'ROLE_CLIENT');
 
+        $user = $this->getUser();
+        $userRole = null;
+        if($user){
+            $userRole = $user->getRoles()[0];
+        }
+
         if($store || $employee || $userRole === Role::ROLE_STOREMANAGER || $userRole === Role::ROLE_EMPLOYEE ){
             $qb->innerJoin('u.stores', 'store');
         }
+
+
 
         if ($store !== null) {
             $qb

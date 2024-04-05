@@ -18,7 +18,7 @@ interface TimeRemaining {
     seconds: number
 }
 export default function TopGameInfoBannerComponent() {
-    const [topBannerOpen, setTopBannerOpen] = useState(false);
+    const [topBannerOpen, setTopBannerOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const [gameConfig, setGameConfig] = useState<DataType>({
         startDate: "",
@@ -108,22 +108,6 @@ export default function TopGameInfoBannerComponent() {
 
 
 
-    function checkVisibility() {
-        if (localStorage.getItem('topGameInfoBannerOpen') === 'true') {
-            setTopBannerOpen(true);
-        }else {
-            setTopBannerOpen(true);
-
-        }
-
-
-    }
-    useEffect(() => {
-        checkVisibility();
-    }, []);
-
-
-
 
 
     const statusColors: Record<string, string> = {
@@ -134,13 +118,11 @@ export default function TopGameInfoBannerComponent() {
 
 
     useEffect(() => {
-        fetchGameConfig();
-
         setInterval(() => {
             fetchGameConfig();
         }, 2000);
 
-    }, [topBannerOpen]);
+    }, []);
 
 
     const [gameStatus, setGameStatus] = useState<string>("");
