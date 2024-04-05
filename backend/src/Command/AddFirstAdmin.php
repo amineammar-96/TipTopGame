@@ -13,10 +13,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AddFirstAdmin extends Command
 {
-
-
-
-
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordEncoder;
 
@@ -43,9 +39,6 @@ class AddFirstAdmin extends Command
         return Command::SUCCESS;
     }
 
-   
-
-   
 
     private function addAdminProfile():User
     {

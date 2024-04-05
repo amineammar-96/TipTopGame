@@ -113,6 +113,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?SocialMediaAccount $socialMediaAccount = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?ClientFinalDraw $clientFinalDraw = null;
+
 
     public function __construct()
     {
@@ -809,6 +812,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->getFullName();
+    }
+
+    public function getClientFinalDraw(): ?ClientFinalDraw
+    {
+        return $this->clientFinalDraw;
+    }
+
+    public function setClientFinalDraw(ClientFinalDraw $clientFinalDraw): static
+    {
+        // set the owning side of the relation if necessary
+        if ($clientFinalDraw->getUser() !== $this) {
+            $clientFinalDraw->setUser($this);
+        }
+
+        $this->clientFinalDraw = $clientFinalDraw;
+
+        return $this;
     }
 
 }

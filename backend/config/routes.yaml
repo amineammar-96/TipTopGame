@@ -119,6 +119,11 @@ get_tickets:
     controller: App\Controller\Api\Ticket\TicketController::getTickets
     methods: GET|POST
 
+get_pending_tickets:
+    path: /api/tickets/pending
+    controller: App\Controller\Api\Ticket\TicketController::getPendingTickets
+    methods: GET
+
 #getTicketByCode
 get_ticket_by_code:
     path: /api/ticket/{code}
@@ -169,6 +174,13 @@ print_ticket_by_employee:
     path: /api/print_ticket
     controller: App\Controller\Api\Ticket\TicketController::printTicketByEmployee
     methods: POST
+
+
+#print random ticket
+print_random_ticket:
+    path: /api/print_random_ticket
+    controller: App\Controller\Api\Ticket\TicketController::printRandomTicket
+    methods: GET
 
 
 #get_store_clients
@@ -415,3 +427,23 @@ save_user_profile:
     path: /api/user/save_profile
     controller: App\Controller\Api\User\UserController::saveUserProfile
     methods: POST
+
+
+#test final draw
+test_final_draw:
+    path: /api/final_draw_test
+    controller: App\Controller\Api\Ticket\TicketController::testFinalDraw
+    methods: GET
+
+
+#test final draw
+final_draw:
+    path: /api/final_draw
+    controller: App\Controller\Api\Ticket\TicketController::realFinalDraw
+    methods: GET
+
+#history final draw
+final_draw_history:
+    path: /api/final_draw/history
+    controller: App\Controller\Api\Ticket\TicketController::finalDrawHistory
+    methods: GET

@@ -79,7 +79,7 @@ function StoresList({ onSelectStore   }: { onSelectStore: (value: string) => voi
             <Form.Item
                 className={`${styles.formItem} searchTicketFormItem mb-5`}
                 name={`store`}
-                label={`Magisins`}
+                label={`Magisin`}
                 initialValue=""
             >
                 <Select onChange={onChange} placeholder={`Tous les Magasins`} className={`mt-2`}>

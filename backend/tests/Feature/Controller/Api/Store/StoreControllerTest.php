@@ -80,10 +80,8 @@ class StoreControllerTest extends WebTestCase
 
         $this->client->loginUser($manager);
 
-        // Make a request to the getStoresForAdmin endpoint
         $this->client->request('GET', '/api/storemanager/' . $manager->getId() . '/store');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        // Add more assertions to verify the response content
     }
 
 

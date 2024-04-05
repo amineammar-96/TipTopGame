@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Card, Col, Modal, Row, Spin} from 'antd';
+import {Col, Modal, Row, Spin} from 'antd';
 import Image from 'next/image';
 import BarcodeTicketImg from "@/assets/images/barcodeTicket.png";
 import InfuserImg from "@/assets/images/infuser.png";
@@ -16,10 +16,7 @@ import {DownOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
 import {
     CheckCircleOutlined,
     ClockCircleOutlined,
-    CloseCircleOutlined,
-    ExclamationCircleOutlined,
-    MinusCircleOutlined,
-    SyncOutlined,
+    CloseCircleOutlined
 } from '@ant-design/icons';
 import {Tag } from 'antd';
 const {Option} = Select;
@@ -147,7 +144,6 @@ function TicketsPageDashboard() {
         fetchData();
     }, [searchParam]);
 
-    //getTicketStatusLabel
     const getTicketStatusLabel = (status: string) => {
         console.log('status : ', status=="1");
         switch (status) {
@@ -218,7 +214,7 @@ function TicketsPageDashboard() {
         if (data) {
             return data.map((ticket, key) => {
                 return (
-                    <Col key={key} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={8} lg={6} span={6}>
+                    <Col key={key+'_ticket_list'} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={8} lg={6} span={6}>
                         <div className={`${styles.ticketCardElement}`}>
 
                             <div className={`${styles.ticketCardBody}`}>
@@ -435,7 +431,7 @@ function TicketsPageDashboard() {
                 </Option>
                 {prizesList.map((prize, key) => {
                     return (
-                        <Option key={key} value={prize.id}>{prize.label}</Option>
+                        <Option key={key+'_prize_list'} value={prize.id}>{prize.label}</Option>
                     )
                 })}
 
@@ -448,7 +444,7 @@ function TicketsPageDashboard() {
         const children = [];
         children.push(
             <Row className={`${styles.fullWidthElement} w-100 d-flex`} gutter={24}>
-                <Col span={8} key={`barCode`}>
+                <Col span={8} key={`barCodeInput`}>
                     <Form.Item
                         className={`${styles.formItem} searchTicketFormItem mb-5`}
                         name={`code`}
@@ -486,7 +482,7 @@ function TicketsPageDashboard() {
                         )}
 
                 </Col>
-                <Col span={8} key={`statusTicket`}>
+                <Col span={8} key={`statusTicketInput`}>
 
 
                     <Form.Item
@@ -714,7 +710,7 @@ function TicketsPageDashboard() {
                     setIsDetailsModalOpen(false);
                 }}
                 footer={[
-                    <Button key="back" onClick={() => {
+                    <Button key="backBtn" onClick={() => {
                         setIsDetailsModalOpen(false);
                     }}>
                         Fermer

@@ -18,20 +18,30 @@ function TirageAuSortTemplate() {
                     <div className={`${styles.ticketsCardsDiv} ${styles.correspandancesDiv} mb-5 px-4`}>
                         <div className={` w-100 ${styles.templatesPersoDiv}`}>
                             <h5 className={"mt-5"}>
-                                Veuillez procéder au tirage au sort final
+                                Veuillez procéder au tirage au sort final en utilisant le profil huissier
                             </h5>
 
+                            <br/>
                             <ul>
                                 <li>
                                     <span>
-                                        Nombre de clients participants : 100
+                                        E-mail de l'huissier: <strong>
+                                        rick.arnaud@gmail.com
+                                    </strong>
+                                    </span>
+                                </li>
+
+                                <br/>
+
+                                <li>
+                                    <span>
+                                        Mot de passe: <strong >
+                                        Tiptop_huisser@123
+                                    </strong>
                                     </span>
                                 </li>
 
                             </ul>
-
-                            <Divider/>
-
 
 
                         </div>

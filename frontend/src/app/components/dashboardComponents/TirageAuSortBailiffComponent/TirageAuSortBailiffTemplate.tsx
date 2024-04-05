@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState , useRef} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Col, Divider, Row, Tag} from "antd";
-import {getGameConfig} from "@/app/api";
+import {Button, Col, Divider, Modal, Row, Tag} from "antd";
+import {getFinalDrawHistory, getGameConfig, realFinalDrawCall, testFinalDrawCall} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
-import participantsTable
-    from "@/app/components/dashboardComponents/ClientManagementComponents/components/ParticipantsTable";
 
+import {HarmonyOSOutlined} from "@ant-design/icons";
+
+import DecodeAnimation from "react-decode-animation";
 
 interface DataType {
     startDate: string;
@@ -19,7 +20,38 @@ interface TimeRemaining {
     seconds: number
 }
 
+interface DataUser {
+    id: number;
+    lastname: string;
+    firstname: string;
+    email: string;
+    status: string;
+    role: string;
+    dateOfBirth: string;
+    phone: string;
+    gender: string;
+    age: number;
+}
+
+interface FinalDrawDataType {
+    history: {
+        date: string;
+        time: string;
+    }
+    winner: {
+        id: number;
+        lastname: string;
+        firstname: string;
+        email: string;
+        phone: string;
+        gender: string;
+        age: number;
+    }
+}
+
 function TirageAuSortBailiffTemplate() {
+    const ref = useRef(null);
+
     const [gameStatus, setGameStatus] = useState<string>("");
 
     const {logoutAndRedirectAdminsUserToLoginPage} = LogoutService();
@@ -134,6 +166,144 @@ function TirageAuSortBailiffTemplate() {
     }, [gameStatus]);
 
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [winner, setWinner] = useState<string>("AMMAR Amine");
+    const [winnerUser , setWinnerUser] = useState<DataUser>({} as DataUser);
+
+    function testFinalDraw() {
+        setDecodeState("Reset");
+        setFinalDrawDone(false);
+        testFinalDrawCall().then((response) => {
+            if (response) {
+                console.log(response);
+                setWinner(response.winner);
+                setWinnerUser(response.user);
+                setModalVisible(true);
+
+            }
+        }).catch((err) => {
+            if (err.response) {
+                if (err.response.status === 401) {
+                    logoutAndRedirectAdminsUserToLoginPage();
+                }
+            } else {
+                console.log(err.request);
+            }
+        });
+
+    }
+
+    const [decodeState, setDecodeState] = useState("Paused");
+    const [finalDrawDone, setFinalDrawDone] = useState<boolean>(false);
+    function testFinalDrawProcess() {
+        setDecodeState("Reset");
+
+        setFinalDrawDone(!finalDrawDone);
+
+        if(finalDrawDone) {
+            return;
+        }
+
+        setTimeout(() => {
+            setDecodeState("Playing");
+        }, 90);
+    }
+
+    function showClientDetails() {
+        console.log(winnerUser);
+
+        Modal.success({
+            title: 'Détails du gagant',
+            content: (
+                <div>
+                    <p>
+                        <strong>Nom : </strong> {winnerUser.lastname}
+                    </p>
+                    <p>
+                        <strong>Prénom : </strong> {winnerUser.firstname}
+                    </p>
+                    <p>
+                        <strong>Email : </strong> {winnerUser.email}
+                    </p>
+                    <p>
+                        <strong>Numéro de téléphone : </strong> {winnerUser.phone}
+                    </p>
+                    <p>
+                        <strong>Genre : </strong> {winnerUser.gender}
+                    </p>
+
+
+                    <br/>
+
+                    <strong>
+                        <small>
+                            Le tirage au sort final est une simulation, ces données ne seront pas enregistrées dans la base de données.
+                        </small>
+                    </strong>
+
+                    <br/>
+
+
+                </div>),
+
+            onOk() {},
+        });
+
+    }
+
+    function realFinalDraw() {
+        setDecodeState("Reset");
+        setFinalDrawDone(false);
+        realFinalDrawCall().then((response) => {
+            if (response) {
+                console.log(response);
+                setWinner(response.winner);
+                setWinnerUser(response.user);
+                setModalVisible(true);
+
+            }
+        }).catch((err) => {
+            if (err.response) {
+                if (err.response.status === 401) {
+                    logoutAndRedirectAdminsUserToLoginPage();
+                }
+            } else {
+                console.log(err.request);
+            }
+        });
+    }
+
+    const [finalDrawHistory , setFinalDrawHistory] = useState<{}>({});
+
+
+    function fetchFinalDrawHistory() {
+        setLoading(true);
+        getFinalDrawHistory().then((response) => {
+            if (response) {
+                console.log(response);
+                setFinalDrawHistory(response);
+            }
+        }).catch((err) => {
+            if (err.response) {
+                if (err.response.status === 401) {
+                    logoutAndRedirectAdminsUserToLoginPage();
+                }
+            } else {
+                console.log(err.request);
+            }
+        });
+
+    }
+
+    useEffect(() => {
+        fetchFinalDrawHistory();
+    }, []);
+
+    useEffect(() => {
+        console.log("finalDrawHistory : ",finalDrawHistory)
+    }, [finalDrawHistory]);
+
+
 
     return (
         <div className={styles.homePageContent}>
@@ -142,18 +312,95 @@ function TirageAuSortBailiffTemplate() {
                 <h1 className={`mx-3`}>
                     Tirage au sort final
                 </h1>
-                <div className={`${styles.ticketsCardsMain} mt-5`}>
+
+                <div className={`${styles.ticketsCardsMain} mb-0 mt-5`}>
                     <div className={`${styles.ticketsCardsDiv} ${styles.correspandancesDiv} mb-5 px-4`}>
                         <div className={` w-100 ${styles.templatesPersoDiv}`}>
 
+                            <h4 className={"mt-5"}>
+                                Le participant gagnant du tirage au sort final sera affiché ci-dessous. ✅
+                            </h4>
 
-                            {gameStatus === "Terminé" && (
+                            <ul>
+                                <li>
+                                    <span>
+                                        Date de confirmation du tirage au sort final :
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span>
+                                        #ID du gagnant :
+                                    </span>
+                                </li>
+
+
+                                <li>
+                                    <span>
+                                        Nom complet du gagnant :
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span>
+                                        Email du gagnant :
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span>
+                                        Numéro de téléphone du gagnant :
+                                    </span>
+                                </li>
+
+
+                                <li>
+                                    <span>
+                                        Genre du gagnant :
+                                    </span>
+                                </li>
+
+
+                                <li>
+                                    <span>
+                                        Age du gagnant :
+                                    </span>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div className={`${styles.ticketsCardsMain} mt-1`}>
+                    <div className={`${styles.ticketsCardsDiv} ${styles.correspandancesDiv} mb-5 px-4`}>
+                        <div className={` w-100 ${styles.templatesPersoDiv}`}>
+
+                            {gameStatus !== "Terminé" && (
                                 <>
+                                    <h4 className={"mt-5"}>
+                                        On vous propose de tester le tirage au sort final avant la fin de la période de
+                                        validation.(simulation) 🚀
+                                    </h4>
                                     <h5 className={"mt-5"}>
-                                        Veuillez procéder au tirage au sort final
+                                        Le tirage au sort final se déroulera à la fin de la période de validation du
+                                        jeu.
                                     </h5>
 
+
                                     <ul>
+                                        <li>
+                                    <span>
+                                A partir du {validationPeriodFinishAt.startDate} à {validationPeriodFinishAt.time}
+                                    </span>
+                                        </li>
                                         <li>
                                     <span>
                                         Nombre de clients participants : {participantsCount}
@@ -162,9 +409,80 @@ function TirageAuSortBailiffTemplate() {
 
                                     </ul>
 
+
+                                    <strong>
+                                        Testez le tirage au sort final (simulation) 🚀 <small>
+                                        Ce teste est une simulation du tirage au sort final, il ne sera pas enregistré
+                                        dans la base de données. (possibilité de tester le tirage au sort final avant la
+                                        fin de la période de validation)
+                                    </small>
+                                    </strong>
+                                    <br/>
+                                    <br/>
+
+
+                                    <strong>
+                                        Simulation de tirage au sort final :
+                                    </strong>
+
+                                    <small className={`mx-2`}>
+                                        Cliquez sur le bouton ci-dessous pour tester le tirage au sort final.
+                                    </small>
+
+                                    <div className="d-flex justify-content-center my-4 align-items-center">
+                                        <Button
+                                            disabled={gameStatus === "Terminé"}
+                                            onClick={() => {
+                                                testFinalDraw();
+                                            }} className={`w-100 ${styles.testDrawBtn}`} htmlType="submit">
+                                            Tester le tirage au sort final <HarmonyOSOutlined className={`mx-2`}/>
+                                        </Button>
+                                    </div>
+
+
                                     <Divider/>
+
+
                                 </>
                             )}
+
+                            {/*  {gameStatus === "Terminé" && (
+                                <>*/}
+                            <h5 className={"mt-5"}>
+                                Veuillez procéder au tirage au sort final en cliquant sur le bouton ci-dessous. 🚀
+                            </h5>
+
+                            <ul>
+                                <li>
+                                    <span>
+                                        Nombre de clients participants : {participantsCount}
+                                    </span>
+                                </li>
+                            </ul>
+
+
+                            <strong>
+                                Tirage au sort final :
+                            </strong>
+
+                            <small className={`mx-2`}>
+                                Cliquez sur le bouton ci-dessous pour effectuer le tirage au sort final.
+                            </small>
+
+                            <div className="d-flex justify-content-center my-4 align-items-center">
+                                <Button
+                                    disabled={gameStatus === "Terminé"}
+                                    onClick={() => {
+                                        realFinalDraw();
+                                    }} className={`w-100 ${styles.testDrawBtn}`} htmlType="submit">
+                                    Effectuer le tirage au sort final <HarmonyOSOutlined className={`mx-2`}/>
+                                </Button>
+                            </div>
+
+
+                            <Divider/>
+                            {/*   </>
+                            )}*/}
 
                             <h5 className={"mt-5"}>
 
@@ -176,7 +494,7 @@ function TirageAuSortBailiffTemplate() {
 
                                 {gameStatus === "En cours" && (
                                     <>
-                                    Date du jeu 🏁
+                                        Date du jeu 🏁
                                     </>
                                 )}
 
@@ -229,7 +547,6 @@ function TirageAuSortBailiffTemplate() {
 
 
                             </h5>
-
 
 
                             <Divider/>
@@ -348,9 +665,66 @@ function TirageAuSortBailiffTemplate() {
                 </div>
             </div>
 
+            <Modal
+                className={``}
+                title="Tirage au sort final"
+                open={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                footer={[
+                    <Button key="ok" onClick={() => setModalVisible(false)}>
+                        Fermer
+                    </Button>
+                ]}
+            >
+
+                <div className={`w-100 d-flex flex-column justify-content-center align-items-center`}>
+                    <Button className={`w-100 ${styles.testDrawBtn}`} htmlType="submit"
+                            onClick={() => {
+                                testFinalDrawProcess();
+                            }}
+                    >
+
+                        {
+                            finalDrawDone && (
+                                <span className={`ms-2`}>
+                                    Réinitialiser le tirage au sort final
+                                </span>
+                            )
+                        }
+
+                        {
+                            !finalDrawDone && (
+                                <span className={`ms-2`}>
+                                    Lancer le tirage au sort final
+                                </span>
+                            )
+                        }
+
+                        <HarmonyOSOutlined className={`mx-2`}/>
+                    </Button>
+
+                    <DecodeAnimation
+                        ref={ref}
+                        autoplay
+                        text={winner}
+                        interval={500}
+                        state={decodeState as any}
+                        className={`${styles.decodeAnimation}`}
+                        customCharacters="#*!&@?%$"
+                        onFinish={() => {
+                            setDecodeState("Paused");
+                            showClientDetails();
+                        }}
+
+                    />
+                </div>
+
+            </Modal>
 
         </div>
-        );
+
+
+    );
 }
 
 export default TirageAuSortBailiffTemplate;

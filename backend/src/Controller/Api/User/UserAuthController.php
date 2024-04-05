@@ -58,6 +58,8 @@ class UserAuthController extends AbstractController {
 
             $user = null;
             if ( $userFormData['email'] && $userFormData['password'] ) {
+                $userFormData[ 'email' ] = strtolower( $userFormData[ 'email' ] );
+                $userFormData[ 'email' ] = trim( $userFormData[ 'email' ] );
                 $user = $this->entityManager->getRepository( User::class )->findOneBy( [ 'email' => $userFormData[ 'email' ] ] );
                 $plainPassword = $userFormData[ 'password' ];
                 if ( $user ) {
@@ -129,6 +131,8 @@ class UserAuthController extends AbstractController {
 
             $user = null;
             if ( $userFormData['email'] && $userFormData['password'] ) {
+                $userFormData[ 'email' ] = strtolower( $userFormData[ 'email' ] );
+                $userFormData[ 'email' ] = trim( $userFormData[ 'email' ] );
                 $user = $this->entityManager->getRepository( User::class )->findOneBy( [ 'email' => $userFormData[ 'email' ] ] );
                 $plainPassword = $userFormData[ 'password' ];
                 if ( $user ) {
