@@ -6,9 +6,11 @@ import './responsive.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Jeu de concours - Thé Tiptop',
+  title: 'Jeu concours - Thé Tiptop',
   description: 'Jeu de concours - Jeu de roulette pour gagner des cadeaux - Thé Tiptop - Marque de thé bio et équitable - Cadeaux à gagner',
+  keywords: 'jeu concours, jeu de roulette, cadeaux à gagner, thé bio, thé, thé Tiptop, roulette, cadeaux, gagner, jeu, concours, bio, équitable, commerce équitable, commerce, équitable, commerce'
 }
+
 
 import Navbar from './components/widgets/NavbarComponent';
 import Footer from './components/widgets/FooterComponent';

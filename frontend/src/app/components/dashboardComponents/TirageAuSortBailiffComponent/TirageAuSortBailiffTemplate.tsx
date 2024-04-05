@@ -471,7 +471,7 @@ function TirageAuSortBailiffTemplate() {
 
                             <div className="d-flex justify-content-center my-4 align-items-center">
                                 <Button
-                                    disabled={gameStatus === "Terminé"}
+                                    disabled={gameStatus !== "Terminé"}
                                     onClick={() => {
                                         realFinalDraw();
                                     }} className={`w-100 ${styles.testDrawBtn}`} htmlType="submit">

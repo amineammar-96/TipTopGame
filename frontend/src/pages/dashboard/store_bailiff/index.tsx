@@ -14,12 +14,13 @@ import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import TicketsHistory from "@/app/components/dashboardComponents/TicketsHistory/TicketsHistory";
 import TirageAuSortBailiffTemplate
     from "@/app/components/dashboardComponents/TirageAuSortBailiffComponent/TirageAuSortBailiffTemplate";
+import Head from "next/head";
 
 function storeAdminDashboard() {
 
 
 
-    const [selectedMenuItem, setSelectedMenuItem] = useState<string>("dashboardItem");
+    const [selectedMenuItem, setSelectedMenuItem] = useState<string>("tirageAuSort");
 
     useEffect(() => {
         const selectedMenuItemSaved = localStorage.getItem("selectedMenuItem");
@@ -80,6 +81,9 @@ function storeAdminDashboard() {
 
         return (
             <>
+                <Head>
+                    <title>TipTop - Tableau de bord - Huissier</title>
+                </Head>
                 {loading && (
                     <SpinnigLoader></SpinnigLoader>
                 )}

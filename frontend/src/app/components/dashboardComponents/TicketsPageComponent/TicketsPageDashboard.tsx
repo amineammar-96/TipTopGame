@@ -170,11 +170,14 @@ function TicketsPageDashboard() {
             return (<></>);
         }
 
-        if (status=="2" && userRole!="ROLE_ADMIN") {
+        if ((status=="1" || status=="2") && userRole!="ROLE_ADMIN") {
             return (
                 <Image src={BoxImg} alt={"BoxImg"}></Image>
             );
         }
+
+        console.log('prizeId : ', prizeId.toString());
+
 
         switch (prizeId.toString()) {
             case "1":
@@ -276,7 +279,7 @@ function TicketsPageDashboard() {
 
 
 
-                                    {(userRole === 'ROLE_ADMIN' || ticket.status=="4" || ticket.status=="6" || ticket.status=="5" || ticket.status=="2" || ticket.status=="3" ) &&  (
+                                    {(userRole === 'ROLE_ADMIN'|| ticket.status=="1" || ticket.status=="4" || ticket.status=="6" || ticket.status=="5" || ticket.status=="2" || ticket.status=="3" ) &&  (
                                         <>
                                             <p><strong>Gain:</strong></p>
                                             <div className={`${styles.ticketCardIconsPrize}`}>
@@ -824,7 +827,7 @@ function TicketsPageDashboard() {
 
 
 
-                            {(userRole === 'ROLE_ADMIN' || selectedTicket?.status=="4" || selectedTicket?.status=="6" || selectedTicket?.status=="5" || selectedTicket?.status=="2" || selectedTicket?.status=="3" ) &&  (
+                            {(userRole === 'ROLE_ADMIN' || selectedTicket?.status=="1" || selectedTicket?.status=="4" || selectedTicket?.status=="6" || selectedTicket?.status=="5" || selectedTicket?.status=="2" || selectedTicket?.status=="3" ) &&  (
                                 <>
                                     <p><strong>Gain:</strong></p>
                                     <div className={`${styles.ticketCardIconsPrize}`}>

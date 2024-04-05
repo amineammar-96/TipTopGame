@@ -22,6 +22,7 @@ import GameGainHistoryPage from "@/app/components/dashboardComponents/GameGainHi
 import GeneralSettingsTemplates
     from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
 import BadgesListPage from "@/app/components/dashboardComponents/BadgesPageComponent/BadgesListPage";
+import Head from "next/head";
 
 
 function ClientDashboard() {
@@ -113,6 +114,9 @@ function ClientDashboard() {
 
     return (
         <>
+            <Head>
+                <title>TipTop - Tableau de bord - Client</title>
+            </Head>
             {loading && (
                 <SpinnigLoader></SpinnigLoader>
             )}

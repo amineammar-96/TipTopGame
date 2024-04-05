@@ -5,7 +5,6 @@ import '../../../../app/globals.css'
 import styles from '../../../../styles/pages/auth/clientRegisterPage.module.css'
 import {Button, ConfigProvider, DatePicker, type DatePickerProps, Form, Input, Modal, Select, Space} from "antd";
 import {
-    ArrowLeftOutlined,
     PhoneOutlined,
     UserAddOutlined,
     UserOutlined
@@ -13,7 +12,7 @@ import {
 import Image from "next/image";
 import logoTipTopImg from "@/assets/images/tipTopLogoAux.png";
 import locale from "antd/locale/fr_FR";
-import {register, saveUserProfile} from "@/app/api";
+import {saveUserProfile} from "@/app/api";
 
 type registerUserForm = {
     firstname?: string;
@@ -38,7 +37,6 @@ const dateFormat = 'DD/MM/YYYY';
 export default function index() {
 
 
-    const [formRef] = Form.useForm();
     const [userForm, setUserForm] = useState(userFormData);
 
     const [loadingButton, setLoadingButton] = useState(false);
@@ -185,130 +183,6 @@ export default function index() {
         });
 
     }
-
-
-    /*
-    function registerClient() {
-        if (userForm.firstname == "" || userForm.lastname=="" || userForm.email=="" || userForm.dateOfBirth==""
-            || userForm.phone=="" || userForm.gender=="" || userForm.password=="" || userForm.passwordConfirm==""
-        ) {
-            Modal.error({
-                className: 'antdLoginRegisterModal',
-                title: 'Un problème est survenu !',
-                content: <>
-                    <span>Veuillez remplir tous les champs.</span> <br/>
-                </>,
-                okText: "D'accord",
-            });
-        }
-
-
-        if (userForm.email == "") {
-            setEmailExists(true);
-            console.log("email is empty");
-            return;
-        }
-
-        if (userForm.firstname == "") {
-            console.log("firstname is empty");
-            return;
-        }
-        if (userForm.lastname == "") {
-            console.log("lastname is empty");
-            return;
-        }
-
-        if (userForm.dateOfBirth == "") {
-            console.log("dateOfBirth is empty");
-            return;
-        }
-        if (userForm.phone == "") {
-            console.log("phone is empty");
-            return;
-        }
-
-        if (userForm.gender == "") {
-            console.log("gender is empty");
-            return;
-        }
-        if (userForm.password == "" || userForm.passwordConfirm == "") {
-            return;
-        }
-
-        if (userForm.password !== userForm.passwordConfirm ) {
-            setEmailExists(false);
-            setPasswordErrorExists(true)
-            console.log("password not match");
-            Modal.error({
-                className: 'antdLoginRegisterModal',
-                title: 'Mot de passe non identique !',
-                content: <>
-                    <span> Veuillez vérifier les mots de passe saisis. </span>
-                </>,
-                okText: "D'accord",
-            });
-            return;
-        }else {
-            setPasswordErrorExists(false)
-        }
-
-        setLoadingButton(true);
-
-        register(userForm).then((response) => {
-            setLoadingButton(false);
-            console.log(response.status);
-            if (response.status === "success") {
-                setEmailExists(false);
-                formRef.resetFields();
-                Modal.success({
-                    className: 'modalSuccess antdLoginRegisterModal',
-                    title : 'Inscription réussie !',
-                    content: <>
-                        <strong>Vous êtes inscrit avec succès.</strong> <br/>
-                        <span>Vous pouvez maintenant vous connecter.</span>
-                    </>,
-                    okText: "Se connecter",
-                    onOk() {
-                        handleFormStepChange();
-                    }
-                });
-            }
-        }).catch((err) => {
-            setLoadingButton(false);
-            console.log(err);
-            if (err.response) {
-                if (err.response.status === 400) {
-                    console.log(err.response.data.error);
-                    if(err.response.data.error == "Email already registered"){
-                        setEmailExists(true);
-                        Modal.error({
-                            className: 'antdLoginRegisterModal',
-                            title: 'Un problème est survenu !',
-                            content: <>
-                                <span>Un compte avec cet email existe déjà.</span> <br/>
-                                <span>Si vous n'avez pas de compte, veuillez vous inscrire avec un autre email.</span>
-                            </>,
-                            okText: "D'accord",
-                        });
-                    }
-                }else{
-                    Modal.error({
-                        className: 'antdLoginRegisterModal',
-                        title: 'Un problème est survenu !',
-                        content: <>
-                            <span>Un problème est survenu lors de l'inscription.</span> <br/>
-                            <span>Veuillez réessayer plus tard.</span>
-                        </>,
-                        okText: "D'accord",
-                    });
-                }
-            } else {
-                console.log(err.request);
-            }
-        })
-    }
-
-     */
 
     return (
         <div className={`${styles.loginForm} `} style={{

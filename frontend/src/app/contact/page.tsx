@@ -1,16 +1,22 @@
 "use client";
 import styles from '../../styles/page.module.css'
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import { useState } from "react";
-import { DatePicker } from 'antd';
+import {DatePicker, Modal} from 'antd';
 import Dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import {PhoneOutlined, MailOutlined, NodeIndexOutlined, SendOutlined} from "@ant-design/icons";
+import ReCAPTCHA from 'react-google-recaptcha'
+import Head from "next/head";
+
 
 Dayjs.locale('fr');
 
 export default function Contact() {
+
+    const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+    const recaptcha: any = useRef(null);
 
     const [loading, setLoading] = useState(true);
 
@@ -21,9 +27,31 @@ export default function Contact() {
             setLoading(false);
         }, 500);
     }, []);
-  
-  return (
+
+
+    function onChangeRecaptcha(param:any) {
+        setCaptchaValue(param);
+    }
+
+    function handleSendMessage() {
+        if (!captchaValue) {
+            Modal.error({
+                title: 'Erreur',
+                content: 'Veuillez valider le captcha pour continuer'
+            });
+            return;
+        }
+        Modal.success({
+            title: 'Succès',
+            content: 'Votre message a été envoyé avec succès'
+        });
+    }
+
+    return (
       <>
+          <Head>
+              <title>thé TipTop - Contact</title>
+          </Head>
           {loading && (
               <>
                   <main className={styles.main}>
@@ -68,7 +96,7 @@ export default function Contact() {
                                               <MailOutlined />
                                               <h4 className="mx-2  d-inline-block">EMAIL :
                                                   <br/>
-                                                  <span>example@info.com</span></h4>
+                                                  <span>contact@tiptop.com</span></h4>
                                           </div>
                                           <div className="info">
                                               <NodeIndexOutlined />
@@ -99,7 +127,26 @@ export default function Contact() {
                                                         placeholder="Votre message..."
                                               ></textarea>
                                           </div>
-                                          <button className="btn btn-block" type="button">
+
+                                          <ReCAPTCHA
+                                              //onVerify={onChangeRecaptcha}
+                                              ref={recaptcha}
+                                              onChange={(e) => {
+                                                  if (!e) {
+                                                      onChangeRecaptcha(null);
+                                                  }else{
+                                                        onChangeRecaptcha(e);
+                                                  }
+                                              }}
+                                              onExpired={() => {
+                                                  onChangeRecaptcha(null);
+                                              }}
+                                              sitekey="6Lf_jrEpAAAAAAjPfA6dq9_7-oef7ndUXMlniySk"
+                                          />
+
+                                          <button className="btn btn-block" type="button" onClick={() => {
+                                             handleSendMessage();
+                                          }}>
                                               Envoyer votre message <SendOutlined className={"mx-2"} />
                                           </button>
                                       </form>

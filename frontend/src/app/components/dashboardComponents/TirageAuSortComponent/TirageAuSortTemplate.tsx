@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styles from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
-import {Button, Col, Divider, Form, Input, Row, Tag} from "antd";
 
 
 function TirageAuSortTemplate() {
