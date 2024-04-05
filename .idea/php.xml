@@ -82,7 +82,6 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-client" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/form" />
-      <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-facebook" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-intl-grapheme" />
       <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-google" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/monolog-bundle" />
