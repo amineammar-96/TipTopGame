@@ -477,7 +477,7 @@ export default function index() {
             <Row>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
-                        <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
+                        <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
                     </div>
                 </Col>
             </Row>

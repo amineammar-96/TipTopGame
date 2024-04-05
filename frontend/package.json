@@ -7,7 +7,8 @@
     "preprod": "next preprod",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.16.1",
@@ -41,7 +42,12 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.2",
+    "@types/jest": "^29.5.12",
     "@types/qs": "^6.9.8",
-    "https-localhost": "^4.7.1"
+    "https-localhost": "^4.7.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

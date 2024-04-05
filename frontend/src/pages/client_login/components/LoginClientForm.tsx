@@ -259,7 +259,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         </div>
                         <div className={`pt-2`}>
                             <p className={`text-center`}>
-                                Connectez-vous avec vos réseaux sociaux préférés.
+                                Connectez-vous avec votre compte Google.
                             </p>
                         </div>
                         <div className={`py-1`}>
@@ -280,7 +280,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
             <Row className={`p-0 m-0 mt-4`}>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
-                        <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
+                        <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
                     </div>
                 </Col>
             </Row>

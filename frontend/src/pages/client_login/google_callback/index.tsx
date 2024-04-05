@@ -7,12 +7,10 @@ const GoogleCallback = () => {
   const router = useRouter();
   const { code } = router.query;
 
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (code) {
-      console.log("code is: " + code);
       setLoading(true);
       googleLoginCallBack(code).then((res) => {
         let user = res.user;
@@ -25,10 +23,6 @@ const GoogleCallback = () => {
             firstLogin = "true";
         }
 
-        console.log("res: ", res);
-        console.log("user: ", user);
-        console.log("token: ", token);
-        console.log("message: ", message);
 
         localStorage.setItem('loggedInUserToken', token);
         localStorage.setItem('firstLoginClientStatus', firstLogin);
@@ -45,16 +39,12 @@ const GoogleCallback = () => {
           window.location.href = '/dashboard/client';
         }
 
-
-        console.log(res);
       }).catch((err) => {
         console.log(err);
-        setError(err);
         window.location.href = '/client_login';
       });
     }else {
-        setError("No code provided");
-        //router.push('/client_login').then(r => console.log(r));
+        window.location.href = '/client_login';
     }
   }, [code]);
 
@@ -62,9 +52,6 @@ const GoogleCallback = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       {loading && <p>Loading...</p>}
-      {error && <p>{
-        error == "No code provided" ? "No code provided" : "An error occurred while logging in"
-      }</p>}
     </div>
   );
 };
