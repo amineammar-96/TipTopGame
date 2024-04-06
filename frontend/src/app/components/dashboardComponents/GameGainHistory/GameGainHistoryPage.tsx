@@ -88,6 +88,8 @@ interface SearchParams {
     sort: string;
     order: string;
     prize: string;
+    start_date?: string;
+    end_date?: string;
 }
 
 const defaultSearchParams: SearchParams = {
@@ -101,6 +103,8 @@ const defaultSearchParams: SearchParams = {
     sort: '',
     order: '',
     prize: '',
+    start_date: '',
+    end_date: '',
 };
 
 const dateFormat = 'DD/MM/YYYY';
@@ -137,7 +141,6 @@ function GameGainHistoryPage() {
     function getAllPrizes() {
         setLoading(true);
         getPrizes().then((response) => {
-            console.log('response : ', response);
             setPrizesList(response.prizes);
         }).catch((err) => {
             if (err.response) {
@@ -165,7 +168,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {prizesList.map((prize, key) => {
                     return (
-                        <Option key={key} value={prize.id}>{prize.label}</Option>
+                        <Option key={key+'_prize_list'} value={prize.id}>{prize.label}</Option>
                     )
                 })}
 
@@ -185,7 +188,6 @@ function GameGainHistoryPage() {
     function getGainTickets() {
         setLoading(true);
         getGainTicket(searchParam).then((response) => {
-            console.log('response : ', response);
             setGainTicketsList(response.gains);
             setGainTicketsCount(response.totalCount);
             setLoading(false);
@@ -203,7 +205,6 @@ function GameGainHistoryPage() {
     function getAllStoresEmployees() {
         setLoading(true);
         getStoresEmployees(searchParam).then((response) => {
-            console.log('response : ', response);
             setStoresEmployeesList(response.users);
         }).catch((err) => {
             if (err.response) {
@@ -218,7 +219,6 @@ function GameGainHistoryPage() {
     function getAllStoresClients() {
         setLoading(true);
         getParticipants(searchParam).then((response) => {
-            console.log('response : ', response);
             setStoresClientsList(response.users);
         }).catch((err) => {
             if (err.response) {
@@ -234,7 +234,6 @@ function GameGainHistoryPage() {
     function getAllStores() {
         setLoading(true);
         getStoresForAdmin().then((response) => {
-            console.log('response : ', response);
             setStoresList(response.storesResponse);
         }).catch((err) => {
             if (err.response) {
@@ -255,7 +254,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {storesClientsList.map((client, key) => {
                     return (
-                        <Option key={key} value={client.id}   label={`${client.lastname} ${client.firstname}`} >{client.lastname} {client.firstname}</Option>
+                        <Option key={key+'_client'} value={client.id}   label={`${client.lastname} ${client.firstname}`} >{client.lastname} {client.firstname}</Option>
                     )
                 })}
             </>
@@ -270,7 +269,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {storesEmployeesList.map((employee, key) => {
                     return (
-                        <Option key={key} value={employee.id} label={`${employee.lastname} ${employee.firstname}`} >{employee.lastname} {employee.firstname}</Option>
+                        <Option key={key+'_employee'} value={employee.id} label={`${employee.lastname} ${employee.firstname}`} >{employee.lastname} {employee.firstname}</Option>
                     )
                 })}
             </>
@@ -278,14 +277,11 @@ function GameGainHistoryPage() {
     }
 
     const handleDateChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
+        console.log(dateString, date)
         if (dateString && date) {
             console.log(date.format('DD/MM/YYYY'));
             let ch = date.format('DD/MM/YYYY');
-            //setUserForm((prevFormData) => ({
-            //  ...prevFormData,
-            // dateOfBirth: ch,
-            //}));
+            console.log(ch);
         }
     };
     const onChangeEmployeeList = (value: string) => {
@@ -309,7 +305,7 @@ function GameGainHistoryPage() {
                 </Option>
                 {storesList.map((store, key) => {
                     return (
-                        <Option key={key} value={store.id}>{store.name}</Option>
+                        <Option key={key+'_store'} value={store.id}>{store.name}</Option>
                     )
                 })}
             </>
@@ -330,7 +326,7 @@ function GameGainHistoryPage() {
         const children = [];
         children.push(
             <Row className={`${styles.fullWidthElement} w-100 d-flex`} gutter={24}>
-                <Col span={12} key={`barCode`}>
+                <Col span={12} key={`barCodeInput`}>
 
                 <Form.Item
                         name={`date_range`}
@@ -343,14 +339,19 @@ function GameGainHistoryPage() {
                         <RangePicker
                             className={`${styles.datePickerDashboardHomePage} mt-2`}
 
-                            onChange={()=>{
-                                handleDateChange
+                            onChange={(date , dateString ) => {
+                                if (dateString && date) {
+                                    setSearchParam({
+                                        ...searchParam,
+                                        start_date: dateString[0],
+                                        end_date: dateString[1],
+                                    });
+                                }
                             }}
                             placeholder={['Date de début', 'Date de fin']}
                             format={dateFormat}
                             cellRender={(current:any) => {
                                 const style: React.CSSProperties = {};
-                                //@ts-ignore
                                 if (current.date() === 1) {
                                     style.border = '1px solid #1677ff';
                                     style.borderRadius = '50%';
@@ -358,7 +359,6 @@ function GameGainHistoryPage() {
                                 return (
                                     <div className="ant-picker-cell-inner" style={style}>
                                         {
-                                             //@ts-ignore
                                         current.date()}
                                     </div>
                                 );

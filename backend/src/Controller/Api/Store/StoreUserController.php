@@ -196,26 +196,25 @@ class StoreUserController extends AbstractController
         $dateOfBirth = \DateTime::createFromFormat( $dateFormat, $dateOfBirthString );
         $user->setDateOfBirth($dateOfBirth);
 
-        if($data['status']!=null && $data['status']!='') {
-            $user->setStatus($data['status']);
-        }else{
-            $user->setStatus(User::STATUS_OPEN);
-        }
+        $user->setStatus($data['status'] ?? User::STATUS_OPEN);
 
         $generatedPassword = $this->generateNewPassword($user);
         $hashedPassword = $this->passwordEncoder->hashPassword( $user, $generatedPassword );
         $user->setPassword( $hashedPassword );
 
 
-        $role = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $data['role']]);
+        $role = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $data['role'] ?? ""]);
         if (!$role) {
             return $this->json([
                 'error' => 'Role not found'
             ], 404);
         }
+
         $user->setRole($role);
         $user->addStore($store);
         $store->addUser($user);
+
+
 
         $roleLabel = "";
         if ($this->getUser()->getRoles()[0] === Role::ROLE_ADMIN) {
@@ -223,6 +222,8 @@ class StoreUserController extends AbstractController
         } else if ($this->getUser()->getRoles()[0] == Role::ROLE_STOREMANAGER) {
             $roleLabel = "Le Manager";
         }
+
+
         $userRole=$user->getRoles()[0];
         $accountLabel="";
         if($userRole==Role::ROLE_STOREMANAGER) {
@@ -230,20 +231,23 @@ class StoreUserController extends AbstractController
         }else if($userRole==Role::ROLE_EMPLOYEE) {
             $accountLabel = "Employé";
         }
+
         $storeName = $store->getName() ?? "";
         $details = $roleLabel. " a ajouté un nouveau compte ".$accountLabel." pour le magasin" .$storeName;
-        $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , $user , $store , $details);
+
 
 
         $this->entityManager->persist($store);
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
+
+        $this->userService->createActionHistory(ActionHistory::USERS_MANAGEMENT , $this->getUser() , $user , $store , $details);
 
         $options = [
           'password' => $generatedPassword,
             'ticket' => null,
             'token' => null,
         ];
+
 
         $this->postManMailerService->sendEmailTemplate(EmailService::EMAILSERVICE_EMPLOYEE_CREATE_ACCOUNT , $user , $options);
 

@@ -20,6 +20,7 @@ import GameGainHistoryPage from "@/app/components/dashboardComponents/GameGainHi
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
 import GeneralSettingsTemplates
     from "@/app/components/dashboardComponents/GeneralSettingsComponents/GeneralSettingsTemplates";
+import Head from "next/head";
 
 function storeAdminDashboard() {
 
@@ -84,6 +85,9 @@ function storeAdminDashboard() {
         return (
 
             <>
+                <Head>
+                    <title>TipTop - Tableau de bord - Gestionnaire</title>
+                </Head>
                 {loading && (
                     <SpinnigLoader></SpinnigLoader>
                 )}

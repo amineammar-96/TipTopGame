@@ -1,4 +1,3 @@
-// api/endpoints/tickets.tsx
 import {AxiosRequestConfig} from 'axios';
 import {fetchJson} from '@/app/api';
 import {URL, URLSearchParams} from "url";
@@ -38,6 +37,31 @@ export async function getTickets(searchParams: any) {
 
     return await fetchJson(finalUrl, config);
 }
+
+
+
+export async function getTicketsPending(searchParams: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+
+    const baseUrl = '/tickets/pending';
+
+    const queryString = Object.keys(searchParams)
+        .filter((key) => searchParams[key] !== '')
+        .map((key) => `${key}=${encodeURIComponent(searchParams[key])}`)
+        .join('&');
+    const finalUrl = `${baseUrl}${queryString ? `?${queryString}` : ''}`;
+
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    };
+
+    return await fetchJson(finalUrl, config);
+}
+
 
 
 export async function getTicketByCode(searchParam: any) {
@@ -210,6 +234,49 @@ export async function getTicketsHistory(searchParams: any) {
     return await fetchJson(finalUrl, config);
 }
 
+
+export async function testFinalDrawCall() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson(`/final_draw_test`, config);
+}
+
+export async function realFinalDrawCall() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson(`/final_draw`, config);
+}
+
+
+export async function getFinalDrawHistory() {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    return await fetchJson(`/final_draw/history`, config);
+}
+
+
+
 export async function getGameConfig() {
 
     const url = '/game_config';
@@ -224,6 +291,7 @@ export async function getGameConfig() {
 
     return await fetchJson(url, config);
 }
+
 
 
 export async function updateGameConfig(data: any) {
