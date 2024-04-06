@@ -99,7 +99,7 @@ class TicketHistory
     public function getUpdatedAtJson(): array
     {
         return [
-            'date' => $this->getUpdatedAt()?->format('d-m-Y'),
+            'date' => $this->getUpdatedAt()?->format('d/m/Y'),
             'time' => $this->getUpdatedAt()?->format('H:i'),
         ];
     }
@@ -115,4 +115,11 @@ class TicketHistory
             'updated_at' => $this->getUpdatedAtJson()
         ];
     }
+
+    public function setId(int $int)
+    {
+        $this->id = $int;
+    }
+
+
 }

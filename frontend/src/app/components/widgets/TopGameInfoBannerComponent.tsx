@@ -18,7 +18,7 @@ interface TimeRemaining {
     seconds: number
 }
 export default function TopGameInfoBannerComponent() {
-    const [topBannerOpen, setTopBannerOpen] = useState(false);
+    const [topBannerOpen, setTopBannerOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const [gameConfig, setGameConfig] = useState<DataType>({
         startDate: "",
@@ -57,9 +57,6 @@ export default function TopGameInfoBannerComponent() {
 
         setLoading(true);
 
-        if(localStorage.getItem('topGameInfoBannerOpen') === 'true'){
-            return;
-        }
 
         getGameConfig().then((response) => {
             if (response) {
@@ -108,24 +105,6 @@ export default function TopGameInfoBannerComponent() {
         setLoading(false);
     }
 
-    function closeTopBanner() {
-        localStorage.setItem('topGameInfoBannerOpen', 'true');
-        setTopBannerOpen(false);
-    }
-
-    function checkVisibility() {
-        if (localStorage.getItem('topGameInfoBannerOpen') === 'true') {
-            setTopBannerOpen(false);
-        }else {
-            setTopBannerOpen(true);
-
-        }
-
-
-    }
-    useEffect(() => {
-        checkVisibility();
-    }, []);
 
 
 
@@ -139,13 +118,11 @@ export default function TopGameInfoBannerComponent() {
 
 
     useEffect(() => {
-        fetchGameConfig();
-
         setInterval(() => {
             fetchGameConfig();
         }, 2000);
 
-    }, [topBannerOpen]);
+    }, []);
 
 
     const [gameStatus, setGameStatus] = useState<string>("");
@@ -231,11 +208,9 @@ export default function TopGameInfoBannerComponent() {
                               </section>
                           </Col>
 
-                          <div className="cookie-consent-banner__actions">
-                              <button className="cookie-consent-banner__button" onClick={() => closeTopBanner()}>
-                                  <CloseOutlined/>
-                              </button>
-                          </div>
+
+
+
 
                       </div>
                   </div>

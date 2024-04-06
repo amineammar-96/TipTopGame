@@ -34,7 +34,6 @@ min-height: 100vh !important;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding-top: 2% !important;
 }
 
 .loginIcon {
@@ -254,6 +253,7 @@ min-height: 100vh !important;
 
 .loginLogo img{
     width: 100% !important;
+    max-width: 550px !important;
 }
 
 .containerLoginFooterLinks {

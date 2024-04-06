@@ -17,7 +17,6 @@ use Doctrine\DBAL\Connection;
 
 class GenerateDefaultTickets extends Command
 {
-    protected static $defaultName = 'app:generate-tickets';
 
     private EntityManagerInterface $entityManager;
     private PrizeRepository $prizeRepository;
@@ -31,10 +30,11 @@ class GenerateDefaultTickets extends Command
         $this->entityManager = $entityManager;
         $this->prizeRepository = $prizeRepository;
         $this->connection = $connection;
+        $this->setName('app:generate-tickets');
 
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Generate 500,000 tickets with the winning rating of each prize');
     }

@@ -68,31 +68,40 @@ class EmailingHistoryController extends AbstractController
         $query->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
-        if($store || $role){
-            $query->innerJoin('eh.receiver', 'u');
-        }
 
-        if($store){
-            $query
-                ->innerJoin('u.stores', 's')
-                ->andWhere('s.id = :store')
-                ->setParameter('store' , $store);
-        }
+       if($store || $role){
+           $query->innerJoin('eh.receiver', 'u');
+       }
 
-        if($role){
-            $roleEntity = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $role]);
+       if($store){
+           $query
+               ->innerJoin('u.stores', 's')
+               ->andWhere('s.id = :store')
+               ->setParameter('store' , $store);
+       }
 
-            $query
-                ->andWhere('u.role = :role')
-                ->setParameter('role' , $roleEntity);
-        }
 
-        if($user){
-            $userEntity = $this->entityManager->getRepository(User::class)->find($user);
 
-            $query->andWhere('eh.receiver = :user')
-                ->setParameter('user' , $userEntity);
-        }
+       if($role){
+           $roleEntity = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $role]);
+
+           $query
+               ->andWhere('u.role = :role')
+               ->setParameter('role' , $roleEntity);
+       }
+
+       
+
+      if($user){
+          $userEntity = $this->entityManager->getRepository(User::class)->find($user);
+
+          $query->andWhere('eh.receiver = :user')
+              ->setParameter('user' , $userEntity);
+      }
+
+
+
+
 
         if ($start_date && $end_date) {
             $query->andWhere('eh.sent_at BETWEEN :start_date AND :end_date')
@@ -105,7 +114,6 @@ class EmailingHistoryController extends AbstractController
             $query->andWhere('eh.sent_at <= :end_date')
                 ->setParameter('end_date', $end_date);
         }
-
 
         $emailingHistory = $query->getQuery()->getResult();
 

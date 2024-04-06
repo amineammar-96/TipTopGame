@@ -27,7 +27,7 @@ import {
 } from '@ant-design/icons';
 
 import styles from '../../../styles/pages/auth/clientLoginPage.module.css';
-import {facebookCallBack, loginClient} from '@/app/api';
+import {loginClient} from '@/app/api';
 
 type FieldType = {
     email?: string;
@@ -121,13 +121,6 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
 
 
-    const facebookCallBackHandle = () => {
-        facebookCallBack().then((response) => {
-            console.log(response);
-        }).catch((err) => {
-            console.log(err);
-        })
-    }
     const googleCallBackHandle = () => {
         console.log('googleCallBackHandle');
         console.log(GOOGLE_CLIENT_ID);
@@ -138,24 +131,10 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
         url += '&redirect_uri=' + encodeURIComponent(GOOGLE_REDIRECT_URL);
         url += '&response_type=code';
         url += '&scope=openid profile email';
-
-        console.log(url);
-
-        //window.location.href = url;
-
-        window.open(url, '_blank');
+        window.location.href = url;
     }
 
 
-    const responseFacebook = async (response : any ) => {
-        if (response.id) {
-            // Facebook login was successful
-            await signIn('facebook', { accessToken: response.accessToken });
-        } else {
-            // Facebook login failed
-            console.log('Facebook login failed');
-        }
-    };
 
 
 
@@ -247,7 +226,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
 
 
                         <Col span={12} md={12} sm={24} className={`m-0 py-2 d-flex justify-content-start`}>
-                            <a href="#" className={`${styles.resetPasswordLink}`} >Mot de passe oublié ? <MailOutlined className={`${styles.resetPasswordIcon}`} /></a>
+                            <a href="/reset_password" className={`${styles.resetPasswordLink}`} >Mot de passe oublié ? <MailOutlined className={`${styles.resetPasswordIcon}`} /></a>
                         </Col>
                     </Row>
 
@@ -280,27 +259,15 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
                         </div>
                         <div className={`pt-2`}>
                             <p className={`text-center`}>
-                                Connectez-vous avec vos réseaux sociaux préférés.
+                                Connectez-vous avec votre compte Google.
                             </p>
                         </div>
                         <div className={`py-1`}>
                             <Space direction="vertical" style={{ width: '100%' }}>
-                               {/* <FacebookLogin
-                                    appId={"621713663395181"}
-                                    autoLoad={false}
-                                    fields="name,email,picture"
-                                    callback={responseFacebook}
-                                />*/}
-                                <Button onClick={() => {
-                                    facebookCallBackHandle();
-                                }} className={`${styles.facebookLoginBtn}`} icon={<FacebookFilled />} block>
-                                    <span> <small>Se coonecter avec Facebook</small></span>
-                                </Button>
-
                                 <Button onClick={() => {
                                     googleCallBackHandle();
                                 }} className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled />} block>
-                                    <span><small>Se coonecter avec Google</small></span>
+                                    <span><small>Se connecter avec Google</small></span>
                                 </Button>
                             </Space>
                         </div>
@@ -313,7 +280,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
             <Row className={`p-0 m-0 mt-4`}>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
-                        <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
+                        <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
                     </div>
                 </Col>
             </Row>

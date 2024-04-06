@@ -26,7 +26,6 @@ export async function googleLoginCallBack(code: any) {
         },
     };
 
-
     return await fetchJson(`/oauth/google/callback${queryString}`, config);
 }
 
@@ -195,23 +194,6 @@ export async function getAllStoresClientsList(searchParams: any) {
 
 
 
-
-//facebookCallBack
-export async function facebookCallBack() {
-    const data = {
-        "code": "621713663395181",
-    };
-
-    const config: AxiosRequestConfig = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        data: data,
-    };
-
-    return await fetchJson('/oauth/facebook/callback', config);
-}
 
 export async function getClientDashboardCardsCounters() {
     const token = localStorage.getItem('loggedInUserToken');
@@ -397,5 +379,31 @@ export async function getFiltredUsers(searchParams: any) {
     };
 
     return await fetchJson(finalUrl, config);
+}
 
+
+export async function saveUserProfile(data: any) {
+    const token = localStorage.getItem('loggedInUserToken');
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson('/user/save_profile', config);
+}
+
+export async function resetPasswordRequest(data: any) {
+    const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(data),
+    };
+
+    return await fetchJson(`/reset_password_request`, config)
 }

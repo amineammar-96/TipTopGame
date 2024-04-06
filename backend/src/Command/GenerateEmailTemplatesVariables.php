@@ -16,7 +16,6 @@ use Doctrine\DBAL\Connection;
 
 class GenerateEmailTemplatesVariables extends Command
 {
-    protected static $defaultName = 'app:generate-email-templates-variables';
 
     private EntityManagerInterface $entityManager;
 
@@ -27,17 +26,18 @@ class GenerateEmailTemplatesVariables extends Command
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->setName('app:generate-email-templates-variables');
 
 
     }
 
-    protected function configure()
+    protected function configure():void
     {
         $this->setDescription('Generate Email Services');
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');
@@ -56,7 +56,7 @@ class GenerateEmailTemplatesVariables extends Command
         return Command::SUCCESS;
     }
 
-    private function generateEmailTemplatesVariables($output)
+    private function generateEmailTemplatesVariables($output): void
     {
         $createAccountClient = $this->entityManager->getRepository(EmailService::class)->findOneBy(['name' => EmailService::EMAILSERVICE_CLIENT_CREATE_ACCOUNT]);
         $createAccountEmployee = $this->entityManager->getRepository(EmailService::class)->findOneBy(['name' => EmailService::EMAILSERVICE_EMPLOYEE_CREATE_ACCOUNT]);
