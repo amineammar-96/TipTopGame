@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class ActionsHistoryController extends AbstractController
@@ -109,7 +110,7 @@ class ActionsHistoryController extends AbstractController
         return new JsonResponse([
             'actionsHistory' => $data,
             'actionsHistoryCount' => $actionsHistoryCount,
-        ], JsonResponse::HTTP_OK);
+        ], Response::HTTP_OK);
 
 
     }

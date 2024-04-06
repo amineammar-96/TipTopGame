@@ -1720,3 +1720,45 @@ background: #ffffff;
     top: 2%;
     left: 3%;
 }
+
+
+.testDrawBtn {
+    background-color: #7BC558 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #7BC558 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    max-height: 1rem;
+    border-radius: 5px;
+    text-decoration: none !important;
+    width: 12rem;
+    font-size: .9rem !important;
+    max-width: 400px;
+}
+
+.testDrawBtn:disabled {
+    background-color: #7BC558 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-color: #7BC558 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    max-height: 1rem;
+    border-radius: 5px;
+    text-decoration: none !important;
+    width: 12rem;
+    font-size: .9rem !important;
+    max-width: 400px;
+    opacity: 0.5;
+}
+
+.decodeAnimation {
+    font-size: 2.5rem;
+    padding: 10rem 0;
+    font-weight: bold;
+}

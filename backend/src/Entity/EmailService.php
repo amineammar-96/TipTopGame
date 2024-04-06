@@ -78,6 +78,7 @@ class EmailService
     public function __construct()
     {
         $this->emailTemplates = new ArrayCollection();
+        $this->variables = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,6 +227,11 @@ class EmailService
             'templates' => $this->getTemplatesJson(),
             'variables' => $this->getVariablesJson(),
         ];
+    }
+
+    public function setId(int $int)
+    {
+        $this->id = $int;
     }
 
 

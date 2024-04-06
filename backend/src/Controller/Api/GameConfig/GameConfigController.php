@@ -39,8 +39,11 @@ class GameConfigController extends AbstractController
         $principalPeriod = 30;
         $validationPeriod = 60;
 
+        $principalPeriodFinishAt=null;
+        $validationPeriodFinishAt=null;
 
-        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
+        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->findAll();
+        $gameConfig = $gameConfig[0] ?? null;
         $gameStatus = "";
         $timeRemainingToStart = [
             'days' => 0,
@@ -61,8 +64,7 @@ class GameConfigController extends AbstractController
                 'seconds' => $interval->format('%s')
             ];
 
-            $principalPeriodFinishAt=null;
-            $validationPeriodFinishAt=null;
+
             $startDateClone = clone $startDate;
             $principalPeriodFinishAt = $startDateClone->modify('+'.$principalPeriod.' days');
 
@@ -110,6 +112,7 @@ class GameConfigController extends AbstractController
         }
 
 
+
         return new JsonResponse([
             'gameConfig' => $gameConfig ? $gameConfig->getStartDate() : null,
             'principalPeriodFinishAt' => $this->getDateTimeAsJson($principalPeriodFinishAt),
@@ -135,7 +138,8 @@ class GameConfigController extends AbstractController
         $originalDate = new DateTime($data['startDate']);
         $formattedDate = $originalDate->format('d/m/Y');
 
-        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->find(1);
+        $gameConfig = $this->entityManager->getRepository(GameConfig::class)->findAll();
+        $gameConfig = $gameConfig[0] ?? null;
         if ($gameConfig) {
             $gameConfig->setStartDate($formattedDate);
             $gameConfig->setTime($data['time']);
@@ -154,7 +158,7 @@ class GameConfigController extends AbstractController
         ]);
     }
 
-    private function getDateTimeAsJson(DateTime|bool $principalPeriodFinishAt)
+    private function getDateTimeAsJson(DateTime|bool|null $principalPeriodFinishAt)
     {
         return [
             'date' => $principalPeriodFinishAt ? $principalPeriodFinishAt->format('d/m/Y') : '00/00/0000',

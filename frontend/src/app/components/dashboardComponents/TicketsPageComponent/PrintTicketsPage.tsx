@@ -100,8 +100,12 @@ function TicketsPageDashboard() {
 
     async function fetchData() {
         setLoading(true);
+        if(searchParam.ticket_code.length==0){
+            setLoading(false);
+            return;
+        }
         await getTicketByCode(searchParam.ticket_code).then((response) => {
-            console.log('response : ', response);
+
             setData(response.tickets);
             setTotalTicketsCount(response.totalCount);
             setLoading(false);
@@ -122,9 +126,7 @@ function TicketsPageDashboard() {
     }, [searchParam ]);
 
 
-    //getTicketStatusLabel
     const getTicketStatusLabel = (status: string) => {
-        console.log('status : ', status=="1");
         switch (status) {
             case "1":
                 return 'Ticket Généré';
@@ -159,7 +161,6 @@ function TicketsPageDashboard() {
             cancelText: 'Annuler',
             onOk: () => {
                 confirmPrintTicket(ticketCode).then(response => {
-                    console.log('response : ', response);
                         Modal.success({
                             title: 'Impression de Ticket',
                             icon: <PrinterOutlined />,
@@ -227,7 +228,7 @@ function TicketsPageDashboard() {
         if (data) {
             return data.map((ticket, key) => {
                 return (
-                    <Col key={key} className={`w-100 d-flex mt-5 justify-content-center`} xs={24} sm={24} md={24} lg={24} span={24}>
+                    <Col key={key+'_ticket_list'} className={`w-100 d-flex mt-5 justify-content-center`} xs={24} sm={24} md={24} lg={24} span={24}>
                         <div className={`${styles.oneTicketCardElement}`}>
 
                             <div className={`${styles.ticketCardBody}`}>
@@ -363,7 +364,7 @@ function TicketsPageDashboard() {
         const children = [];
         children.push(
             <Row className={`${styles.fullWidthElement} w-100 d-flex`} gutter={24}>
-                <Col span={24} key={`barCode`}>
+                <Col span={24} key={`barCodeInput`}>
                     <Form.Item
                         className={`${styles.formItem} searchTicketFormItem mb-5 pb-2`}
                         name={`code`}
@@ -398,7 +399,6 @@ function TicketsPageDashboard() {
             cancelText: 'Annuler',
             onOk: () => {
                 printRandomTicket().then(response => {
-                    console.log('response : ', response);
                     Modal.success({
                         title: 'Impression de Ticket',
                         icon: <PrinterOutlined />,

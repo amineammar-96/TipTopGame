@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Row, Col } from 'antd';
+import {Row, Col, Modal} from 'antd';
 import styles from '../../../styles/components/footer.module.css';
 
 import Button from 'react-bootstrap/Button';
@@ -25,6 +25,49 @@ import {
 } from '@ant-design/icons';
 
 const FooterComponent = () => {
+
+    const [email, setEmail] = React.useState('');
+  function newsLetterSubscribe() {
+    if(email === ''){
+      Modal.error({
+        className: 'antdLoginRegisterModal',
+        title: 'Veuillez saisir votre adresse e-mail',
+        content: <>
+          <span>Veuillez remplir tous les champs.</span> <br/>
+        </>,
+        okText: "D'accord",
+      });
+      return;
+    }
+
+    let emailPreg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailPreg.test(email)) {
+      Modal.error({
+        className: 'antdLoginRegisterModal',
+        title: 'Adresse e-mail invalide',
+        content: <>
+          <span>Veuillez saisir une adresse e-mail valide.</span> <br/>
+        </>,
+        okText: "D'accord",
+      });
+      return;
+    }
+
+    Modal.success({
+      className: 'antdLoginRegisterModal',
+      title: 'Votre adresse e-mail a été enregistrée avec succès.',
+      content: <>
+        <span>
+          Vous étes maintenant abonné à notre newsletter. Vous recevrez bientôt un e-mail de confirmation.
+        </span> <br/>
+      </>,
+      okText: "D'accord",
+    });
+
+    setEmail('');
+
+  }
+
   return (
     <div className={`${styles.footerContainer}`}>
       <Row className={`${styles.footerRow}`}>
@@ -41,9 +84,15 @@ const FooterComponent = () => {
                 placeholder="E-mail"
                 aria-label="E-mail"
                 aria-describedby="basic-addon2"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={`${styles.footerNewsletterInput} `}
               />
-              <Button className={`${styles.footerSendBtn}`} variant="outline-secondary" id="button-addon2">
+              <Button
+                  onClick={() => {
+                    newsLetterSubscribe();
+                  }}
+                  className={`${styles.footerSendBtn}`} variant="outline-secondary" id="button-addon2">
                 S'abonner <SendOutlined className={`mx-2`} />
               </Button>
             </InputGroup>

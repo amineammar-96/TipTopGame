@@ -44,7 +44,7 @@ function ProfilesManagement() {
                         <Col className={styles.fullWidthElement} >
                             <Result
                                 status="warning"
-                                title="Aucun magasin sélectionné"
+                                title="Veuillez selectionner un magasin pour voir les profils"
                                 extra={
                                    <>
                                    </>

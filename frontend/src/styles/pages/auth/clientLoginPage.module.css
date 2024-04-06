@@ -54,7 +54,6 @@ min-height: 100vh !important;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding-top: 2% !important;
 }
 
 .loginFormTopHeader h1{

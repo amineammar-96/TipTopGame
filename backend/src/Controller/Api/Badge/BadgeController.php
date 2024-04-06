@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class BadgeController extends AbstractController
@@ -40,7 +41,7 @@ class BadgeController extends AbstractController
 
         return new JsonResponse([
             'badges' => $data,
-        ], JsonResponse::HTTP_OK);
+        ], Response::HTTP_OK);
     }
 
     public function getBadgeById(Request $request, int $id): JsonResponse
@@ -55,7 +56,6 @@ class BadgeController extends AbstractController
     }
 
 
-    //getClientBadges
 
     public function getClientBadges(int $id , Request $request): JsonResponse
     {

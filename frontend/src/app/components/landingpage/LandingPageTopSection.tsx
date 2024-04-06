@@ -12,6 +12,7 @@ import SurpriseBoxImg from "@/assets/images/surprise.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import {GiftOutlined, InfoOutlined} from "@ant-design/icons";
 import stylesAux from "@/styles/pages/dashboards/storeAdminDashboard.module.css";
+import TopGameInfoBannerComponent from "@/app/components/widgets/TopGameInfoBannerComponent";
 
 interface DataType {
     'id' : string;
@@ -194,7 +195,7 @@ function LandingPageTopSection() {
 
 
     return (
-        <div className={`mx-2 px-1 ${styles.topSection} mt-1`}>
+        <div className={`mx-2 px-1 ${styles.topSection} mt-1`} data-testid={"landing-page-top-section"}>
             <Row className="">
                 <Col className={`${styles.topSectionLeftSide}`} md={12}>
                     <div className={`${styles.topSectionTextDiv}`}>
@@ -234,6 +235,8 @@ function LandingPageTopSection() {
                     </div>
 
                 </Col>
+
+                <TopGameInfoBannerComponent></TopGameInfoBannerComponent>
 
                 <div className="container my-5">
                     <section id="steps">

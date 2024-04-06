@@ -6,18 +6,18 @@ import './responsive.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'TipTop-Game',
-  description: 'Jeu de concours',
+  title: 'Jeu concours - Thé Tiptop',
+  description: 'Jeu de concours - Jeu de roulette pour gagner des cadeaux - Thé Tiptop - Marque de thé bio et équitable - Cadeaux à gagner',
+  keywords: 'jeu concours, jeu de roulette, cadeaux à gagner, thé bio, thé, thé Tiptop, roulette, cadeaux, gagner, jeu, concours, bio, équitable, commerce équitable, commerce, équitable, commerce'
 }
+
 
 import Navbar from './components/widgets/NavbarComponent';
 import Footer from './components/widgets/FooterComponent';
 import CookiesModalComponent from './components/widgets/CookiesModalComponent';
 
 import { GoogleAnalytics } from '@next/third-parties/google'
-import {CheckOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import TopInfoBannerComponent from "@/app/components/widgets/TopInfoBannerComponent";
-import TopGameInfoBannerComponent from "@/app/components/widgets/TopGameInfoBannerComponent";
 
 
 export default function RootLayout({
@@ -32,13 +32,13 @@ export default function RootLayout({
   return (
     <html lang="en">
     <body className={inter.className}>
-    <TopGameInfoBannerComponent></TopGameInfoBannerComponent>
+    <TopInfoBannerComponent></TopInfoBannerComponent>
+
     <Navbar></Navbar>
     {children}
     <Footer></Footer>
     <CookiesModalComponent></CookiesModalComponent>
 
-    <TopInfoBannerComponent></TopInfoBannerComponent>
 
     </body>
     <GoogleAnalytics gaId="G-XLKV7N9HQT"/>

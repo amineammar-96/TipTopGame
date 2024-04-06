@@ -106,4 +106,9 @@ class UserPersonalInfo
             'country' => $this->getCountry(),
         ];
     }
+
+    public function setId(int $int): void
+    {
+        $this->id = $int;
+    }
 }
