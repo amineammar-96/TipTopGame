@@ -1,7 +1,12 @@
 
 version: 2.1
 
+
+orbs:
+  sonarscanner: psl/sonarscanner@0.0.4
+  
 jobs:
+<<<<<<< HEAD
 
   run_test:
     docker:
@@ -39,6 +44,8 @@ jobs:
             composer test
 
 
+=======
+>>>>>>> tiptop-origin/dev
   build_frontend_dev:
     docker:
       - image: docker:20.10.8
@@ -370,9 +377,28 @@ workflows:
             branches:
               only: main
 
+      - deploy_staging:
+          context: context
+          requires:
+            - build_frontend_staging
+            - build_backend_staging
+          filters:
+            branches:
+              only: staging
+
+      - deploy_preprod:
+          context: context
+          requires:
+            - build_frontend_preprod
+            - build_backend_preprod
+          filters:
+            branches:
+              only: preprod
+
       - deploy_development:
           context: context
           requires:
+            - sonarqube_scan
             - build_frontend_dev
             - build_backend_dev
           filters:
@@ -394,4 +420,15 @@ workflows:
             - build_backend_preprod
           filters:
             branches:
+<<<<<<< HEAD
               only: preprod
+=======
+              only: preprod
+
+      - sonarqube_scan:
+          context: context
+          filters:
+            branches:
+              only:
+                - dev
+>>>>>>> tiptop-origin/dev
