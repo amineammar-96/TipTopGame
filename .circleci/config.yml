@@ -2,7 +2,6 @@
 version: 2.1
 
 jobs:
-
   build_frontend_dev:
     docker:
       - image: docker:20.10.8
