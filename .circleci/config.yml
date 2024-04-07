@@ -1,11 +1,44 @@
 
 version: 2.1
 
-
-orbs:
-  sonarscanner: psl/sonarscanner@0.0.4
-
 jobs:
+
+  run_test:
+    docker:
+      - image: ghcr.io/furious-ducks-tiptop/backend
+    steps:
+      - checkout
+
+      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
+      - run: sudo docker-php-ext-install zip
+
+      # Download and cache dependencies
+      - run:
+          name: connexion to Docker
+          command: |
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            docker pull ghcr.io/furious-ducks-tiptop/backend
+
+
+      - run:
+          name: "Install Dependencies"
+          command: |
+            cd backend
+            composer install -n --prefer-dist
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+
+      # run tests with phpunit
+      - run:
+          name: "Run tests"
+          command: |
+            cd backend
+            composer test
+
+
   build_frontend_dev:
     docker:
       - image: docker:20.10.8
@@ -337,28 +370,9 @@ workflows:
             branches:
               only: main
 
-      - deploy_staging:
-          context: context
-          requires:
-            - build_frontend_staging
-            - build_backend_staging
-          filters:
-            branches:
-              only: staging
-
-      - deploy_preprod:
-          context: context
-          requires:
-            - build_frontend_preprod
-            - build_backend_preprod
-          filters:
-            branches:
-              only: preprod
-
       - deploy_development:
           context: context
           requires:
-            - sonarqube_scan
             - build_frontend_dev
             - build_backend_dev
           filters:
@@ -381,10 +395,3 @@ workflows:
           filters:
             branches:
               only: preprod
-
-      - sonarqube_scan:
-          context: context
-          filters:
-            branches:
-              only:
-                - dev
