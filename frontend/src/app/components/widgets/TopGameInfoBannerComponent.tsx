@@ -177,6 +177,32 @@ export default function TopGameInfoBannerComponent() {
                                       </small>
                                       </>
                                   )}
+
+                                    {gameStatus === "Validation" && (
+                                        <>
+                                        <small>
+                                            Du {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time} jusqu'au {validationPeriodFinishAt.startDate} à {validationPeriodFinishAt.time}
+                                        </small>
+                                        </>
+                                    )}
+
+                                    {gameStatus === "Terminé" && (
+                                        <>
+                                        <small>
+                                            {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
+                                        </small>
+                                        </>
+                                    )}
+
+                                    {gameStatus === "A venir" && (
+                                        <>
+                                        <small>
+                                            Le {gameConfigOriginal.startDate} à {gameConfigOriginal.time}
+                                        </small>
+                                        </>
+                                    )}
+
+
                               </h5>
                               <section className="timeContainer">
                                   <div className="wrapper">
