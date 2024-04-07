@@ -43,9 +43,8 @@ const GoogleCallback = () => {
         console.log(err);
         window.location.href = '/client_login';
       });
-    }else {
-        window.location.href = '/client_login';
     }
+
   }, [code]);
 
 

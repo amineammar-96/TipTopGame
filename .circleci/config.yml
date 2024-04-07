@@ -1,44 +1,11 @@
 
 version: 2.1
 
+
+orbs:
+  sonarscanner: psl/sonarscanner@0.0.4
+
 jobs:
-
-  run_test: 
-    docker:
-      - image: ghcr.io/furious-ducks-tiptop/backend
-    steps:
-      - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
-      - run:
-          name: connexion to Docker
-          command: |
-            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend
-
-
-      - run:
-          name: "Install Dependencies"
-          command: |
-            cd backend
-            composer install -n --prefer-dist
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
-
-      # run tests with phpunit
-      - run:
-          name: "Run tests"
-          command: |
-            cd backend
-            composer test
-
-
   build_frontend_dev:
     docker:
       - image: docker:20.10.8
@@ -131,12 +98,12 @@ jobs:
       - run:
           name: building frontend docker image
           command: |
-             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-             cd frontend
-             rm -rf node_modules
-             rm -rf .next
-             docker build  --file Dockerfile.preprod -t ghcr.io/furious-ducks-tiptop/frontend-preprod:latest .
-             docker push ghcr.io/furious-ducks-tiptop/frontend-preprod:latest
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            cd frontend
+            rm -rf node_modules
+            rm -rf .next
+            docker build  --file Dockerfile.preprod -t ghcr.io/furious-ducks-tiptop/frontend-preprod:latest .
+            docker push ghcr.io/furious-ducks-tiptop/frontend-preprod:latest
 
   # Build and push backend image
   build_backend_preprod:
@@ -152,13 +119,13 @@ jobs:
       - run:
           name: building backend docker image
           command: |
-             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-             cd backend
-             docker build -t ghcr.io/furious-ducks-tiptop/backend-preprod:latest .
-             docker push ghcr.io/furious-ducks-tiptop/backend-preprod:latest
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            cd backend
+            docker build -t ghcr.io/furious-ducks-tiptop/backend-preprod:latest .
+            docker push ghcr.io/furious-ducks-tiptop/backend-preprod:latest
+  
+  
 
-
-             
   # Build and push frontend image
   build_frontend:
     docker:
@@ -173,12 +140,12 @@ jobs:
       - run:
           name: building frontend docker image
           command: |
-             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-             cd frontend
-             rm -rf node_modules
-             rm -rf .next
-             docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
-             docker push ghcr.io/furious-ducks-tiptop/frontend:latest
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            cd frontend
+            rm -rf node_modules
+            rm -rf .next
+            docker build -t ghcr.io/furious-ducks-tiptop/frontend:latest .
+            docker push ghcr.io/furious-ducks-tiptop/frontend:latest
 
   # Build and push backend image
   build_backend:
@@ -194,10 +161,10 @@ jobs:
       - run:
           name: building backend docker image
           command: |
-             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-             cd backend
-             docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
-             docker push ghcr.io/furious-ducks-tiptop/backend:latest
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            cd backend
+            docker build -t ghcr.io/furious-ducks-tiptop/backend:latest .
+            docker push ghcr.io/furious-ducks-tiptop/backend:latest
 
   # Deploy to production environment
   deploy_production:
@@ -226,96 +193,96 @@ jobs:
             ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend && docker-compose pull backend && docker-compose up --force-recreate --no-deps -d frontend backend "  
 
   deploy_development:
-      docker:
-        - image: almalinux:8.8
-      steps:
-        - run:
-            name: prepare
-            command: |
-              rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
-              yum update -y
-              rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
-              # Check repository configuration
-              cat /etc/yum.repos.d/*.repo
-              yum clean packages
-              yum clean metadata
-              yum makecache
-              yum install -y git curl zip unzip openssh-clients openssh-server
-        - checkout
-        - add_ssh_keys
-        - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
-        - run:
-            name: deploy
-            command: |
-              # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-dev && docker-compose pull backend-dev && docker-compose up --force-recreate --no-deps -d frontend-dev backend-dev "  
+    docker:
+      - image: almalinux:8.8
+    steps:
+      - run:
+          name: prepare
+          command: |
+            rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
+            yum update -y
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
+            # Check repository configuration
+            cat /etc/yum.repos.d/*.repo
+            yum clean packages
+            yum clean metadata
+            yum makecache
+            yum install -y git curl zip unzip openssh-clients openssh-server
+      - checkout
+      - add_ssh_keys
+      - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
+      - run:
+          name: deploy
+          command: |
+            # Se connecter à votre serveur et déployer les conteneurs Docker
+            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-dev && docker-compose pull backend-dev && docker-compose up --force-recreate --no-deps -d frontend-dev backend-dev "  
 
 
   deploy_staging:
-      docker:
-        - image: almalinux:8.8
-      steps:
-        - run:
-            name: prepare
-            command: |
-              rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
-              yum update -y
-              rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
-              # Check repository configuration
-              cat /etc/yum.repos.d/*.repo
-              yum clean packages
-              yum clean metadata
-              yum makecache
-              yum install -y git curl zip unzip openssh-clients openssh-server
-        - checkout
-        - add_ssh_keys
-        - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
-        - run:
-            name: deploy
-            command: |
-              # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-staging && docker-compose pull backend-staging && docker-compose up --force-recreate --no-deps -d frontend-staging backend-staging "  
+    docker:
+      - image: almalinux:8.8
+    steps:
+      - run:
+          name: prepare
+          command: |
+            rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
+            yum update -y
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
+            # Check repository configuration
+            cat /etc/yum.repos.d/*.repo
+            yum clean packages
+            yum clean metadata
+            yum makecache
+            yum install -y git curl zip unzip openssh-clients openssh-server
+      - checkout
+      - add_ssh_keys
+      - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
+      - run:
+          name: deploy
+          command: |
+            # Se connecter à votre serveur et déployer les conteneurs Docker
+            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-staging && docker-compose pull backend-staging && docker-compose up --force-recreate --no-deps -d frontend-staging backend-staging "  
 
   deploy_preprod:
-      docker:
-        - image: almalinux:8.8
-      steps:
-        - run:
-            name: prepare
-            command: |
-              rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
-              yum update -y
-              rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
-              # Check repository configuration
-              cat /etc/yum.repos.d/*.repo
-              yum clean packages
-              yum clean metadata
-              yum makecache
-              yum install -y git curl zip unzip openssh-clients openssh-server
-        - checkout
-        - add_ssh_keys
-        - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
-        - run:
-            name: deploy
-            command: |
-              # Se connecter à votre serveur et déployer les conteneurs Docker
-              ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-preprod && docker-compose pull backend-preprod && docker-compose up --force-recreate --no-deps -d frontend-preprod backend-preprod "  
+    docker:
+      - image: almalinux:8.8
+    steps:
+      - run:
+          name: prepare
+          command: |
+            rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
+            yum update -y
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux
+            # Check repository configuration
+            cat /etc/yum.repos.d/*.repo
+            yum clean packages
+            yum clean metadata
+            yum makecache
+            yum install -y git curl zip unzip openssh-clients openssh-server
+      - checkout
+      - add_ssh_keys
+      - run: ssh-keyscan -H $VM_IPADDRESS >> ~/.ssh/known_hosts
+      - run:
+          name: deploy
+          command: |
+            # Se connecter à votre serveur et déployer les conteneurs Docker
+            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend-preprod && docker-compose pull backend-preprod && docker-compose up --force-recreate --no-deps -d frontend-preprod backend-preprod "  
 
 
 workflows:
   build_and_push:
     jobs:
       - run_test:
-              context: context
-              filters:
-                branches:
-                  only: main
-                  
+          context: context
+          filters:
+            branches:
+              only: main
+
       - build_frontend_dev:
-            context: context
-            filters:
-              branches:
-                only: dev
+          context: context
+          filters:
+            branches:
+              only: dev
 
       - build_backend_dev:
           context: context
@@ -324,10 +291,10 @@ workflows:
               only: dev
 
       - build_frontend_staging:
-            context: context
-            filters:
-              branches:
-                only: staging
+          context: context
+          filters:
+            branches:
+              only: staging
 
       - build_backend_staging:
           context: context
@@ -336,17 +303,17 @@ workflows:
               only: staging
 
       - build_frontend_preprod:
-            context: context
-            filters:
-              branches:
-                only: preprod
+          context: context
+          filters:
+            branches:
+              only: preprod
 
       - build_backend_preprod:
           context: context
           filters:
             branches:
               only: preprod
-              
+
       - build_frontend:
           context: context
           filters:
@@ -370,9 +337,28 @@ workflows:
             branches:
               only: main
 
+      - deploy_staging:
+          context: context
+          requires:
+            - build_frontend_staging
+            - build_backend_staging
+          filters:
+            branches:
+              only: staging
+
+      - deploy_preprod:
+          context: context
+          requires:
+            - build_frontend_preprod
+            - build_backend_preprod
+          filters:
+            branches:
+              only: preprod
+
       - deploy_development:
           context: context
           requires:
+            - sonarqube_scan
             - build_frontend_dev
             - build_backend_dev
           filters:
@@ -395,3 +381,10 @@ workflows:
           filters:
             branches:
               only: preprod
+
+      - sonarqube_scan:
+          context: context
+          filters:
+            branches:
+              only:
+                - dev

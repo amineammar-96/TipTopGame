@@ -141,7 +141,7 @@ export default function Contact() {
                                               onExpired={() => {
                                                   onChangeRecaptcha(null);
                                               }}
-                                              sitekey="6Lf_jrEpAAAAAAjPfA6dq9_7-oef7ndUXMlniySk"
+                                              sitekey="6LfAZ7MpAAAAAI6cNGXlx2PqjgMEl1HCQletrFNy"
                                           />
 
                                           <button className="btn btn-block" type="button" onClick={() => {
