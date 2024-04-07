@@ -17,7 +17,7 @@ COPY . ./
 COPY .env.preproduction .env
 
 
-# delete all other files .env files
+# delete the other env files
 RUN rm -rf .env.production
 RUN rm -rf .env.development
 RUN rm -rf .env.staging

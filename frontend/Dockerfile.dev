@@ -16,7 +16,7 @@ COPY . ./
 # Copy the environment file to the container
 COPY .env.development .env
 
-# delete all other files .env files
+# delete the other env files
 RUN rm -rf .env.production
 RUN rm -rf .env.development
 RUN rm -rf .env.staging
