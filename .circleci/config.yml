@@ -305,6 +305,12 @@ jobs:
 workflows:
   build_and_push:
     jobs:
+      - run_test:
+              context: context
+              filters:
+                branches:
+                  only: main
+                  
       - build_frontend_dev:
             context: context
             filters:
