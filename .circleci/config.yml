@@ -4,48 +4,8 @@ version: 2.1
 
 orbs:
   sonarscanner: psl/sonarscanner@0.0.4
-  
+
 jobs:
-<<<<<<< HEAD
-
-  run_test:
-    docker:
-      - image: ghcr.io/furious-ducks-tiptop/backend
-    steps:
-      - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
-      - run:
-          name: connexion to Docker
-          command: |
-            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend
-
-
-      - run:
-          name: "Install Dependencies"
-          command: |
-            cd backend
-            composer install -n --prefer-dist
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
-
-      # run tests with phpunit
-      - run:
-          name: "Run tests"
-          command: |
-            cd backend
-            composer test
-
-
-=======
->>>>>>> tiptop-origin/dev
   build_frontend_dev:
     docker:
       - image: docker:20.10.8
@@ -420,9 +380,6 @@ workflows:
             - build_backend_preprod
           filters:
             branches:
-<<<<<<< HEAD
-              only: preprod
-=======
               only: preprod
 
       - sonarqube_scan:
@@ -431,4 +388,3 @@ workflows:
             branches:
               only:
                 - dev
->>>>>>> tiptop-origin/dev
