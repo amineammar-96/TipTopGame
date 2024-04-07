@@ -17,6 +17,7 @@ jobs:
           name: connexion to Docker
           command: |
             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            docker pull ghcr.io/furious-ducks-tiptop/backend
 
 
       - run:
