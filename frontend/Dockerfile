@@ -17,6 +17,12 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Copy the environment file to the container
 COPY .env.production .env
 
+# delete the other env files
+RUN rm -rf .env.production
+RUN rm -rf .env.development
+RUN rm -rf .env.staging
+RUN rm -rf .env.preproduction
+
 # Build the Next.js app
 RUN npm run build
 

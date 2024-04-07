@@ -97,16 +97,40 @@ class GenerateFakeData extends Command
         }
 
         for ($i = 0; $i < $count; $i++) {
+            $email ="";
+
+            if($role == Role::ROLE_CLIENT){
+               if($i === 0) {
+                   $email = "client_default" . "@dsp5-archi-f23-15m-g2.ovh";
+               }else{
+                   $email = "client".$i."@dsp5-archi-f23-15m-g2.ovh";
+               }
+            }
+            else if ($role == Role::ROLE_EMPLOYEE){
+                if($i === 0) {
+                    $email = "employee_default" . "@dsp5-archi-f23-15m-g2.ovh";
+                }else{
+                    $email = "employee".$i."@dsp5-archi-f23-15m-g2.ovh";
+                }
+            }
+            else if ($role == Role::ROLE_STOREMANAGER){
+                if($i === 0) {
+                    $email = "storemanager_default" . "@dsp5-archi-f23-15m-g2.ovh";
+                }else{
+                    $email = "storemanager".$i."@dsp5-archi-f23-15m-g2.ovh";
+                }
+            }
+
             $store = $allStores[array_rand($allStores)];
             $user = new User();
-            $user->setEmail($faker->email);
+            $user->setEmail($email);
             $user->setFirstname($faker->firstName);
             $user->setLastname($faker->lastName);
             $user->setGender($faker->randomElement(['Homme', 'Femme']));
             $dob = $faker->dateTimeBetween('-100 years', '-16 years');
             $user->setDateOfBirth($dob);
             $user->setPhone($faker->phoneNumber);
-            $plainPassword = "azerty";
+            $plainPassword = 'TiptopDefault@123';
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
             $user->setRole($roleEntity);
