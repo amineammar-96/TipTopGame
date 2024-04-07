@@ -289,7 +289,7 @@ class GenerateFakeData extends Command
 
         $defaultUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'client@dsp5-archi-f23-15m-g2.ovh']);
 
-        if ($defaultUser) {
+        if ($defaultUser && !in_array($defaultUser, $users) && $role->getName() === Role::ROLE_CLIENT) {
             $users[] = $defaultUser;
         }
         
@@ -302,7 +302,7 @@ class GenerateFakeData extends Command
         shuffle($users);
         $users = array_slice($users, 0, 20);
 
-        if ($defaultUser) {
+        if ($defaultUser && !in_array($defaultUser, $users) && $role->getName() === Role::ROLE_CLIENT) {
             $users[] = $defaultUser;
         }
 
