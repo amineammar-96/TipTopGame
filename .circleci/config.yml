@@ -38,6 +38,11 @@ jobs:
           name: "Run tests"
           command: |
             cd backend
+            php bin/console d:d:d --force
+            php bin/console d:d:c 
+            php bin/console d:m:m -n
+            php bin/console d:f:l -n
+            php bin/console cache:clear
             composer test
 
 
@@ -311,7 +316,7 @@ workflows:
           context: context
           filters:
             branches:
-              only: main
+              only: staging
 
       - build_frontend_dev:
           context: context
