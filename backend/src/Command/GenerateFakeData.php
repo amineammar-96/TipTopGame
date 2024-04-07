@@ -287,11 +287,25 @@ class GenerateFakeData extends Command
     {
         $users = $this->entityManager->getRepository(User::class)->findBy(['role' => $role]);
 
+        $defaultUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'client@dsp5-archi-f23-15m-g2.ovh']);
+
+        if ($defaultUser) {
+            $users[] = $defaultUser;
+        }
+        
         if (count($users) < 20) {
             return $users;
         }
 
+
+
         shuffle($users);
-        return array_slice($users, 0, 20);
+        $users = array_slice($users, 0, 20);
+
+        if ($defaultUser) {
+            $users[] = $defaultUser;
+        }
+
+        return $users;
     }
 }
