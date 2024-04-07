@@ -13,6 +13,11 @@ jobs:
       - run: sudo docker-php-ext-install zip
 
       # Download and cache dependencies
+      - run:
+          name: connexion to Docker
+          command: |
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
