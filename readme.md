@@ -1,14 +1,47 @@
-#admin default login
-login:
-eric.bourdon@gmail.com
-mdp:
-azerty123456
+## 1 default profiles
+# ADMIN:
+      email : eric.bourdon@gmail.com
+      mdp : TiptopDefault@123
+
+
+# ADMIN 2:
+    +  email : admin@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# STORE MANAGER:
+    +  email : manager@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# EMPLOYEE:
+    +  email : employee@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# CLIENT:
+    +  email : client@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# BAILIFF:
+    +  email :  bailiff@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# BAILIFF2:
+    +  email :  rick.arnaud@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+
+
 # Tiptop game project
 # Getting Started
 ## Backend setup
 
 ### Symfony
 #### Migration and fixtures
+
+
+### - Go to the backend directory
+```bash
+cd backend
+```
 
 ### 1- Install dependencies
 ```bash
@@ -17,20 +50,29 @@ composer install
 
 2- Create database
 ```bash
-php bin/console doctrine:database:create
+php bin/console d:d:c
 ```
 
 3- Run migrations
 ```bash
-php bin/console doctrine:migrations:migrate
+php bin/console d:m:m
+```
+
+4- Load fixtures
+```bash
+php bin/console d:f:l
 ```
 
 
-### 4- Reset game and generate all data in one command 
+
+
+
+### Reset game and generate all data in one command 
 
 -- This command will purge all tables and generate all data from scratch
 
 -- data generated Tables:
++ game configuration
 + role
 + prize
 + user
@@ -53,12 +95,6 @@ php bin/console doctrine:migrations:migrate
 + 6 roles (ROLE_ADMIN, ROLE_STOREMANAGER, ROLE_EMPLOYEE, ROLE_CLIENT , ROLE_BAILIFF , ROLE_ANONYMOUS)
 
 
-+ 1 default store TipTop company
-  + +1 Admin Eric Bourdon
-    +  email : eric.bourdon@gmail.com
-    +  mdp : azerty123456
-  + +1 Anonymous user - For the user's history -We will use this user when a client delete or deactivate his account
-
 
 + 5 prizes 
   + Infuser
@@ -80,23 +116,24 @@ php bin/console doctrine:migrations:migrate
 
 + Fake data generated
     + 5 stores
-    + 20 managers (store managers)
-    + 40 employees (caissiers)
-    + 100 clients
-    + 400 tickets history
+    + 5 managers (store managers)
+    + 20 employees (caissiers)
+    + 30 clients
+    + 50 tickets history
 
++ Game configuration (period of the game)
 
 
 
 #### **- This may take a long time just wait for the end of the process please 😀**
 
 ```bash
-php bin/console doctrine:migrations:migrate
-php bin/console app:reset-game # reinitialize all data from scratch
+php bin/console app:reset-game 
 ```
 
-## Output
+## Output exemple
 ```bash
+
 Purging table ticket_history
 Purging table user_badge
 Purging table store_user
@@ -110,45 +147,66 @@ Purging table emailing_history
 Purging table action_history
 Purging table avatar
 Next  Generate Role...
-Default roles created successfully. 1/9
+Default roles created successfully. 1/10
 Loading...
 Next  Generate Company and admin profile...
-Default company created successfully. 2/9
+Default company created successfully. 2/10
 Loading...
 Next  Generate Prizes...
-Prizes created successfully. 3/9
+Prizes created successfully. 3/10
+Loading...
+Next  Generate Game Config...
+Badges generated successfully. 4/10
 Loading...
 Next  Generate Badges...
-Badges generated successfully. 4/9
+Badges generated successfully. 5/10
 Loading...
 Next  Generate Tickets...
-Tickets generated successfully. 5/9
+Tickets generated successfully. 6/10
 Loading...
 Next  Generate Email Services...
-Email Services generated successfully. 6/9
+Email Services generated successfully. 7/10
 Loading...
 Next  Generate Email Templates Variables...
-Email Templates Variables generated successfully. 7/9
+Email Templates Variables generated successfully. 8/10
 Loading...
 Next  Generate Email Templates...
-Email Templates generated successfully. 8/9
+Email Templates generated successfully. 9/10
 Loading...
 Next  Generate Fake Data...
-Data generated successfully. 9/9
+Data generated successfully. 10/10
 100% Complete
 Game reset successfully.
 
 ```
 
+### 5- Run the server
+```bash
+symfony serve
+```
+
 
 Next.js
+## Frontend setup
+
+### - Go to the frontend directory
+```bash
+cd frontend
+```
+
+### 1- Install dependencies
+```bash
+npm install
+```
+
+### 2- Run the server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
+
+### 3- Open your browser and go to http://localhost:3000
+
+### 4- Enjoy the game 🎉🎉🎉
 
 
 
