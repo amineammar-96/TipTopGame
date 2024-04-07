@@ -173,11 +173,11 @@ class GenerateFakeData extends Command
             ->getQuery()
             ->getSingleScalarResult();
 
-        $offset = mt_rand(0, max(0, $totalTickets - 50));
+        $offset = mt_rand(0, max(0, $totalTickets - 400));
 
         return $ticketRepository->createQueryBuilder('t')
             ->setFirstResult($offset)
-            ->setMaxResults(50)
+            ->setMaxResults(400)
             ->getQuery()
             ->getResult();
     }
