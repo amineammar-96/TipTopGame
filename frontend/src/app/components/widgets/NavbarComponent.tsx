@@ -90,8 +90,8 @@ function NavbarComponent() {
                       <>
                         {!token && (
                             <>
-                              <Nav.Link href="/store_login" className={`${styles.navLink} ${styles.navLinkStoreBtn}`}><DashboardOutlined /><span className='mx-2'>Espace Administrateurs</span></Nav.Link>
-                              <Nav.Link href="/client_login" className={`${styles.navLink} ${styles.navLinkPlayBtn}`}><PlayCircleOutlined className='' /><span className='mx-2'>Participer</span></Nav.Link>
+                              <Nav.Link href="/store_login" className={`${styles.navLink} ${styles.navLinkStoreBtn}`}><DashboardOutlined /><span className='mx-2'>Accès Personnels</span></Nav.Link>
+                              <Nav.Link href="/client_login" className={`${styles.navLink} ${styles.navLinkPlayBtn}`}><PlayCircleOutlined className='' /><span className='mx-2'>Espace client</span></Nav.Link>
                             </>
                         )}
                         {token && (

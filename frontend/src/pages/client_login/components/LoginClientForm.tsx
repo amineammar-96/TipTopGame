@@ -280,7 +280,7 @@ export default function LoginClientForm({ formStep, handleFormStepChange }: Prop
             <Row className={`p-0 m-0 mt-4`}>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
-                        <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
+                        <p>&copy; 2024 Furious Ducks. Tous droits réservés.</p>
                     </div>
                 </Col>
             </Row>

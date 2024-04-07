@@ -172,35 +172,37 @@ export default function TopGameInfoBannerComponent() {
                                   <br/>
                                   {gameStatus === "En cours" && (
                                       <>
-                                      <small>
-                                          Du {gameConfigOriginal.startDate} à {gameConfigOriginal.time} jusqu'au {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
-                                      </small>
+                                          <small>
+                                              Du {gameConfigOriginal.startDate} à {gameConfigOriginal.time} jusqu'au {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
+                                          </small>
                                       </>
                                   )}
 
-                                    {gameStatus === "Validation" && (
-                                        <>
-                                        <small>
-                                            Du {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time} jusqu'au {validationPeriodFinishAt.startDate} à {validationPeriodFinishAt.time}
-                                        </small>
-                                        </>
-                                    )}
+                                  {gameStatus === "A venir" && (
+                                      <>
+                                          <small>
+                                              Du {gameConfigOriginal.startDate} à {gameConfigOriginal.time} jusqu'au {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
+                                          </small>
+                                      </>
+                                  )}
 
-                                    {gameStatus === "Terminé" && (
-                                        <>
-                                        <small>
-                                            {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
-                                        </small>
-                                        </>
-                                    )}
+                                  {gameStatus === "Validation" && (
+                                      <>
+                                          <small>
+                                              Du {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time} jusqu'au {validationPeriodFinishAt.startDate} à {validationPeriodFinishAt.time}
+                                          </small>
+                                      </>
+                                  )}
 
-                                    {gameStatus === "A venir" && (
-                                        <>
-                                        <small>
-                                            Le {gameConfigOriginal.startDate} à {gameConfigOriginal.time}
-                                        </small>
-                                        </>
-                                    )}
+                                  {gameStatus === "Terminé" && (
+                                      <>
+                                          <small>
+                                              Du {gameConfigOriginal.startDate} à {gameConfigOriginal.time} jusqu'au {principalPeriodFinishAt.startDate} à {principalPeriodFinishAt.time}
+                                          </small>
+                                      </>
+                                  )}
+
+
 
 
                               </h5>

@@ -149,7 +149,7 @@ export default function StoreLoginForm() {
                             <Col className={"w-100"}>
                                 <h1 className={`${styles.adminsLoginFormtopHeaderText}`}><a href="/">
                                     <ArrowLeftOutlined className={`${styles.leftArrowIcon}`}/>
-                                </a> Espace Administrateur <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
+                                </a> Accès Personnels <LoginOutlined className={`${styles.loginIcon} ${styles.rightArrowIcon}`}/>
                                 </h1>
                             </Col>
                         </Row>
@@ -259,7 +259,7 @@ export default function StoreLoginForm() {
                         <Row>
                             <Col>
                                 <div className={`${styles.navLinkLogin} d-flex`}>
-                                    <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
+                                    <p>&copy; 2024 Furious Ducks. Tous droits réservés.</p>
                                 </div>
                             </Col>
                         </Row>
