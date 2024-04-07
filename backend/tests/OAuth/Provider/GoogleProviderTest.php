@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\OAuth\Provider;
+namespace App\Tests\OAuth\Provider;
 
 use App\OAuth\Provider\GoogleProvider;
 use League\OAuth2\Client\Provider\Google;

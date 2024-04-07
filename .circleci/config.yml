@@ -37,11 +37,11 @@ jobs:
           name: "Run tests"
           command: |
             cd backend
-            php bin/console d:d:d --force
-            php bin/console d:d:c 
+            php bin/console d:d:d --force --if-exists --no-interaction
+            php bin/console d:d:c -n
             php bin/console d:m:m -n
             php bin/console d:f:l -n
-            php bin/console cache:clear
+            php bin/console cache:clear --no-warmup
             composer test
 
 

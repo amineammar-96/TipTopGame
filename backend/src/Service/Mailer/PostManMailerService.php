@@ -97,7 +97,7 @@ class PostManMailerService
         foreach ($emailServiceTemplates as $emailServiceTemplate) {
             if ($emailServiceTemplate->getRequired()) {
                 $template = $emailServiceTemplate;
-                $recipient = "amineammar20@icloud.com";
+                $recipient = $receiver->getEmail();
                 $subject = $emailServiceTemplate->getSubject();
                 $body = $emailServiceTemplate->getContent();
             }
@@ -170,8 +170,8 @@ class PostManMailerService
             'activate_account_link_client' => $activateAccountLinkClient($receiver , $emailServiceEntity),
             'activate_account_link_employee' => 'getActivateAccountLinkEmployee',
             'token_expiration_date' => $getTokenExpirationDate($receiver),
-            'wheel_of_fortune_link' => 'www.dsp5-archi-o23a-15m-g2.tech/',
-            'win_declaration_link' => 'www.dsp5-archi-o23a-15m-g2.tech/',
+            'wheel_of_fortune_link' => 'www.dsp5-archi-f23-15m-g2.ovh/',
+            'win_declaration_link' => 'www.dsp5-archi-f23-15m-g2.ovh/',
             'password' => $options['password'] ?? '',
         ];
 
