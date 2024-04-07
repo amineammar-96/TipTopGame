@@ -50,7 +50,7 @@ class AddTipTopCompany extends Command
         $admin=$this->addAdminProfile('eric.bourdon@gmail.com');
         $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $admin, $store);
 
-        $admin=$this->addAdminProfile('eric.bourdon@dsp5-archi-f23-15m-g2.ovh');
+        $admin=$this->addAdminProfile('admin@dsp5-archi-f23-15m-g2.ovh');
         $this->addStoreManagerRelationShipWithAllStores($this->entityManager, $admin, $store);
 
         $this->addDefaultProfiles();
