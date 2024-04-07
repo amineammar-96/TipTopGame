@@ -7,6 +7,7 @@ orbs:
   
 jobs:
 
+<<<<<<< HEAD
   sonarqube_scan:
     docker:
       - image: php:7.4-apache
@@ -37,6 +38,43 @@ jobs:
           name: Run SonarScanner
           command: |
             sonar-scanner -X -Dsonar.projectSettings=../sonar-project.properties
+=======
+  run_test: 
+    docker:
+      - image: ghcr.io/furious-ducks-tiptop/backend
+    steps:
+      - checkout
+
+      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
+      - run: sudo docker-php-ext-install zip
+
+      # Download and cache dependencies
+      - run:
+          name: connexion to Docker
+          command: |
+            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
+            docker pull ghcr.io/furious-ducks-tiptop/backend
+
+
+      - run:
+          name: "Install Dependencies"
+          command: |
+            cd backend
+            composer install -n --prefer-dist
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+
+      # run tests with phpunit
+      - run:
+          name: "Run tests"
+          command: |
+            cd backend
+            composer test
+
+>>>>>>> tiptop-origin/main
 
   build_frontend_dev:
     docker:
@@ -223,10 +261,6 @@ jobs:
           command: |
             # Se connecter à votre serveur et déployer les conteneurs Docker
             ssh $VM_USER@$VM_IPADDRESS "cd docker && docker-compose pull frontend && docker-compose pull backend && docker-compose up --force-recreate --no-deps -d frontend backend "  
-      - run:
-          name: Debug chown
-          command: |
-            ssh $VM_USER@$VM_IPADDRESS "cd docker && docker exec -u root backend bash -c ' chown -R www-data:www-data /var/www/html/'"
 
   deploy_development:
       docker:
@@ -308,6 +342,12 @@ jobs:
 workflows:
   build_and_push:
     jobs:
+      - run_test:
+              context: context
+              filters:
+                branches:
+                  only: main
+                  
       - build_frontend_dev:
             context: context
             filters:
@@ -352,6 +392,8 @@ workflows:
 
       - build_backend:
           context: context
+          requires:
+            - run_test
           filters:
             branches:
               only: main
