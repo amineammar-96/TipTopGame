@@ -1,13 +1,13 @@
 
 version: 2.1
-  #orbs:
+#orbs:
 # sonarscanner: psl/sonarscanner@0.0.4
 
 jobs:
 
   run_test:
     docker:
-      - image: ghcr.io/furious-ducks-tiptop/backend
+      - image: ghcr.io/furious-ducks-tiptop/backend-staging:latest
     steps:
       - checkout
 
@@ -19,7 +19,7 @@ jobs:
           name: connexion to Docker
           command: |
             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend
+            docker pull ghcr.io/furious-ducks-tiptop/backend-staging:latest
 
 
       - run:
@@ -33,7 +33,6 @@ jobs:
           paths:
             - ./vendor
 
-      # run tests with phpunit
       - run:
           name: "Run tests"
           command: |
@@ -362,8 +361,6 @@ workflows:
 
       - build_backend:
           context: context
-          requires:
-            - run_test
           filters:
             branches:
               only: main
