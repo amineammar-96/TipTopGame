@@ -7,36 +7,22 @@ jobs:
 
   run_test:
     docker:
-      - image: ghcr.io/furious-ducks-tiptop/backend-staging:latest
+      - image: docker:20.10.8
+    environment:
+      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-dev
     steps:
+      - run: apk update
+      - run: apk add git
       - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
+      - setup_remote_docker
       - run:
-          name: connexion to Docker
+          name: Access Backend
           command: |
             echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend-staging:latest
-
-
-      - run:
-          name: "Install Dependencies"
-          command: |
             cd backend
-            composer install -n --prefer-dist
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
-
       - run:
-          name: "Run tests"
+          name: Run tests
           command: |
-            cd backend
             php bin/console d:d:d --force --if-exists --no-interaction
             php bin/console d:d:c -n
             php bin/console d:m:m -n
@@ -315,7 +301,7 @@ workflows:
           context: context
           filters:
             branches:
-              only: staging
+              only: main
 
       - build_frontend_dev:
           context: context
