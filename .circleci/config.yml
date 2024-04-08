@@ -334,7 +334,7 @@ workflows:
           context: context
           filters:
             branches:
-              only: main
+              only: staging
 
       - build_frontend_dev:
           context: context
