@@ -210,8 +210,6 @@ class AddTipTopCompany extends Command
 
 
 
-
-
     }
 
     private function generateAnonymousProfile(EntityManagerInterface $entityManager):void

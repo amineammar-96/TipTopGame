@@ -42,7 +42,7 @@ class GenerateFakeData extends Command
 
         $this->generateFakeStores($output, $faker);
         $this->generateFakeUsers($output, $faker, 'storemanager', Role::ROLE_STOREMANAGER, 5);
-        $this->generateFakeUsers($output, $faker, 'employee', Role::ROLE_EMPLOYEE, 20);
+        $this->generateFakeUsers($output, $faker, 'employee', Role::ROLE_EMPLOYEE, 15);
         $this->generateFakeUsers($output, $faker, 'client', Role::ROLE_CLIENT, 30);
 
         $randomTickets = $this->getRandomTickets();
@@ -100,25 +100,13 @@ class GenerateFakeData extends Command
             $email ="";
 
             if($role == Role::ROLE_CLIENT){
-               if($i === 0) {
-                   $email = "client" . "@dsp5-archi-f23-15m-g2.ovh";
-               }else{
-                   $email = "client".$i."@dsp5-archi-f23-15m-g2.ovh";
-               }
+                   $email = "client".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
             }
             else if ($role == Role::ROLE_EMPLOYEE){
-                if($i === 0) {
-                    $email = "employee" . "@dsp5-archi-f23-15m-g2.ovh";
-                }else{
-                    $email = "employee".$i."@dsp5-archi-f23-15m-g2.ovh";
-                }
+                    $email = "employee".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
             }
             else if ($role == Role::ROLE_STOREMANAGER){
-                if($i === 0) {
-                    $email = "storemanager@dsp5-archi-f23-15m-g2.ovh";
-                }else{
-                    $email = "storemanager".$i."@dsp5-archi-f23-15m-g2.ovh";
-                }
+                    $email = "manager".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
             }
 
             $store = $allStores[array_rand($allStores)];
