@@ -17,6 +17,9 @@ jobs:
           name: Start Database
           command: |
             docker run --name db -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
+      
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Run tests
           command: |
