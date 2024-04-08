@@ -20,6 +20,12 @@ jobs:
       
       - setup_remote_docker:
           docker_layer_caching: true
+
+      - run:
+          name: Wait for Database to Start
+          command: |
+            sleep 30 # Adjust as needed based on database startup time
+            
       - run:
           name: Run tests
           command: |
