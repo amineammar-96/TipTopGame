@@ -2,16 +2,12 @@
 version: 2.1
 #orbs:
 # sonarscanner: psl/sonarscanner@0.0.4
-<<<<<<< HEAD
 
-=======
->>>>>>> ec975c1eea54cc2186a23807c53350bd59dc2d89
 
 jobs:
 
   run_test:
     docker:
-<<<<<<< HEAD
       - image: cimg/php:8.1.12-browsers
       - image: mysql:5.6.36
         environment:
@@ -66,44 +62,6 @@ jobs:
           name: Stop Database
           command: |
             docker stop db
-=======
-      - image: ghcr.io/furious-ducks-tiptop/backend-staging:latest
-    steps:
-      - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
-      - run:
-          name: connexion to Docker
-          command: |
-            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend-staging:latest
-
-
-      - run:
-          name: "Install Dependencies"
-          command: |
-            cd backend
-            composer install -n --prefer-dist
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
-
-      - run:
-          name: "Run tests"
-          command: |
-            cd backend
-            php bin/console d:d:d --force
-            php bin/console d:d:c 
-            php bin/console d:m:m -n
-            php bin/console d:f:l -n
-            php bin/console cache:clear
-            composer test
->>>>>>> ec975c1eea54cc2186a23807c53350bd59dc2d89
 
 
   build_frontend_dev:
@@ -376,11 +334,7 @@ workflows:
           context: context
           filters:
             branches:
-<<<<<<< HEAD
-              only: main
-=======
               only: staging
->>>>>>> ec975c1eea54cc2186a23807c53350bd59dc2d89
 
       - build_frontend_dev:
           context: context
@@ -395,15 +349,6 @@ workflows:
               only: dev
 
       - build_frontend_staging:
-<<<<<<< HEAD
-=======
-          context: context
-          filters:
-            branches:
-              only: staging
-
-      - build_backend_staging:
->>>>>>> ec975c1eea54cc2186a23807c53350bd59dc2d89
           context: context
           filters:
             branches:
