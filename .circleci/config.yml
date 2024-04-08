@@ -26,11 +26,19 @@ jobs:
           name: Wait for Database to Start
           command: |
             sleep 30 # Adjust as needed based on database startup time
-
+            
       - run:
           name: show docker containers
           command: |
             docker ps
+
+      - run:
+          name: Create Temporary Database
+          command: |
+            docker exec -i db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS db;"
+            echo "Temporary database 'db' created."
+            docker exec -i db mysql -uroot -e "show databases;"
+
 
       - run:
           name: Run tests
@@ -367,6 +375,8 @@ workflows:
 
       - build_backend:
           context: context
+          requires:
+            - run_test
           filters:
             branches:
               only: main
