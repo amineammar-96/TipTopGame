@@ -1,5 +1,4 @@
 "use client";
-
 import React, {useEffect, useState} from 'react';
 import {Button, Modal} from 'antd';
 
@@ -13,7 +12,6 @@ export default function CookiesModalComponent() {
     };
 
     const handleRefuse = () => {
-        // Logique de refus des cookies ici
         localStorage.setItem('cookiesAccepted', 'false');
         setIsModalOpen(false);
     };

@@ -19,7 +19,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class GenerateFakeData extends Command
 {
-    protected static $defaultName = 'app:generate-data';
 
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordEncoder;
@@ -29,9 +28,10 @@ class GenerateFakeData extends Command
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->setName('app:generate-data');
     }
 
-    protected function configure()
+    protected function configure():void
     {
         $this->setDescription('Generate fake data for stores, tickets, user, (managers, employees, clients) table.');
     }
@@ -52,7 +52,7 @@ class GenerateFakeData extends Command
         return Command::SUCCESS;
     }
 
-    private function generateFakeStores(OutputInterface $output, $faker)
+    public function generateFakeStores(OutputInterface $output, $faker): void
     {
         $storeCount = 5;
 
@@ -80,33 +80,57 @@ class GenerateFakeData extends Command
         $this->entityManager->flush();
     }
 
-    private function generateFakeUsers(OutputInterface $output, $faker, $type, $role, $count)
+    public function generateFakeUsers(OutputInterface $output, $faker, $type, $role, $count): void
     {
         $roleEntity = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => $role]);
 
         if (!$roleEntity) {
             $output->writeln("Error: $role role not found.");
-            return Command::FAILURE;
+            return;
         }
 
         $allStores = $this->entityManager->getRepository(Store::class)->findAll();
 
         if (empty($allStores)) {
             $output->writeln('Error: No stores found in the database.');
-            return Command::FAILURE;
+            return;
         }
 
         for ($i = 0; $i < $count; $i++) {
+            $email ="";
+
+            if($role == Role::ROLE_CLIENT){
+               if($i === 0) {
+                   $email = "client_default" . "@dsp5-archi-f23-15m-g2.ovh";
+               }else{
+                   $email = "client".$i."@dsp5-archi-f23-15m-g2.ovh";
+               }
+            }
+            else if ($role == Role::ROLE_EMPLOYEE){
+                if($i === 0) {
+                    $email = "employee_default" . "@dsp5-archi-f23-15m-g2.ovh";
+                }else{
+                    $email = "employee".$i."@dsp5-archi-f23-15m-g2.ovh";
+                }
+            }
+            else if ($role == Role::ROLE_STOREMANAGER){
+                if($i === 0) {
+                    $email = "storemanager_default" . "@dsp5-archi-f23-15m-g2.ovh";
+                }else{
+                    $email = "storemanager".$i."@dsp5-archi-f23-15m-g2.ovh";
+                }
+            }
+
             $store = $allStores[array_rand($allStores)];
             $user = new User();
-            $user->setEmail($faker->email);
+            $user->setEmail($email);
             $user->setFirstname($faker->firstName);
             $user->setLastname($faker->lastName);
             $user->setGender($faker->randomElement(['Homme', 'Femme']));
             $dob = $faker->dateTimeBetween('-100 years', '-16 years');
             $user->setDateOfBirth($dob);
             $user->setPhone($faker->phoneNumber);
-            $plainPassword = "azerty";
+            $plainPassword = 'TiptopDefault@123';
             $hashedPassword = $this->passwordEncoder->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
             $user->setRole($roleEntity);
@@ -131,15 +155,20 @@ class GenerateFakeData extends Command
         $this->entityManager->flush();
 
         $output->writeln("$count $type added to the user table. (relationship too)");
-        return Command::SUCCESS;
     }
 
-    private function getRandomTickets(): array
+    public function getRandomTickets(): array
     {
         $ticketRepository = $this->entityManager->getRepository(Ticket::class);
 
-        $totalTickets = $ticketRepository->createQueryBuilder('t')
-            ->select('COUNT(t.id)')
+        $qb = $ticketRepository->createQueryBuilder('t')
+            ->select('COUNT(t.id)');
+
+        if($qb === null) {
+            return [];
+        }
+
+        $totalTickets = $qb
             ->where('t.status = 1')
             ->getQuery()
             ->getSingleScalarResult();
@@ -153,7 +182,7 @@ class GenerateFakeData extends Command
             ->getResult();
     }
 
-    private function generateFakeGains(OutputInterface $output, $faker, array $randomTickets)
+    public function generateFakeGains(OutputInterface $output, $faker, array $randomTickets): void
     {
         $clientRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_CLIENT]);
         $employeeRole = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ROLE_EMPLOYEE]);
@@ -213,7 +242,7 @@ class GenerateFakeData extends Command
         $output->writeln('Fake gains generated and linked to clients and employees.');
     }
 
-    private function createTicketHistory(Ticket $ticket, DateTime $randomDate, string $randomStatus, User $employee, User $client): void
+    public function createTicketHistory(Ticket $ticket, DateTime $randomDate, string $randomStatus, User $employee, User $client): void
     {
         $ticketHistory = new TicketHistory();
         $ticketHistory->setTicket($ticket);
@@ -225,7 +254,7 @@ class GenerateFakeData extends Command
         $this->entityManager->persist($ticketHistory);
     }
 
-    private function updateTicket(Ticket $ticket, User $client, User $employee, int $randomStatus, DateTime $randomDate): void
+    public function updateTicket(Ticket $ticket, User $client, User $employee, int $randomStatus, DateTime $randomDate): void
     {
         $ticket->setStatus($randomStatus);
 
@@ -254,7 +283,7 @@ class GenerateFakeData extends Command
         $this->entityManager->persist($client);
     }
 
-    private function getRandomUsersByRole(Role $role): array
+    public function getRandomUsersByRole(Role $role): array
     {
         $users = $this->entityManager->getRepository(User::class)->findBy(['role' => $role]);
 

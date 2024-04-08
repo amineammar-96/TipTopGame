@@ -62,11 +62,14 @@ class TicketRepository extends ServiceEntityRepository
     }
 
 
-    //findTicketsRelatedToUser
     public function findTicketsRelatedToUser($user, $startDate, $endDate, $storeId , $userRole)
     {
-        $startDate = \DateTime::createFromFormat('d/m/Y', $startDate)->format('Y-m-d H:i:s');
-        $endDate = \DateTime::createFromFormat('d/m/Y', $endDate)->format('Y-m-d H:i:s');
+        $oneYearAgo = new \DateTime();
+        $oneYearAgo->modify('-1 year');
+
+
+        $startDate = $startDate ?  \DateTime::createFromFormat('d/m/Y', $startDate)->format('Y-m-d H:i:s') : $oneYearAgo->format('Y-m-d H:i:s');
+        $endDate = $endDate ? \DateTime::createFromFormat('d/m/Y', $endDate)->format('Y-m-d H:i:s') : (new \DateTime())->format('Y-m-d H:i:s');
 
         $qb = $this->createQueryBuilder('t')
             ->andWhere('t.updated_at BETWEEN :startDate AND :endDate')

@@ -62,6 +62,14 @@ const dateFormat = 'DD/MM/YYYY';
 
 const {RangePicker} = DatePicker;
 
+
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_REDIRECT_URL = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV || '';
+
+
+
 export default function RegisterClientForm({formStep, handleFormStepChange}: Props) {
 
 
@@ -240,6 +248,19 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
+
+    const googleCallBackHandle = () => {
+        console.log('googleCallBackHandle');
+        console.log(GOOGLE_CLIENT_ID);
+        console.log(GOOGLE_CLIENT_SECRET);
+        console.log(GOOGLE_AUTHORIZATION_URL);
+        let url = GOOGLE_AUTHORIZATION_URL;
+        url += '?client_id=' + GOOGLE_CLIENT_ID;
+        url += '&redirect_uri=' + encodeURIComponent(GOOGLE_REDIRECT_URL);
+        url += '&response_type=code';
+        url += '&scope=openid profile email';
+        window.location.href = url;
+    }
 
     return (
         <div className={`${styles.loginForm} `}>
@@ -453,19 +474,17 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                         </div>
                         <div className={`pt-3`}>
                             <p className={`text-center`}>
-                                Connectez-vous avec vos réseaux sociaux préférés.
+                                Inscrivez-vous avec votre compte Google.
                             </p>
                         </div>
 
 
                         <div className={`pb-3  d-flex justify-content-center `}>
-                            <Space direction="vertical" style={{width: '100%'}}
-                                   className={`pb-3  d-flex justify-content-center `}>
-                                <Button className={`${styles.facebookLoginBtn}`} icon={<FacebookFilled/>} block>
-                                    <span> <small>Inscrivez-vous avec Facebook</small></span>
-                                </Button>
-                                <Button className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled/>} block>
-                                    <span><small>Inscrivez-vous avec Google</small></span>
+                            <Space direction="vertical" style={{ width: '100%' }}>
+                                <Button onClick={() => {
+                                    googleCallBackHandle();
+                                }} className={`${styles.googleLoginBtn}`} icon={<GoogleSquareFilled />} block>
+                                    <span><small>Se connecter avec Google</small></span>
                                 </Button>
                             </Space>
                         </div>
@@ -473,34 +492,10 @@ export default function RegisterClientForm({formStep, handleFormStepChange}: Pro
                 </Col>
             </Row>
 
-            {/*<Row className="px-3 py-2">
-                <Col className={`w-100 d-flex`}>
-                    <Navbar expand="lg" className={`${styles.loginFooterLinksDiv}`}>
-                        <div className={`${styles.containerLoginFooterLinks} d-flex `}>
-                            <div className={`${styles.LoginLinksDiv} d-flex`}>
-                                <Nav className="me-auto d-flex justify-content-between w-100">
-                                    <Nav.Link href="#home" className={`${styles.navLinkLogin}`}><AppstoreFilled
-                                        className='mx-2'/> Termes et conditions</Nav.Link>
-                                    <Nav.Link href="#link"
-                                              className={`${styles.navLinkLogin}`}><ExclamationCircleOutlined
-                                        className='mx-2'/>Politique De Confidentialité</Nav.Link>
-                                    <Nav.Link href="#link" className={`${styles.navLinkLogin}`}><MailOutlined
-                                        className='mx-2'/>Contact</Nav.Link>
-
-                                </Nav>
-                            </div>
-
-
-                        </div>
-                    </Navbar>
-                </Col>
-
-            </Row>*/}
-
             <Row>
                 <Col>
                     <div className={`${styles.navLinkLogin} d-flex`}>
-                        <p>&copy; 2023 Furious Ducks. All rights reserved.</p>
+                        <p>&copy; 2024 Furious Ducks. All rights reserved.</p>
                     </div>
                 </Col>
             </Row>

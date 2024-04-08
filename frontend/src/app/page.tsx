@@ -7,7 +7,7 @@ import LandingPageTopSection from './components/landingpage/LandingPageTopSectio
 import Dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import SpinnigLoader from "@/app/components/widgets/SpinnigLoader";
-
+import Head from 'next/head';
 Dayjs.locale('fr');
 
 export default function Home() {
@@ -24,11 +24,12 @@ export default function Home() {
   
   return (
       <>
+
           {loading && (
               <>
                   <main className={styles.main}>
-                  <SpinnigLoader></SpinnigLoader>
-                    </main>
+                      <SpinnigLoader></SpinnigLoader>
+                  </main>
               </>
           )}
           {!loading && (

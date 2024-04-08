@@ -138,6 +138,7 @@ class EmailTemplate
             'name' => $this->service->getName(),
             'description' => $this->service->getDescription(),
             'label' => $this->service->getLabel(),
+            'templates' => $this->service->getTemplatesJson(),
             'variables' => $this->service->getVariablesJson(),
 
         ];
@@ -153,5 +154,10 @@ class EmailTemplate
         $this->name = $name;
 
         return $this;
+    }
+
+    public function setId(int $int)
+    {
+        $this->id = $int;
     }
 }

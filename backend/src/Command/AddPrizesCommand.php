@@ -11,7 +11,6 @@ use Doctrine\DBAL\Connection;
 
 class AddPrizesCommand extends Command
 {
-    protected static $defaultName = 'app:add-prizes';
 
     private EntityManagerInterface $entityManager;
 
@@ -22,9 +21,10 @@ class AddPrizesCommand extends Command
 
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->setName('app:add-prizes');
     }
 
-    protected function configure()
+    protected function configure() : void
     {
         $this->setDescription('Add prizes to the database');
     }

@@ -12,8 +12,6 @@ use Symfony\Component\Process\Process;
 
 class ResetGame extends Command
 {
-    protected static $defaultName = 'app:reset-game';
-
     private EntityManagerInterface $entityManager;
 
     private Connection $connection;
@@ -24,16 +22,17 @@ class ResetGame extends Command
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->setName('app:reset-game');
 
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Generate badges for clients');
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $tables=['ticket_history','user_badge','store_user' ,'user_store','user_personal_info','user','store',

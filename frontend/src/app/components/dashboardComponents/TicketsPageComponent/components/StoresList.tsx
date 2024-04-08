@@ -76,7 +76,7 @@ function StoresList({ onSelectStore   }: { onSelectStore: (value: string) => voi
 
     const renderStores = () => {
         return storesOptionsList.map((store) => {
-            return <Option key={store.key} value={store.value}>{store.label}</Option>
+            return <Option key={store.key+'_store_list'} value={store.value}>{store.label}</Option>
         })
     }
 
@@ -85,7 +85,7 @@ function StoresList({ onSelectStore   }: { onSelectStore: (value: string) => voi
             <Form.Item
                 className={`${styles.formItem} searchTicketFormItem mb-5`}
                 name={`store`}
-                label={`Magisins`}
+                label={`Magisin`}
                 initialValue=""
             >
                 <Select onChange={onChange} placeholder={`Tous les Magasins`} className={`mt-2`}>

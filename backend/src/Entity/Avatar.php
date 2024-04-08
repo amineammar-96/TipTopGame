@@ -82,4 +82,11 @@ class Avatar
             'avatarUrl' => $this->getAvatarUrl(),
         ];
     }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 }

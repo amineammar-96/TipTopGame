@@ -124,7 +124,6 @@ class EmailTemplateController extends AbstractController
     }
 
 
-    //updateEmailTemplateById
 /**
      * @IsGranted("ROLE_ADMIN")
      * @param Request $request
@@ -199,6 +198,7 @@ class EmailTemplateController extends AbstractController
 
         return new JsonResponse(['status' => 'Template deleted'], Response::HTTP_NO_CONTENT);
     }
+
 
 
 }

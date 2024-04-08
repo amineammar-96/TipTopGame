@@ -535,7 +535,7 @@ function PlayGameComponent() {
     const [loading, setLoading] = useState(false);
 
     const ref = useRef<any>(null)
-    const [ticketCode, setTicketCode] = useState('TK6349465A');
+    const [ticketCode, setTicketCode] = useState('');
 
     const [spinning, setSpinning] = useState(false);
     const [validTicketCode, setValidTicketCode] = useState('');

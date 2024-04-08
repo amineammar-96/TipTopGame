@@ -146,13 +146,14 @@ class StoreController extends AbstractController
             ], 400);
         }
 
+
         $store = new Store();
-        $store->setName($data['name']);
-        $store->setAddress($data['address']);
-        $store->setCity($data['city']);
-        $store->setPostalCode($data['postal_code']);
-        $store->setCountry($data['country']);
-        $store->setStatus($data['status']);
+        $store->setName($data['name'] ?? "");
+        $store->setAddress($data['address'] ?? "");
+        $store->setCity($data['city'] ?? "");
+        $store->setPostalCode($data['postal_code'] ?? "");
+        $store->setCountry($data['country'] ?? "");
+        $store->setStatus($data['status'] ?? Store::STATUS_OPEN);
         if ($data['opening_date'] != null && $data['opening_date'] != ''){
             $formattedDate = \DateTime::createFromFormat('d/m/Y', $data['opening_date']);
             $store->setOpeningDate($formattedDate);
@@ -166,6 +167,7 @@ class StoreController extends AbstractController
         $store->setEmail($data['email']);
         $store->setSiren($data['siren']);
 
+
         $roleLabel = "";
         if ($this->getUser()->getRoles()[0] === Role::ROLE_ADMIN) {
             $roleLabel = "L'Administateur";
@@ -173,6 +175,7 @@ class StoreController extends AbstractController
         $storeName = $data['name'] ?? "";
         $details = $roleLabel. " a ajouté un nouveau magasin " .$storeName. " ( ". $store->getSiren(). " )";
         $this->userService->createActionHistory(ActionHistory::STORES_MANAGEMENT , $this->getUser() , null , $store , $details);
+
 
 
 
@@ -186,17 +189,28 @@ class StoreController extends AbstractController
         $actionHistory->setStore($store);
         $actionHistory->setCreatedAt(new \DateTime());
 
+
+
         $this->entityManager->persist($actionHistory);
+
+
+
 
         $users = $this->entityManager->getRepository(User::class)->findAll();
         foreach ($users as $admin) {
-            if($admin->getRole()->getName() == Role::ROLE_ADMIN) {
-                $admin->addStore($store);
-                $store->addUser($admin);
-                $this->entityManager->persist($store);
-                $this->entityManager->persist($admin);
+            $role = $admin->getRole();
+            if ($role != null && $role != "") {
+                if ($role->getName() == Role::ROLE_ADMIN) {
+                    $admin->addStore($store);
+                    $store->addUser($admin);
+                    $this->entityManager->persist($store);
+                    $this->entityManager->persist($admin);
+                }
             }
         }
+
+
+
 
 
         $this->entityManager->persist($store);
@@ -222,10 +236,14 @@ class StoreController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (!$data) {
-            return $this->json([
-                'error' => 'No data provided'
-            ], 400);
+        $requiredFields = ['name', 'address', 'city', 'postal_code', 'country', 'status', 'capital', 'headquarters_address', 'phone_number', 'email', 'siren'];
+
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field])) {
+                return $this->json([
+                    'error' => 'Missing field: ' . $field
+                ], 400);
+            }
         }
 
         $store->setName($data['name']);
@@ -258,17 +276,15 @@ class StoreController extends AbstractController
         }
         $storeName = $store->getName();
         $details = $roleLabel. " a modifié le magasin ." .$storeName. " ( ". $store->getSiren(). " )";
+        $this->entityManager->persist($store);
 
         $this->userService->createActionHistory(ActionHistory::STORES_MANAGEMENT , $this->getUser() , null , $store  , $details);
 
 
 
-        $this->entityManager->persist($store);
-        $this->entityManager->flush();
-
         return new JsonResponse([
             'status'=>'updated',
-            'storeResponse' => $store->getStoreJson(),
+            //'storeResponse' => $store->getStoreJson(),
         ]);
     }
 
@@ -368,10 +384,10 @@ class StoreController extends AbstractController
      * @IsGranted("ROLE_CLIENT")
      */
     public function associateClientToStore(Request $request): JsonResponse {
-        try {
             $data = json_decode($request->getContent(), true);
-            $id = $data['storeId'];
+            $id = $data['storeId'] ?? null;
             $store = $this->entityManager->getRepository(Store::class)->findOneBy(['id' => $id]);
+
             if (!$store) {
                 return $this->json([
                     'error' => 'Store not found'
@@ -388,11 +404,7 @@ class StoreController extends AbstractController
             return new JsonResponse([
                 'status'=>'associated',
             ]);
-        }catch (Exception $e) {
-            return $this->json([
-                'error' => $e->getMessage()
-            ], 400);
-        }
+
     }
 
 }

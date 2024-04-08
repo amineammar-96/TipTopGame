@@ -8,7 +8,7 @@ import TeaBoxImg from "@/assets/images/teaBox.png";
 import TeaBoxSignatureImg from "@/assets/images/teaBoxSignature.png";
 import SurprisePlusImg from "@/assets/images/surprisePlus.png";
 import SurpriseBoxImg from "@/assets/images/surprise.png";
-import {getTickets, getPrizes, getStoreClientsList, confimGainTicket} from "@/app/api";
+import {getTickets, getPrizes, getStoreClientsList, confimGainTicket, getTicketsPending} from "@/app/api";
 import LogoutService from "@/app/service/LogoutService";
 import {Button, Form, Input, Select, Space, theme} from 'antd';
 import {DownOutlined, EyeOutlined, GiftOutlined, PrinterOutlined} from "@ant-design/icons";
@@ -52,7 +52,13 @@ interface DataType {
         time: string;
     };
     client: string;
-    caissier: string;
+    employee: {
+        id: string;
+        firstname: string;
+        lastname: string;
+        phone: string;
+        email: string;
+    };
     store: string;
     user: {
         id: string;
@@ -87,6 +93,7 @@ interface SearchParams {
     order: string;
     ticket_code: string;
     prize: string;
+    keyword: string;
 }
 
 const defaultSearchParams: SearchParams = {
@@ -101,6 +108,7 @@ const defaultSearchParams: SearchParams = {
     order: '',
     ticket_code: '',
     prize: '',
+    keyword: '',
 };
 
 function ConfirmTicketGain() {
@@ -118,8 +126,7 @@ function ConfirmTicketGain() {
 
     async function fetchData() {
         setLoading(true);
-        await getTickets(searchParam).then((response) => {
-            console.log('response : ', response);
+        await getTicketsPending(searchParam).then((response) => {
             setData(response.tickets);
             setTotalTicketsCount(response.totalCount);
             setLoading(false);
@@ -139,7 +146,6 @@ function ConfirmTicketGain() {
     }, [searchParam]);
 
     const getTicketStatusLabel = (status: string) => {
-        console.log('status : ', status=="1");
         switch (status) {
             case "1":
                 return 'Ticket Généré';
@@ -264,12 +270,12 @@ function ConfirmTicketGain() {
         if (data) {
             return data.map((ticket, key) => {
                 return (
-                    <Col key={key} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={12} lg={8} span={8}>
+                    <Col key={key+'_ticket_list'} className={`w-100 d-flex mt-5`} xs={24} sm={24} md={12} lg={8} span={8}>
                         <div className={`${styles.ticketCardElement}`}>
 
                             <div className={`${styles.ticketCardBody}`}>
                                 <div className={`${styles.ticketCardTextOneTicket} mb-1`}>
-                                    <p className={`${styles.ticketStatusTag}
+                                    <div className={`${styles.ticketStatusTag}
                                      ${ticket.status=="1" && styles.ticketStatusTagGenerated}
                                         ${ticket.status=="2" && styles.ticketStatusTagPrinted}
                                         ${ticket.status=="3" && styles.ticketStatusTagWaiting}
@@ -309,7 +315,7 @@ function ConfirmTicketGain() {
                                         )}
 
 
-                                    </p>
+                                    </div>
 
                                     <p className={`${styles.prizeDatesTextAux} mt-5 mb-0 pb-0`}>
                                         <strong>Code de Ticket:</strong>
@@ -338,19 +344,41 @@ function ConfirmTicketGain() {
                                     )}
                                     {ticket.status=="3" && (
                                         <>
-                                            <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
-                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant:</strong> {ticket.user.lastname} {ticket.user.firstname} </p>
-                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant ID :</strong> #{ticket.user.id}  </p>
-                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant E-mail :</strong> {ticket.user.email}  </p>
-                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant N° Tel :</strong> {ticket.user.phone}  </p>
-                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
+                                            <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de
+                                                jeu:</strong>Le {ticket.updated_at.date} à {ticket.updated_at.time} </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}>
+                                                <strong>Participant:</strong> {ticket.user.lastname} {ticket.user.firstname}
+                                            </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant ID
+                                                :</strong> #{ticket.user.id}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant E-mail
+                                                :</strong> {ticket.user.email}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Participant N° Tel
+                                                :</strong> {ticket.user.phone}  </p>
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}><strong>Date de
+                                                Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
+
+                                            <br/>
 
 
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}>
+                                                <strong>Caissier associé:</strong> {ticket.employee.lastname} {ticket.employee.firstname}
+                                            </p>
+
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}>
+                                                <strong>Caissier ID:</strong> #{ticket.employee.id}
+                                            </p>
+
+                                            <p className={`mt-2 ${styles.prizeDatesTextAux}`}>
+                                                <strong>Caissier E-mail:</strong> {ticket.employee.email}
+                                            </p>
+
+                                            <br/>
 
 
                                         </>
                                     )}
-                                    {ticket.status=="4" && (
+                                    {ticket.status == "4" && (
                                         <p className={`mt-5 ${styles.prizeDatesTextAux}`}><strong>Date de Gain:</strong>Le {ticket.win_date.date} à {ticket.win_date.time} </p>
                                     )}
 
@@ -399,7 +427,6 @@ function ConfirmTicketGain() {
     function getAllPrizes() {
         setLoading(true);
         getPrizes().then((response) => {
-            console.log('response : ', response);
             setPrizesList(response.prizes);
         }).catch((err) => {
             if (err.response) {
@@ -423,7 +450,6 @@ function ConfirmTicketGain() {
     useEffect(() => {
         if(userStoreId != '' && userStoreId != null){
             getStoreClientsList(userStoreId).then((response) => {
-                console.log('response : ', response);
                 setClientsList(response.users);
             });
         }
@@ -491,6 +517,23 @@ function ConfirmTicketGain() {
                     </Form.Item>
                 </Col>
 
+                <Col span={24} key={`keyWords`}>
+                    <Form.Item
+                        className={`${styles.formItem} searchTicketFormItem mb-5`}
+                        name={`keyword`}
+                        label={`Mot clé: (ex: nom, prénom, email, téléphone du client)`}
+                    >
+                        <Input className={`mt-2`} placeholder="Mot clé..."
+                               onChange={(e) => {
+                                   setSearchParam({
+                                       ...searchParam,
+                                       keyword: e.target.value,
+                                   });
+                               }}
+                        />
+                    </Form.Item>
+                </Col>
+
 
             </Row>,
         );
@@ -502,9 +545,17 @@ function ConfirmTicketGain() {
         return (
             <>
                 <Form form={form} name="advanced_search" className={`${styles.searchOneTicketForm}`}>
+                    <Row className={`${styles.fullWidthElement}`} gutter={24}>
+                        <h2>
+                            Recherche de gain
+                        </h2>
+                    </Row>
+
+
+
                     <Row className={`${styles.fullWidthElement}`} gutter={24}>{getFields()}</Row>
                     <div className={`mt-0 w-100`} style={{textAlign: 'right'}}>
-                        <Space size="small">
+                        <Space size="small" className={`mt-4 mx-3`}>
                             <Button
                                 className={`${styles.submitButtonBlue}`}
 

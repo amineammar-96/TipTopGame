@@ -12,7 +12,6 @@ use Doctrine\DBAL\Connection;
 
 class GenerateBadges extends Command
 {
-    protected static $defaultName = 'app:generate-badges';
 
     private EntityManagerInterface $entityManager;
 
@@ -24,16 +23,17 @@ class GenerateBadges extends Command
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->setName('app:generate-badges');
 
     }
 
-    protected function configure()
+    protected function configure():void
     {
         $this->setDescription('Generate badges for clients');
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $this->connection->executeQuery('SET SQL_SAFE_UPDATES = 0');

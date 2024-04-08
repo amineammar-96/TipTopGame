@@ -82,7 +82,6 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-client" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/form" />
-      <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-facebook" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-intl-grapheme" />
       <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-google" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/monolog-bundle" />
@@ -161,6 +160,7 @@
       <path value="$PROJECT_DIR$/backend/vendor/phpmailer/phpmailer" />
       <path value="$PROJECT_DIR$/backend/vendor/jms/metadata" />
       <path value="$PROJECT_DIR$/backend/vendor/vich/uploader-bundle" />
+      <path value="$PROJECT_DIR$/backend/vendor/league/oauth2-facebook" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
