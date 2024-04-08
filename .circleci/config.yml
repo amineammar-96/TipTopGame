@@ -29,14 +29,6 @@ jobs:
           docker_layer_caching: true
 
       - run:
-          name: Create Temporary Database
-          command: |
-            docker exec -i db mysql -uroot -proot -e  "CREATE DATABASE IF NOT EXISTS db;"
-            echo "Temporary database 'db' created."
-            docker exec -i db mysql -uroot -proot -e "show databases;"
-
-
-      - run:
           name: Run tests
           command: |
             cd backend
@@ -48,10 +40,7 @@ jobs:
             php bin/console d:m:m --env=test --connection=test -n
             php bin/console cache:clear --no-warmup
             composer test --connection=test --connection=test
-      - run:
-          name: Stop Database
-          command: |
-            docker stop db
+
 
 
   build_frontend_dev:
