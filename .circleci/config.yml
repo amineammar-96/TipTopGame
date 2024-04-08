@@ -56,7 +56,6 @@ jobs:
             php bin/console d:d:d --force --if-exists --no-interaction
             php bin/console d:d:c -n
             php bin/console d:m:m -n
-            php bin/console d:f:l -n
             php bin/console cache:clear --no-warmup
             composer test
       - run:
