@@ -17,7 +17,8 @@ jobs:
           name: Start Database
           command: |
             docker pull mysql/mysql-server:latest
-            docker run --name db -e MYSQL_ROOT_PASSWORD= -d mysql/mysql-server:latest
+            docker run --name db -e MYSQL_ROOT_PASSWORD=root -d mysql/mysql-server:latest
+            
       
       - setup_remote_docker:
           docker_layer_caching: true
@@ -35,9 +36,9 @@ jobs:
       - run:
           name: Create Temporary Database
           command: |
-            docker exec -i db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS db;"
+            docker exec -i db mysql -uroot -proot -e  "CREATE DATABASE IF NOT EXISTS db;"
             echo "Temporary database 'db' created."
-            docker exec -i db mysql -uroot -e "show databases;"
+            docker exec -i db mysql -uroot -proot -e "show databases;"
 
 
       - run:
