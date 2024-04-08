@@ -382,14 +382,14 @@ workflows:
             branches:
               only: main
 
-      - deploy_production:
-          context: context
-          requires:
-            - build_frontend
-            - build_backend
-          filters:
-            branches:
-              only: main
+      #- deploy_production:
+       #   context: context
+        #  requires:
+         #   - build_frontend
+          #  - build_backend
+          #filters:
+           # branches:
+            #  only: main
 
       - deploy_development:
           context: context
