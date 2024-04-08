@@ -12,6 +12,12 @@ jobs:
     environment:
       DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-staging
     steps:
+      - checkout
+      - run:
+          name: Debug
+          command: |
+            pwd
+            ls -la  
       - run:
           name: Access Backend
           command: |
