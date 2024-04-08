@@ -12,10 +12,6 @@ jobs:
     environment:
       DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-staging
     steps:
-      - run: apk update
-      - run: apk add git
-      - checkout
-      - setup_remote_docker
       - run:
           name: Access Backend
           command: |
