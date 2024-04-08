@@ -27,6 +27,11 @@ jobs:
             sleep 30 # Adjust as needed based on database startup time
 
       - run:
+          name: show docker containers
+          command: |
+            docker ps
+
+      - run:
           name: Run tests
           command: |
             cd backend
