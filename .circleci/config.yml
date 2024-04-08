@@ -3,13 +3,14 @@ version: 2.1
 #orbs:
 # sonarscanner: psl/sonarscanner@0.0.4
 
+
 jobs:
 
   run_test:
     docker:
-      - image: docker:20.10.8
+      - image: cimg/php:8.1.12-browsers
     environment:
-      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-dev
+      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-staging
     steps:
       - run: apk update
       - run: apk add git
@@ -18,7 +19,6 @@ jobs:
       - run:
           name: Access Backend
           command: |
-            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
             cd backend
       - run:
           name: Run tests
