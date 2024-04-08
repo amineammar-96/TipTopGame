@@ -14,22 +14,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Debug
-          command: |
-            pwd
-            ls -la  
-      - run:
-          name: Access Backend
-          command: |
-            cd backend
-      - run:
-          name: Debug
-          command: |
-            pwd
-            ls -la  
-      - run:
           name: Run tests
           command: |
+            cd backend
+            pwd
+            ls -la  
+            composer install
             php bin/console d:d:d --force --if-exists --no-interaction
             php bin/console d:d:c -n
             php bin/console d:m:m -n
