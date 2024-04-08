@@ -16,7 +16,8 @@ jobs:
       - run:
           name: Start Database
           command: |
-            docker run --name db -e MYSQL_ROOT_PASSWORD= -d mysql:latest
+            docker pull mysql/mysql-server:latest
+            docker run --name db -e MYSQL_ROOT_PASSWORD= -d mysql/mysql-server:latest
       
       - setup_remote_docker:
           docker_layer_caching: true
