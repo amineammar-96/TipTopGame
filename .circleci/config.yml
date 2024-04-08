@@ -23,6 +23,11 @@ jobs:
           command: |
             cd backend
       - run:
+          name: Debug
+          command: |
+            pwd
+            ls -la  
+      - run:
           name: Run tests
           command: |
             php bin/console d:d:d --force --if-exists --no-interaction
