@@ -356,6 +356,8 @@ workflows:
 
       - build_backend_staging:
           context: context
+          requires:
+            - run_test
           filters:
             branches:
               only: staging
@@ -380,20 +382,18 @@ workflows:
 
       - build_backend:
           context: context
-          requires:
-            - run_test
           filters:
             branches:
               only: main
 
-      #- deploy_production:
-       #   context: context
-        #  requires:
-         #   - build_frontend
-          #  - build_backend
-          #filters:
-           # branches:
-            #  only: main
+      - deploy_production:
+          context: context
+          requires:
+            - build_frontend
+            - build_backend
+          filters:
+            branches:
+              only: main
 
       - deploy_development:
           context: context
