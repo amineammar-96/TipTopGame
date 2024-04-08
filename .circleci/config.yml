@@ -29,16 +29,6 @@ jobs:
           docker_layer_caching: true
 
       - run:
-          name: Wait for Database to Start
-          command: |
-            sleep 30 
-            
-      - run:
-          name: show docker containers
-          command: |
-            docker ps
-
-      - run:
           name: Create Temporary Database
           command: |
             docker exec -i db mysql -uroot -proot -e  "CREATE DATABASE IF NOT EXISTS db;"
@@ -53,9 +43,9 @@ jobs:
             pwd
             ls -la  
             composer install
-            php bin/console d:d:d --env=test --connection=default mysql://root:root@127.0.0.1:3306/db --force --if-exists --no-interaction
-            php bin/console d:d:c --env=test --connection=default mysql://root:root@127.0.0.1:3306/db -n
-            php bin/console d:m:m --env=test --connection=default mysql://root:root@127.0.0.1:3306/db -n
+            php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
+            php bin/console d:d:c --env=test --connection=test -n
+            php bin/console d:m:m --env=test --connection=test -n
             php bin/console cache:clear --no-warmup
             composer test
       - run:
