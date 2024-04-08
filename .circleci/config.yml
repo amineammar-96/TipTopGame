@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Wait for Database to Start
           command: |
-            sleep 30 # Adjust as needed based on database startup time
+            sleep 30 
             
       - run:
           name: show docker containers
