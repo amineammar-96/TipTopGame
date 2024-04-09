@@ -4,7 +4,7 @@ doctrine:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
             test:
-                url: 'mysql://root:root@127.0.0.1:3306/tiptopgame?serverVersion=8&charset=utf8mb4'
+                url: 'mysql://root:root@127.0.0.1:3306/tiptopgame_test?serverVersion=8&charset=utf8mb4'
         default_connection: default
 
         # IMPORTANT: You MUST configure your server version,
