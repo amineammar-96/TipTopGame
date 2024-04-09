@@ -10,6 +10,7 @@ jobs:
     docker:
       - image: cimg/php:8.1.12-browsers
       - image: mysql:5.6.36
+        name: db_test
         environment:
           MYSQL_ROOT_PASSWORD: root
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
@@ -38,7 +39,7 @@ jobs:
             php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
             php bin/console d:d:c --env=test --connection=test -n
             docker ps
-            docker exec jolly_knuth mysql -uroot -proot -e "show databases; use tiptop_test; show tables;"
+            docker exec db_test mysql -uroot -proot -e "show databases; use tiptop_test; show tables;"
             php bin/console d:m:m --env=test -n
             php bin/console cache:clear --no-warmup
             composer test --connection=test
