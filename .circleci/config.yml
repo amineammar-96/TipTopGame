@@ -3,46 +3,70 @@ version: 2.1
 #orbs:
 # sonarscanner: psl/sonarscanner@0.0.4
 
+
 jobs:
 
-  run_test:
+
+  run_test_front:
     docker:
-      - image: ghcr.io/furious-ducks-tiptop/backend-staging:latest
+        - image: cimg/node:20.12.1-browsers
     steps:
       - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
-          name: connexion to Docker
+          name: Start tests
           command: |
-            echo $CI_REGISTRY_TOKEN | docker login ghcr.io -u $CI_REGISTRY_USER --password-stdin
-            docker pull ghcr.io/furious-ducks-tiptop/backend-staging:latest
+            cd frontend
+            pwd
+            ls -la  
+            npm install
+            npm test
+      
 
+
+            
+
+        
+
+
+
+  run_test_backend:
+    docker:
+      - image: cimg/php:8.1.12-browsers
+      - image: mysql:5.6.36
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+          
+    environment:
+      DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-staging
+    steps:
+      - checkout
+      - run:
+          name: Start Database
+          command: |
+            docker pull mysql/mysql-server:latest
+            docker run --name db -e MYSQL_ROOT_PASSWORD=root -d mysql/mysql-server:latest
+            
+      
+      - setup_remote_docker:
+          docker_layer_caching: true
 
       - run:
-          name: "Install Dependencies"
+          name: Run tests
           command: |
             cd backend
-            composer install -n --prefer-dist
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
-          paths:
-            - ./vendor
-
-      - run:
-          name: "Run tests"
-          command: |
-            cd backend
-            php bin/console d:d:d --force
-            php bin/console d:d:c 
-            php bin/console d:m:m -n
-            php bin/console d:f:l -n
-            php bin/console cache:clear
-            composer test
+            pwd
+            ls -la  
+            composer install
+            php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
+            php bin/console d:d:c --env=test --connection=test  -n
+            php bin/console d:m:m --env=test  -n
+            php bin/console cache:clear --no-warmup --env=test
+            composer update 
+            SYMFONY_DEPRECATIONS_HELPER=disabled  php ./vendor/bin/phpunit 
+            
 
 
   build_frontend_dev:
@@ -311,7 +335,14 @@ jobs:
 workflows:
   build_and_push:
     jobs:
-      - run_test:
+
+      - run_test_front:
+          context: context
+          filters:
+            branches:
+              only: staging
+
+      - run_test_backend:
           context: context
           filters:
             branches:
@@ -331,12 +362,16 @@ workflows:
 
       - build_frontend_staging:
           context: context
+          requires:
+            - run_test_front
           filters:
             branches:
               only: staging
 
       - build_backend_staging:
           context: context
+          requires:
+            - run_test_backend
           filters:
             branches:
               only: staging
