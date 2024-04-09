@@ -39,6 +39,7 @@ jobs:
             php bin/console d:d:c --env=test --connection=test  -n
             php bin/console d:m:m --env=test  -n
             php bin/console cache:clear --no-warmup --env=test
+            composer update 
             composer test
 
 
