@@ -374,6 +374,7 @@ workflows:
           filters:
             branches:
               only: staging
+          on_fail: continue
 
       - build_frontend_preprod:
           context: context
