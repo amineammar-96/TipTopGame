@@ -6,7 +6,7 @@ jest.useFakeTimers();
 window.scrollTo = jest.fn();
 
 describe('Home', () => {
-    test('renders loading spinner initially and then LandingPage', async () => {
+    test('rendering Home Page', async () => {
 
         render(<Home />);
 

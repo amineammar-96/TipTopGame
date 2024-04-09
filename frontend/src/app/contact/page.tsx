@@ -61,7 +61,7 @@ export default function Contact() {
           )}
           {!loading && (
               <>
-                  <main className={`${styles.main} mt-5 pt-5`}>
+                  <main data-testid="contact-section" className={`${styles.main} mt-5 pt-5`}>
                       <section className="contact" id="contact">
                           <div className="container">
                               <div className="heading text-center">

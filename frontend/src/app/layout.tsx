@@ -30,18 +30,17 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en">
-    <body className={inter.className}>
-    <TopInfoBannerComponent></TopInfoBannerComponent>
+      <html lang="en">
+      <body className={inter.className}>
+      <TopInfoBannerComponent data-testid="top-info-banner"/>
 
-    <Navbar></Navbar>
-    {children}
-    <Footer></Footer>
-    <CookiesModalComponent></CookiesModalComponent>
+      <Navbar data-testid="navbar"/>
+      {children}
+      <Footer data-testid="footer"/>
+      <CookiesModalComponent data-testid="cookies-modal"/>
 
-
-    </body>
-    <GoogleAnalytics gaId="G-XLKV7N9HQT"/>
-    </html>
+      </body>
+      <GoogleAnalytics gaId="G-XLKV7N9HQT"/>
+      </html>
   )
 }
