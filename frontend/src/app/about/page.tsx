@@ -31,7 +31,7 @@ export default function About() {
             )}
             {!loading && (
                 <>
-                    <main className={`${styles.main} mt-5 pt-5`}>
+                    <main data-testid="about-section" className={`${styles.main} mt-5 pt-5`}>
                         <section className="section_all" id="about">
                             <div className="container contact">
                                 <div className="heading text-center">
@@ -45,7 +45,7 @@ export default function About() {
                                     </p>
                                 </div>
 
-                                <div className="row">
+                                <div data-testid="about-content" className="row">
                                     <div className="col-lg-12">
                                         <div className="section_title_all text-center">
                                             <p className="section_subtitle mx-auto text-muted">
@@ -82,7 +82,7 @@ export default function About() {
                                     </div>
                                     <div className="col-lg-6">
                                         <div className="img_about mt-3">
-                                            <Image src={wallpaperHomepageImg} alt={"wallpaper"} style={{borderRadius: "10px", width: "40rem", height: "20rem"}}>
+                                            <Image data-testid="about-image" src={wallpaperHomepageImg} alt={"wallpaper"} style={{borderRadius: "10px", width: "40rem", height: "20rem"}}>
 
                                             </Image>
                                         </div>

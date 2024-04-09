@@ -480,7 +480,7 @@ class TicketController extends AbstractController
         $prize = $ticket->getPrize();
 
         if ($prize) {
-            $points = floatval($prize->getPrice()) * 10;
+            $points = (int) (floatval($prize->getPrice()) * 10);
         }
 
         $lastUserBadges= [];

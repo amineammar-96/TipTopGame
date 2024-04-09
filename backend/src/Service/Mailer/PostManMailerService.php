@@ -201,10 +201,9 @@ class PostManMailerService
 
     private function replacePlaceholders($content, $variablesValues)
     {
-
         foreach ($variablesValues as $variable => $value) {
             $placeholder = '{{ ' . $variable . ' }}';
-            $content = $content ? str_replace($placeholder, $value, $content) : "";
+            $content = $content && $value ? str_replace($placeholder, $value, $content) : $content;
         }
 
         return $content;
