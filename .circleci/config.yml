@@ -13,14 +13,21 @@ jobs:
         environment:
           MYSQL_ROOT_PASSWORD: root
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
-        name: db_test
           
     environment:
       DOCKER_IMAGE_BASE_URL: ghcr.io/furious-ducks-tiptop/backend-staging
     steps:
       - checkout
+      - run:
+          name: Start Database
+          command: |
+            docker pull mysql/mysql-server:latest
+            docker run --name db -e MYSQL_ROOT_PASSWORD=root -d mysql/mysql-server:latest
+            
+      
       - setup_remote_docker:
           docker_layer_caching: true
+
       - run:
           name: Run tests
           command: |
@@ -30,8 +37,6 @@ jobs:
             composer install
             php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
             php bin/console d:d:c --env=test --connection=test -n
-            docker ps
-            docker exec jolly_knuth mysql -uroot -proot -e "show databases; use tiptop_test; show tables;"
             php bin/console d:m:m --env=test -n
             php bin/console cache:clear --no-warmup
             composer test --connection=test
