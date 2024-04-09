@@ -35,10 +35,10 @@ jobs:
             pwd
             ls -la  
             composer install
-            php bin/console d:d:d --env=staging --force --if-exists --no-interaction
-            php bin/console d:d:c --env=staging -n
-            php bin/console d:m:m --env=staging -n
-            php bin/console cache:clear --no-warmup --env=staging
+            php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
+            php bin/console d:d:c --env=test --connection=test  -n
+            php bin/console d:m:m --env=test  -n
+            php bin/console cache:clear --no-warmup --env=test
             composer test
 
 
