@@ -362,7 +362,7 @@ workflows:
       - build_frontend_staging:
           context: context
           requires:
-            - run_test_frontend
+            - run_test_front
           filters:
             branches:
               only: staging
