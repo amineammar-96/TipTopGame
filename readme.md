@@ -124,7 +124,6 @@ php bin/console d:f:l
 + Game configuration (period of the game)
 
 
-
 #### **- This may take a long time just wait for the end of the process please 😀**
 
 ```bash
@@ -206,8 +205,30 @@ npm run dev
 
 ### 3- Open your browser and go to http://localhost:3000
 
-### 4- Enjoy the game 🎉🎉🎉
 
+
+## Use those profiles to test the game
+# 5 STORE MANAGERS:
+    +  $i = 1,2,3,4,5
+    +  email : manager${i}@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# 15 EMPLOYEES:
+    +  $i = 1-15
+    +  email : employee${i}@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+# 30 CLIENTS:
+    +  $i = 1-30
+    +  email : client${i}@dsp5-archi-f23-15m-g2.ovh
+    +  mdp : TiptopDefault@123
+
+#
+#### Or you can use the tiptop profiles created in the top of readme.md file
+
+
+
+### 4- Enjoy the game 🎉🎉🎉
 
 
 

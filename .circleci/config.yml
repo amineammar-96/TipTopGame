@@ -65,7 +65,8 @@ jobs:
             php bin/console d:m:m --env=test  -n
             php bin/console cache:clear --no-warmup --env=test
             composer update 
-            composer test
+            php -d error_reporting=-1 ./vendor/bin/phpunit 
+            
 
 
   build_frontend_dev:
@@ -374,7 +375,6 @@ workflows:
           filters:
             branches:
               only: staging
-          on_fail: continue
 
       - build_frontend_preprod:
           context: context
