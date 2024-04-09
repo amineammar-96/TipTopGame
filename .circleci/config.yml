@@ -6,7 +6,32 @@ version: 2.1
 
 jobs:
 
-  run_test:
+
+  run_test_front:
+    docker:
+        - image: cimg/node:20.12.1-browsers
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Start tests
+          command: |
+            cd frontend
+            pwd
+            ls -la  
+            npm install
+            npm test
+      
+
+
+            
+
+        
+
+
+
+  run_test_backend:
     docker:
       - image: cimg/php:8.1.12-browsers
       - image: mysql:5.6.36
@@ -309,7 +334,14 @@ jobs:
 workflows:
   build_and_push:
     jobs:
-      - run_test:
+
+      - run_test_front:
+          context: context
+          filters:
+            branches:
+              only: staging
+
+      - run_test_backend:
           context: context
           filters:
             branches:
@@ -329,6 +361,8 @@ workflows:
 
       - build_frontend_staging:
           context: context
+          requires:
+            - run_test_frontend
           filters:
             branches:
               only: staging
@@ -336,7 +370,7 @@ workflows:
       - build_backend_staging:
           context: context
           requires:
-            - run_test
+            - run_test_backend
           filters:
             branches:
               only: staging
