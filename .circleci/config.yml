@@ -65,7 +65,7 @@ jobs:
             php bin/console d:m:m --env=test  -n
             php bin/console cache:clear --no-warmup --env=test
             composer update 
-            php -d error_reporting=-1 ./vendor/bin/phpunit 
+            php -d error_reporting=-1 ./vendor/bin/phpunit --no-deprecation-warnings
             
 
 
