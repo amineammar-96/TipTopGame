@@ -38,7 +38,7 @@ jobs:
             php bin/console d:d:d --env=test --connection=test --force --if-exists --no-interaction
             php bin/console d:d:c --env=test --connection=test -n
             docker ps
-            docker exec db mysql -uroot -proot -e "show databases; use tiptop_test; show tables;"
+            docker exec db mysql -h 127.0.0.1 -uroot -proot -e "show databases; use tiptop_test; show tables;"
             php bin/console d:m:m --env=test -n
             php bin/console cache:clear --no-warmup
             composer test --connection=test
