@@ -610,10 +610,19 @@ function PlayGameComponent() {
                     logoutAndRedirectAdminsUserToLoginPage();
                 } else if (error.response.status === 404) {
                     if (error.response.data.message=="Ticket already played") {
-                        Modal.info({
+                        Modal.warning({
                             className: 'modalError',
-                            title: 'Code déjà joué !',
-                            content: 'Votre code est plus valide, il a déjà été joué.',
+                            title: 'Ticket déjà utilisé !',
+                            content: (
+                                <div>
+                                    <p style={{ marginBottom: '10px' }}>
+                                        Malheureusement, votre code n'est plus valide car il a déjà été utilisé.
+                                    </p>
+                                    <p style={{ fontSize: '14px', color: '#666' }}>
+                                        Veuillez vérifier et essayer à nouveau.
+                                    </p>
+                                </div>
+                            ),
                             okText: "D'accord",
                         });
                     }else {

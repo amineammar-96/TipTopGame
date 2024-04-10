@@ -70,15 +70,18 @@ class PostManMailerController extends AbstractController
         }
 
 
-       if( $this->postManMailerService->sendEmailTemplate($finalService , $receiver , [
-           'token' => $activationToken,
-           'ticket' => null,
-
-       ])) {
-              return new JsonResponse('Activation Email sent successfully!' , 200);
-         } else {
-              return new JsonResponse('Activation Email not sent!' , 500);
-       }
+        try {
+            if ($this->postManMailerService->sendEmailTemplate($finalService, $receiver, [
+                'token' => $activationToken,
+                'ticket' => null,
+            ])) {
+                return new JsonResponse('Activation Email sent successfully!', 200);
+            } else {
+                return new JsonResponse('Activation Email not sent!', 500);
+            }
+        } catch (\Exception $e) {
+            return new JsonResponse('Error sending activation email: ' . $e->getMessage(), 500);
+        }
 
 
     }

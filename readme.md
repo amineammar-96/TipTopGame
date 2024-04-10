@@ -184,6 +184,20 @@ Game reset successfully.
 symfony serve
 ```
 
+### 6- PhpUnit tests
+```bash
+  composer test
+```
+
+#### With coverage report
+```bash
+  composer test:coverage
+```
+
+
+
+
+
 
 Next.js
 ## Frontend setup
@@ -197,6 +211,13 @@ cd frontend
 ```bash
 npm install
 ```
+
+#### Test the frontend
+```bash
+npm test
+```
+
+
 
 ### 2- Run the server
 ```bash

@@ -63,16 +63,26 @@ class PostManMailerService
 
     public function initMailer(): PHPMailer
     {
+
         $mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->Host = $this->mailtrapHost;
         $mail->SMTPAuth = true;
         $mail->Username = $this->mailtrapUser;
         $mail->Password = $this->mailtrapPassword;
+        $mail->SMTPOptions = [
+            'ssl'=> [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            ]
+        ];
+
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = $this->mailtrapPort;
         $mail->CharSet = 'UTF-8';
-
+        $mail->SMTPAutoTLS = false;
+        $mail->SMTPDebug = SMTP::DEBUG_OFF;
         return $mail;
 
     }
@@ -216,7 +226,12 @@ class PostManMailerService
             try {
 
                 $mail = $this->initMailer();
-                $mail->setFrom('your@example.com', 'Your Name');
+                $mail->setFrom('tiptop@dsp5-archi-f23-15m-g2.com', 'Thé - Tiptop');
+
+                if(!$recipient){
+                    return false;
+                }
+
                 $mail->addAddress($recipient);
 
                 $subject = $this->convertHtmlToText($subject);
@@ -228,6 +243,7 @@ class PostManMailerService
                 $this->createEmailingHistory($emailService , $receiver);
                 return true;
             } catch (Exception $e) {
+                dd($e->getMessage());
                 return false;
             }
         }
