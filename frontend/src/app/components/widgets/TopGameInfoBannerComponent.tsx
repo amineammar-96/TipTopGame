@@ -120,7 +120,7 @@ export default function TopGameInfoBannerComponent() {
     useEffect(() => {
         setInterval(() => {
             fetchGameConfig();
-        }, 2000);
+        }, 10000);
 
     }, []);
 
