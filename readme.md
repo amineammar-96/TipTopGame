@@ -186,12 +186,12 @@ symfony serve
 
 ### 6- PhpUnit tests
 ```bash
-  ./vendor/bin/phpunit
+  composer test
 ```
 
 #### With coverage report
 ```bash
-  XDEBUG_MODE=coverage ./vendor/bin/phpunit  --coverage-html var/coverage
+  composer test:coverage
 ```
 
 

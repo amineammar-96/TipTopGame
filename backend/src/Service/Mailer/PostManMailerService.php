@@ -227,6 +227,11 @@ class PostManMailerService
 
                 $mail = $this->initMailer();
                 $mail->setFrom('tiptop@dsp5-archi-f23-15m-g2.com', 'Thé - Tiptop');
+
+                if(!$recipient){
+                    return false;
+                }
+
                 $mail->addAddress($recipient);
 
                 $subject = $this->convertHtmlToText($subject);
