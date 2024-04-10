@@ -184,6 +184,20 @@ Game reset successfully.
 symfony serve
 ```
 
+### 6- PhpUnit tests
+```bash
+  ./vendor/bin/phpunit
+```
+
+#### With coverage report
+```bash
+  XDEBUG_MODE=coverage ./vendor/bin/phpunit  --coverage-html var/coverage
+```
+
+
+
+
+
 
 Next.js
 ## Frontend setup
@@ -197,6 +211,13 @@ cd frontend
 ```bash
 npm install
 ```
+
+#### Test the frontend
+```bash
+npm test
+```
+
+
 
 ### 2- Run the server
 ```bash
