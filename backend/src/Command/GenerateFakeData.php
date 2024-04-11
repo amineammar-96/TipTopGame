@@ -100,7 +100,11 @@ class GenerateFakeData extends Command
             $email ="";
 
             if($role == Role::ROLE_CLIENT){
-                   $email = "client".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
+                   if($i === 0) {
+                       $email = "client@dsp5-archi-f23-15m-g2.ovh";
+                   }else{
+                       $email = "client".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
+                   }
             }
             else if ($role == Role::ROLE_EMPLOYEE){
                     $email = "employee".($i+1)."@dsp5-archi-f23-15m-g2.ovh";
