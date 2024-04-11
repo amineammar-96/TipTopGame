@@ -25,7 +25,7 @@ function TirageAuSortTemplate() {
                                 <li>
                                     <span>
                                         E-mail de l'huissier: <strong>
-                                        rick.arnaud@gmail.com
+                                        rick.arnaud@dsp5-archi-f23-15m-g2.ovh
                                     </strong>
                                     </span>
                                 </li>
@@ -35,7 +35,7 @@ function TirageAuSortTemplate() {
                                 <li>
                                     <span>
                                         Mot de passe: <strong >
-                                        Tiptop_huisser@123
+                                        TiptopDefault@123
                                     </strong>
                                     </span>
                                 </li>
